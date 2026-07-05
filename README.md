@@ -18,7 +18,7 @@ Die eerste weergawe van die volledige Conradie Stamboom is in 1932 saamgestel de
 
 In 2000 het Pieter Jakobus Conradie (stamlidnommer: c3d5e3f4g13h2i1) die taak oorgeneem om dit by te werk (met 'n hersiene uitgawe in 2007). Daar was ook in-diepte navorsing deur Charl Francois Conradie (stamlidnommer: c2d5e1f7g3h3i2) betreffende doop-, lidmaat- en grafinskrywings. Verskeie ander persone het self ook baie moeite gedoen en tyd opgeoffer om die geskiedenis te dokumenteer.
 
-Die laaste opgedateerde weergawe van die stamboom was in 2014 gepubliseer. Dit sou onregverdig wees om die harde werk van die familielede dormand te laat en nie verder by te werk nie. Hierdie is 'n poging om 'n meganisme te skep waardeur besonderhede bygewerk kan word en die geskiedenis intyds by te werk.
+Die laaste opgedateerde weergawe van die stamboom was in 2014 gepubliseer. Dit sou onregverdig wees om die harde werk van die familielede dormant te laat en nie verder by te werk nie. Hierdie is 'n poging om 'n meganisme te skep waardeur besonderhede bygewerk kan word en die geskiedenis intyds by te werk.
 
 ## Bron:
 www.dieconradies.com

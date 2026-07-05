@@ -10,6 +10,9 @@ Hy sluit aan by die VOC as soldaat en vertrek per skip na Kaapstad waar hy Janua
 
 Hy trou op 35 jarige ouderdom, verkry 'n plaas en word die stamvader van die Conradies in Suid-Afrika.
 
+Nuutste weergawe:
+- [Conradie Familiegeskiedenis](/data/conradies.html)
+
 ## Waarom hierdie bladsye geskep is?
 Die eerste weergawe van die volledige Conradie Stamboom is in 1932 saamgestel deur Hendrik Ludolph Neethling Conradie (stamlidnommer: c2d4e8f13g5) met opdaterings in 1955 en 1978. Dit was 'n reuse taak en met ondersteuning en hulp van familielede en belangstellendes gedoen.
 

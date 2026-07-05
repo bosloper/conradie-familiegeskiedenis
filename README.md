@@ -22,5 +22,5 @@ www.dieconradies.com
 
 Hierdie oorsig is saamgestel deur Andries de Vries, seun van Hermanus Macdonald de Vries en Anna Maria Conradie (stamlidnommer: c2d5e1f8g1h1i3), met die hulp van Claude AI wat die verwerking en ontleding van die oorspronklike PDF-dokumente gedoen het, 'n volledige databasis van Conradie-familielede sowel as gades saamgestel het en die tegniese voorbereiding van die bladsye hanteer het.
 
-Bladsye geskep gedurende Junie 2026
+Bladsye geskep gedurende Junie 2026  
 Laaste bywerking: Julie 2026

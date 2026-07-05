@@ -11,6 +11,11 @@ Hy sluit aan by die VOC as soldaat en vertrek per skip na Kaapstad waar hy Janua
 Hy trou op 35 jarige ouderdom, verkry 'n plaas en word die stamvader van die Conradies in Suid-Afrika.
 
 ### Nuutste weergawe:
+Hier is die nuutste, opgedateerde lys van alle Conradie familielede, aangetroudes en kinders. Dit bestaan uit 3 dele:
+- Stamvader en Geskiedenis (die oorsprong van die Conradies)
+- Soek & Blaai (gebruik die filters of soekbalk om enige van die familielede of aangetroudenes te vind. Kies enige persoon om hul detail te sien, gebruik die **"Stel voor"** knoppie om besonderhede by te voeg)
+- Admin (hier is 'n verduideliking van die proses om bestaande inligting by te werk)
+
 - [Conradie Familiegeskiedenis](/data/conradies.html)
 
 ## Waarom hierdie bladsye geskep is?

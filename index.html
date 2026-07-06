@@ -1,9 +1,282 @@
 <!DOCTYPE html>
-<html>
+<html lang="af">
 <head>
-<meta http-equiv="refresh" content="0; url=data/conradies.html">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Conradie Familiegeskiedenis</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Josefin+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #1a1208;
+      --parchment: #f5efe0;
+      --parchment-dark: #ede3cc;
+      --sepia: #8b6914;
+      --sepia-light: #d4aa50;
+      --sepia-pale: #f0e4c4;
+      --rust: #8b3a1a;
+      --forest: #2d4a2a;
+      --muted: #6b5a3a;
+      --line: #d4c49a;
+      --card-bg: #fdf8ee;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--parchment);
+      color: var(--ink);
+      font-family: 'EB Garamond', serif;
+      font-size: 1.08rem;
+      line-height: 1.75;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      background: var(--ink);
+      color: var(--parchment);
+      text-align: center;
+      padding: 3rem 1.5rem 2.5rem;
+      border-bottom: 3px solid var(--sepia-light);
+    }
+    .hero-wapen {
+      width: 90px;
+      height: 90px;
+      margin: 0 auto 1.2rem;
+      opacity: 0.85;
+    }
+    .hero-wapen img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    .hero-wapen-placeholder {
+      width: 90px;
+      height: 90px;
+      margin: 0 auto 1.2rem;
+      border: 2px solid var(--sepia-light);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      color: var(--sepia-light);
+    }
+    .hero-label {
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--sepia-light);
+      margin-bottom: 0.6rem;
+    }
+    .hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.4rem;
+      font-weight: 600;
+      color: var(--parchment);
+      line-height: 1.2;
+      margin-bottom: 0.5rem;
+    }
+    .hero-sub {
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--sepia-light);
+    }
+
+    /* ── CTA-knoppie ── */
+    .cta-wrap {
+      text-align: center;
+      padding: 2rem 1.5rem;
+      background: var(--sepia-pale);
+      border-bottom: 1px solid var(--line);
+    }
+    .cta-knoppie {
+      display: inline-block;
+      background: var(--sepia);
+      color: var(--parchment);
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.85rem 2.2rem;
+      text-decoration: none;
+      border-radius: 2px;
+      transition: background 0.2s;
+    }
+    .cta-knoppie:hover { background: var(--ink); }
+    .cta-beskrywing {
+      margin-top: 0.8rem;
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+
+    /* ── Inhoud ── */
+    .inhoud {
+      max-width: 740px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+
+    .afdeling {
+      margin-bottom: 2.5rem;
+      padding-bottom: 2.5rem;
+      border-bottom: 1px solid var(--line);
+    }
+    .afdeling:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+    }
+
+    h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.55rem;
+      font-weight: 600;
+      color: var(--sepia);
+      margin-bottom: 1rem;
+    }
+
+    p { margin-bottom: 0.9rem; }
+    p:last-child { margin-bottom: 0; }
+
+    /* ── Tabs-verduideliking ── */
+    .tabs-lys {
+      list-style: none;
+      margin: 1rem 0;
+    }
+    .tabs-lys li {
+      display: flex;
+      gap: 0.8rem;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid var(--line);
+      font-size: 0.97rem;
+    }
+    .tabs-lys li:last-child { border-bottom: none; }
+    .tab-naam {
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--sepia);
+      white-space: nowrap;
+      padding-top: 0.15rem;
+      min-width: 120px;
+    }
+
+    /* ── Bydraers ── */
+    .bydraers {
+      background: var(--card-bg);
+      border: 1px solid var(--line);
+      border-radius: 2px;
+      padding: 1.2rem 1.4rem;
+      margin-top: 1rem;
+    }
+    .bydraer-item {
+      font-size: 0.93rem;
+      color: var(--muted);
+      padding: 0.35rem 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .bydraer-item:last-child { border-bottom: none; }
+    .bydraer-naam { color: var(--ink); font-style: italic; }
+
+    /* ── Voetnoot ── */
+    .voetnoot {
+      background: var(--parchment-dark);
+      border-top: 2px solid var(--line);
+      padding: 1.5rem;
+      text-align: center;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+    .voetnoot a { color: var(--sepia); }
+
+    @media (max-width: 600px) {
+      .hero h1 { font-size: 1.8rem; }
+      .tab-naam { min-width: 90px; font-size: 0.65rem; }
+    }
+  </style>
 </head>
 <body>
-<a href="data/conradies.html">Conradie Familiegeskiedenis</a>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-wapen-placeholder">⚜</div>
+    <div class="hero-label">Suid-Afrikaanse Geslagsregister</div>
+    <h1>Conradie Familiegeskiedenis</h1>
+    <div class="hero-sub">Marburg, Duitsland · 1668 &nbsp;—&nbsp; Suid-Afrika · Vandag</div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-wrap">
+    <a class="cta-knoppie" href="data/conradies.html">📖 &nbsp;Oopmaak: Conradie Stamboom</a>
+    <div class="cta-beskrywing">
+      7 201 Conradie-familielede &nbsp;·&nbsp; 3 932 aangetroudenes &nbsp;·&nbsp; 11 geslagte
+    </div>
+  </div>
+
+  <!-- Hoofinhoud -->
+  <div class="inhoud">
+
+    <div class="afdeling">
+      <h2>Inleiding</h2>
+      <p>Hierdie is 'n oorsig oor die ontstaan van die Conradie-familie in Duitsland en die aankoms van Friederich Henrich Conradij aan die Kaap de Goede Hoop.</p>
+      <p>Friederich is gebore in Marburg, Duitsland in 1668 as die seun van 'n Lutherse predikant en vertrek op 20-jarige ouderdom, vermoedelik om werk te soek in Nederland, wat op daardie stadium 'n voorspoedige land was.</p>
+      <p>Hy sluit aan by die VOC as soldaat en vertrek per skip na Kaapstad, waar hy in Januarie 1689 aanland. Na drie en 'n halwe jaar word sy kontrak beëindig en hy word 'n Vryburger in 1692 — minder as 40 jaar na die aankoms van Jan van Riebeeck.</p>
+      <p>Hy trou op 35-jarige ouderdom, verkry 'n plaas, en word die stamvader van die Conradies in Suid-Afrika.</p>
+    </div>
+
+    <div class="afdeling">
+      <h2>Die Stamboom-toepassing</h2>
+      <p>Die toepassing bestaan uit drie afdelings:</p>
+      <ul class="tabs-lys">
+        <li>
+          <span class="tab-naam">Stamvader &amp; Geskiedenis</span>
+          <span>Die oorsprong van die Conradies — van Allendorf en Marburg in Duitsland tot die eerste plase aan die Kaap.</span>
+        </li>
+        <li>
+          <span class="tab-naam">Soek &amp; Blaai</span>
+          <span>Gebruik die filters of soekbalk om enige familielid of aangetroudene te vind. Kies 'n persoon om hul besonderhede te sien, of gebruik die <em>"Stel voor"</em>-knoppie om inligting by te voeg.</span>
+        </li>
+        <li>
+          <span class="tab-naam">Admin</span>
+          <span>Verduideliking van die proses om bestaande inligting by te werk vir gemagtigde gebruikers.</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="afdeling">
+      <h2>Waarom hierdie bladsye?</h2>
+      <p>Die eerste weergawe van die volledige Conradie Stamboom is in 1932 saamgestel deur <span class="bydraer-naam">Hendrik Ludolph Neethling Conradie</span> (c2d4e8f13g5), met opdaterings in 1955 en 1978. Dit was 'n reuse taak, met ondersteuning en hulp van familielede en belangstellendes.</p>
+      <p>In 2000 het <span class="bydraer-naam">Pieter Jakobus Conradie</span> (c3d5e3f4g13h2i1) die taak oorgeneem om dit by te werk, met 'n hersiene uitgawe in 2007. Daar was ook in-diepte navorsing deur <span class="bydraer-naam">Charl Francois Conradie</span> (c2d5e1f7g3h3i2) betreffende doop-, lidmaat- en grafinskrywings. Verskeie ander persone het self ook baie moeite gedoen en tyd opgeoffer om die geskiedenis te dokumenteer.</p>
+      <p>Die laaste gedrukte weergawe was in 2014. Dit sou onregverdig wees om die harde werk van hierdie familielede dormant te laat. Hierdie is 'n poging om 'n meganisme te skep waardeur besonderhede intyds bygewerk en gedeel kan word.</p>
+    </div>
+
+    <div class="afdeling">
+      <h2>Saamgestel deur</h2>
+      <div class="bydraers">
+        <div class="bydraer-item">
+          <span class="bydraer-naam">Andries de Vries</span> — seun van Hermanus Macdonald de Vries en Anna Maria Conradie (c2d5e1f8g1h1i3). Samestelling, datakorrekture en redaksie.
+        </div>
+        <div class="bydraer-item">
+          <span class="bydraer-naam">Claude AI (Anthropic)</span> — verwerking en ontleding van PDF-brondokumente, samestelling van die volledige databasis, en tegniese voorbereiding van die bladsye.
+        </div>
+        <div class="bydraer-item">
+          Brondokument: <a href="https://www.dieconradies.com" target="_blank">www.dieconradies.com</a> — Conradie Geslagsregister, 2014 Uitgawe.
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Voetnoot -->
+  <div class="voetnoot">
+    <a href="data/conradies.html">Conradie Familiegeskiedenis</a> &nbsp;·&nbsp;
+    Laas opgedateer: Julie 2026 &nbsp;·&nbsp;
+    <a href="https://www.dieconradies.com" target="_blank">dieconradies.com</a>
+  </div>
+
 </body>
 </html>

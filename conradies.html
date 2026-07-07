@@ -1510,6 +1510,28 @@ async function laaiData() {
         BRANCH_COUNTS[r.branch] = (BRANCH_COUNTS[r.branch] || 0) + 1;
       }
     }
+    // Bereken kop-statistieke
+    let iCount = 0, sCount = 0, maxGen = 0;
+    for (const r of CONRADIE_DATA) {
+      if (r.id) {
+        if (r.id.charAt(0) === 'I') iCount++;
+        else if (r.id.charAt(0) === 'S') sCount++;
+      }
+      if (r.gen && r.gen > maxGen) maxGen = r.gen;
+    }
+    window.CONRADIE_STATS = {
+      conradie_individuals: iCount,
+      spouse_individuals: sCount,
+      max_generation: maxGen
+    };
+    // Dateer kop-statistieke op
+    try {
+      document.getElementById('stat-conradie').textContent = iCount.toLocaleString();
+      document.getElementById('stat-spouses').textContent = sCount.toLocaleString();
+      document.getElementById('stat-gens').textContent = maxGen;
+      const lm = document.getElementById('loading-msg');
+      if (lm) lm.textContent = '';
+    } catch(e) {}
     if (statusEl) statusEl.remove();
     // Begin UI nadat data gelaai is
     if (typeof initApp === 'function') initApp();
@@ -1980,13 +2002,6 @@ function switchTab(tabName) {
 
 // Registreer tab-knoppe na alle inhoud gelaai is
 window.addEventListener('load', function() {
-  // Stel header statistieke
-  try {
-    document.getElementById('stat-conradie').textContent = CONRADIE_STATS.conradie_individuals.toLocaleString();
-    document.getElementById('stat-spouses').textContent = CONRADIE_STATS.spouse_individuals.toLocaleString();
-    document.getElementById('stat-gens').textContent = CONRADIE_STATS.max_generation;
-    document.getElementById('loading-msg').textContent = '';
-  } catch(e) {}
   // Registreer tab-knoppe
   document.querySelectorAll('.tab-btn').forEach(function(btn) {
     btn.addEventListener('click', function() {

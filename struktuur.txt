@@ -1,0 +1,8 @@
+bosloper/conradie-familiegeskiedenis/
+├── conradie-familiegeskiedenis.html   ← vervang met v7-49
+├── index.html                          ← bly soos is
+├── data/
+│   ├── conradies.json                  ← nuwe lêer (8.8MB)
+│   └── conradie-familiewapen.gif       ← bly soos is
+└── logs/
+    └── transaksies.json                ← outomaties geskep deur app

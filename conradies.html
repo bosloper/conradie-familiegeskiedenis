@@ -1549,7 +1549,7 @@ const PAGE_SIZE = 80;
 let state = {
   search: '',
   branches: new Set(),
-  genMin: 1, genMax: 11,
+  genMin: 0, genMax: 11,
   yearMin: null, yearMax: null,
   showSpouses: false,
   onlyNarrative: false,
@@ -2394,7 +2394,7 @@ function attachCorrectionListeners() {
 
     if (statusEl) statusEl.innerHTML =
       '✅ <strong>' + sRek.name + '</strong> (' + sId + ') suksesvol gekoppel as gade.' +
-      ' Gebruik "Laai JSON af" om permanent te stoor.';
+      ' Gebruik "Stoor na GitHub" om permanent te stoor.';
 
     // Herlaai bestaande huwelike-afdeling
     var huwDiv = document.getElementById('adm-huw-bestaande');
@@ -2452,7 +2452,7 @@ function attachCorrectionListeners() {
       '<li>Goedgekeurde wysigings word <strong style="color:#c49a3a">gestoor in geheue</strong> en afgelaai as JSON vir die databasis.</li>',
       '</ol>',
       '<div style="border-top:1px solid #3d3020;padding-top:0.6rem;color:#7a6a4a;font-size:0.82rem;">',
-      '⚠️ Wysigings is slegs <em>tydelik in geheue</em> — gebruik <strong>Laai JSON af</strong> om permanent te stoor. ',
+      '⚠️ Wysigings is slegs <em>tydelik in geheue</em> — gebruik <strong>Stoor na GitHub</strong> om permanent te stoor. ',
       'Nuwe lede of huwelike word onderaan bygevoeg via die <strong>Voeg by</strong>-afdeling.',
       '</div>',
       '</div>',
@@ -3004,7 +3004,7 @@ function attachCorrectionListeners() {
     }
 
     document.getElementById('adm-status').textContent =
-      '✅ Gewysig in geheue: ' + p.name + ' — gebruik "Laai JSON af" om te stoor.';
+      '✅ Gewysig in geheue: ' + p.name + ' — gebruik "Stoor na GitHub" om te stoor.';
   }
 
   // ── Voeg nuwe huwelik by ──
@@ -3208,7 +3208,7 @@ function attachCorrectionListeners() {
     });
     window.admHuwConradie = null;
 
-    statusLyne.push('Gebruik "Laai JSON af" om te stoor.');
+    statusLyne.push('Gebruik "Stoor na GitHub" om te stoor.');
     document.getElementById('adm-status').textContent = statusLyne.join(' ');
   }
 

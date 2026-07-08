@@ -1393,6 +1393,9 @@ main {
     <div class="corr-field"><label>Voornaam</label><input id="corr-given" type="text" placeholder="—"></div>
     <div class="corr-field"><label>Van</label><input id="corr-surname" type="text" placeholder="—"></div>
   </div>
+  <div class="corr-grid single">
+    <div class="corr-field"><label>Bynaam / Noemnaam / Alias</label><input id="corr-nickname" type="text" placeholder="bv. Boetie, Koos, Jan Groot"></div>
+  </div>
 
   <div class="corr-section-label">Geboorte &amp; Dood</div>
   <div class="corr-grid">
@@ -1890,6 +1893,21 @@ function buildPanelHTML(r) {
     parts.push(`<div class="panel-section"><h3>Aantekening</h3><div class="narrative-text">${escHtml(r.narrative)}</div></div>`);
   }
 
+  // Gade-knoppie (slegs vir aangetroudes met 'n bekende Conradie-gade)
+  if (r.is_spouse && r.spouses && r.spouses.length) {
+    const gadeBtns = r.spouses
+      .filter(function(sp) { return indexById[sp.id]; })
+      .map(function(sp) {
+        return '<button onclick="openPanel(\'' + sp.id + '\')" style="' +
+          'background:var(--sepia-light);color:#fff;border:none;border-radius:20px;' +
+          'padding:0.45rem 1.1rem;font-size:0.85rem;cursor:pointer;font-family:inherit;' +
+          'display:inline-flex;align-items:center;gap:0.4rem;margin:0.2rem">' +
+          '\u{1F464} Gade: ' + sp.name +
+          '</button>';
+      }).join('');
+    if (gadeBtns) parts.push('<div style="margin-top:1rem;text-align:center">' + gadeBtns + '</div>');
+  }
+
   // Voorvader-knoppie (slegs vir bloedverwante met family_code)
   if (r.family_code && !r.is_spouse) {
     parts.push(`<div style="margin-top:1rem;text-align:center">
@@ -2033,6 +2051,7 @@ function initCorrectionForm(id) {
 
   set('corr-given',       r.given || '');
   set('corr-surname',     r.surname || '');
+  set('corr-nickname',    r.nickname || '');
   set('corr-birth-date',  r.birth_date || '');
   set('corr-birth-place', r.birth_place || '');
   set('corr-death-date',  r.death_date || '');
@@ -2082,6 +2101,7 @@ function buildWhatsAppMessage() {
   const fields = [
     ['Voornaam',        get('corr-given')],
     ['Van',             get('corr-surname')],
+    ['Bynaam/Alias',    get('corr-nickname')],
     ['Geboortedatum',   get('corr-birth-date')],
     ['Geboorteplek',    get('corr-birth-place')],
     ['Sterfdatum',      get('corr-death-date')],

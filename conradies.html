@@ -1517,7 +1517,7 @@ async function laaiData() {
         if (r.id.charAt(0) === 'I') iCount++;
         else if (r.id.charAt(0) === 'S') sCount++;
       }
-      if (r.gen && r.gen > maxGen) maxGen = r.gen;
+      if (r.generation && r.generation > maxGen) maxGen = r.generation;
     }
     window.CONRADIE_STATS = {
       conradie_individuals: iCount,
@@ -1942,6 +1942,9 @@ function toonVoorvaderModal(id) {
       const naam = stap.persoon
         ? `<span class="vv-naam" onclick="sluitVoorvaderModal();openPanel('${stap.persoon.id}')">${stap.persoon.name}</span>`
         : `<span style="color:var(--muted);font-size:0.85rem">Onbekend</span>`;
+      const leesKnoppie = (stap.persoon && stap.persoon.narrative)
+        ? `<button onclick="sluitVoorvaderModal();openPanel('${stap.persoon.id}')" style="margin-left:0.6rem;padding:0.15rem 0.55rem;background:var(--sepia);color:var(--parchment);border:none;border-radius:3px;cursor:pointer;font-size:0.78rem;font-family:serif;vertical-align:middle;">&#128218; Lees meer</button>`
+        : '';
       const kodeSpan = `<div class="vv-kode">${stap.kode}</div>`;
       const koppel = isLaaste ? '' : '<div class="vv-koppel"></div>';
       return `
@@ -1950,7 +1953,7 @@ function toonVoorvaderModal(id) {
             <div class="vv-sirkel${isLaaste ? ' huidige' : ''}">${i + 1}</div>
             ${koppel}
           </div>
-          <div>${naam}${kodeSpan}</div>
+          <div>${naam}${leesKnoppie}${kodeSpan}</div>
         </div>`;
     }).join('');
   }
@@ -3330,82 +3333,121 @@ function attachCorrectionListeners() {
     var pat = (document.getElementById('adm-pat') || {}).value || '';
     pat = pat.trim();
     if (!pat) {
-      document.getElementById('adm-status').textContent = '⚠️ Voer eers jou GitHub PAT in.';
+      document.getElementById('adm-status').textContent = 'Voer eers jou GitHub PAT in.';
       return;
     }
     if (!window.CONRADIE_DATA) {
-      document.getElementById('adm-status').textContent = '⚠️ Geen data om te stoor nie.';
+      document.getElementById('adm-status').textContent = 'Geen data om te stoor nie.';
       return;
     }
 
     var statusEl = document.getElementById('adm-status');
-    var REPO  = 'bosloper/conradie-familiegeskiedenis';
-    var API   = 'https://api.github.com/repos/' + REPO + '/contents/';
+    var REPO = 'bosloper/conradie-familiegeskiedenis';
+    var BASE = 'https://api.github.com/repos/' + REPO;
+    var BRANCH = 'main';
+    var LEER_PAD = 'data/conradies.json';
+    var headers = {
+      'Authorization': 'token ' + pat,
+      'Accept': 'application/vnd.github+json',
+      'Content-Type': 'application/json'
+    };
 
-    statusEl.textContent = '⏳ Besig om na GitHub te stoor…';
+    async function ghFetch(url, opts) {
+      var r = await fetch(url, opts);
+      if (!r.ok) {
+        var e = await r.json().catch(function() { return {}; });
+        throw new Error((e.message || r.status) + ' [' + url.split('/').pop() + ']');
+      }
+      return r.json();
+    }
 
     try {
-      // ── Stap 1: Kry huidige SHA van conradies.json ──
-      var infoResp = await fetch(API + 'data/conradies.json', {
-        headers: { 'Authorization': 'token ' + pat, 'Accept': 'application/vnd.github+json' }
-      });
-      if (!infoResp.ok) throw new Error('Kon nie lêer-info kry nie: ' + infoResp.status);
-      var info = await infoResp.json();
-      var sha = info.sha;
-
-      // ── Stap 2: Kodeer CONRADIE_DATA as Base64 ──
-      var jsonStr = JSON.stringify(CONRADIE_DATA);
-      var b64 = btoa(unescape(encodeURIComponent(jsonStr)));
-
-      // ── Stap 3: Stuur nuwe inhoud na GitHub ──
       var nou = new Date().toISOString();
-      var putResp = await fetch(API + 'data/conradies.json', {
-        method: 'PUT',
-        headers: {
-          'Authorization': 'token ' + pat,
-          'Accept': 'application/vnd.github+json',
-          'Content-Type': 'application/json'
-        },
+      var tydsStempel = nou.slice(0,19).replace('T',' ');
+
+      statusEl.textContent = 'Stap 1/4: Kry tak-inligting...';
+      var refData = await ghFetch(BASE + '/git/refs/heads/' + BRANCH, { headers: headers });
+      var huidigeCommitSha = refData.object.sha;
+
+      statusEl.textContent = 'Stap 2/4: Laai data op (8MB blob)...';
+      var jsonStr = JSON.stringify(CONRADIE_DATA);
+      var blobData = await ghFetch(BASE + '/git/blobs', {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify({ content: jsonStr, encoding: 'utf-8' })
+      });
+      var blobSha = blobData.sha;
+
+      statusEl.textContent = 'Stap 3/4: Skep nuwe boom...';
+      var commitData = await ghFetch(BASE + '/git/commits/' + huidigeCommitSha, { headers: headers });
+      var huidigeTreeSha = commitData.tree.sha;
+
+      var nuweTree = await ghFetch(BASE + '/git/trees', {
+        method: 'POST',
+        headers: headers,
         body: JSON.stringify({
-          message: 'Admin-wysiging: ' + nou,
-          content: b64,
-          sha: sha
+          base_tree: huidigeTreeSha,
+          tree: [{
+            path: LEER_PAD,
+            mode: '100644',
+            type: 'blob',
+            sha: blobSha
+          }]
         })
       });
-      if (!putResp.ok) {
-        var errBody = await putResp.json();
-        throw new Error(errBody.message || putResp.status);
-      }
+      var nuweTreeSha = nuweTree.sha;
 
-      // ── Stap 4: Skryf transaksie-inskrywing ──
-      await skryfTransaksie(pat, API, nou);
+      statusEl.textContent = 'Stap 4/4: Skep commit...';
+      var nuweCommit = await ghFetch(BASE + '/git/commits', {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify({
+          message: 'Admin-wysiging: ' + nou,
+          tree: nuweTreeSha,
+          parents: [huidigeCommitSha]
+        })
+      });
+      var nuweCommitSha = nuweCommit.sha;
 
-      statusEl.textContent = '✅ Suksesvol gestoor na GitHub (' + nou.slice(0,19).replace('T',' ') + ')';
+      await ghFetch(BASE + '/git/refs/heads/' + BRANCH, {
+        method: 'PATCH',
+        headers: headers,
+        body: JSON.stringify({ sha: nuweCommitSha })
+      });
+
+      await skryfTransaksie(pat, BASE, nou);
+
+      statusEl.textContent = 'Suksesvol gestoor na GitHub (' + tydsStempel + ')';
 
     } catch(err) {
-      statusEl.textContent = '❌ GitHub-fout: ' + err.message;
+      statusEl.textContent = 'GitHub-fout: ' + err.message;
       console.error('GitHub stoor-fout:', err);
     }
   }
 
+  }
+
   // ── Skryf transaksie-inskrywing na logs/transaksies.json ──
-  async function skryfTransaksie(pat, API, tydstempel) {
+  // Gebruik Contents API (lêer is klein genoeg)
+  async function skryfTransaksie(pat, BASE, tydstempel) {
     var nuweInskrywing = {
       tyd: tydstempel,
       gebruiker: 'admin',
       aksie: 'wysiging',
       rekords: window.CONRADIE_DATA ? window.CONRADIE_DATA.length : 0
     };
+    var CONTENTS = BASE + '/contents/logs/transaksies.json';
+    var headers = {
+      'Authorization': 'token ' + pat,
+      'Accept': 'application/vnd.github+json',
+      'Content-Type': 'application/json'
+    };
 
     try {
-      // Probeer bestaande lêer kry
-      var resp = await fetch(API + 'logs/transaksies.json', {
-        headers: { 'Authorization': 'token ' + pat, 'Accept': 'application/vnd.github+json' }
-      });
-
       var logData = [];
       var sha = null;
 
+      var resp = await fetch(CONTENTS, { headers: headers });
       if (resp.ok) {
         var bestaande = await resp.json();
         sha = bestaande.sha;
@@ -3419,13 +3461,9 @@ function attachCorrectionListeners() {
       var body = { message: 'Transaksie: ' + tydstempel, content: b64 };
       if (sha) body.sha = sha;
 
-      await fetch(API + 'logs/transaksies.json', {
+      await fetch(CONTENTS, {
         method: 'PUT',
-        headers: {
-          'Authorization': 'token ' + pat,
-          'Accept': 'application/vnd.github+json',
-          'Content-Type': 'application/json'
-        },
+        headers: headers,
         body: JSON.stringify(body)
       });
     } catch(e) {

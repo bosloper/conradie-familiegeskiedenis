@@ -1338,6 +1338,9 @@ main {
       <label class="toggle-row" style="margin-top:0.5rem">
         <input type="checkbox" id="toggle-narrative"> Net met Narratief
       </label>
+      <label class="toggle-row" style="margin-top:0.25rem">
+        <input type="checkbox" id="toggle-only-ref"> Slegs Volgnommer
+      </label>
     </div>
 
     <div class="filter-section">
@@ -1345,7 +1348,7 @@ main {
       <select class="sort-select" id="sort-select">
         <option value="code">Familiekode (A–Z)</option>
         <option value="name">Naam (A–Z)</option>
-        <option value="birth_asc">Geboortejaar (oud–nuut)</option>
+        <option value="birth_asc" selected>Geboortejaar (oud–nuut)</option>
         <option value="birth_desc">Geboortejaar (nuut–oud)</option>
         <option value="gen">Geslag</option>
       </select>
@@ -1556,7 +1559,8 @@ let state = {
   yearMin: null, yearMax: null,
   showSpouses: false,
   onlyNarrative: false,
-  sort: 'code',
+  sort: 'birth_asc',
+  onlyRef: false,
   page: 1,
 };
 let filtered = [];
@@ -1646,6 +1650,9 @@ function attachListeners() {
   document.getElementById('toggle-narrative').addEventListener('change', e => {
     state.onlyNarrative = e.target.checked; state.page = 1; applyFilters();
   });
+  document.getElementById('toggle-only-ref').addEventListener('change', e => {
+    state.onlyRef = e.target.checked; state.page = 1; applyFilters();
+  });
   document.getElementById('sort-select').addEventListener('change', e => {
     state.sort = e.target.value; state.page = 1; applyFilters();
   });
@@ -1672,11 +1679,15 @@ function applyFilters() {
     if (state.yearMax && r.birth_year && r.birth_year > state.yearMax) return false;
     if (state.onlyNarrative && !r.narrative) return false;
     if (q) {
-      const nm = r.name.toLowerCase();
-      const cd = (r.family_code||'').toLowerCase();
       const ref = (r.ref||'').toLowerCase();
-      const by = r.birth_year ? String(r.birth_year) : '';
-      if (!nm.includes(q) && !cd.includes(q) && !ref.includes(q) && !by.includes(q)) return false;
+      if (state.onlyRef) {
+        if (!ref.includes(q)) return false;
+      } else {
+        const nm = r.name.toLowerCase();
+        const cd = (r.family_code||'').toLowerCase();
+        const by = r.birth_year ? String(r.birth_year) : '';
+        if (!nm.includes(q) && !cd.includes(q) && !ref.includes(q) && !by.includes(q)) return false;
+      }
     }
     return true;
   });
@@ -1893,6 +1904,10 @@ function buildPanelHTML(r) {
     parts.push(`<div class="panel-section"><h3>Aantekening</h3><div class="narrative-text">${escHtml(r.narrative)}</div></div>`);
   }
 
+  // Tydlyn
+  const tydlynHtml = buildTydlyn(r);
+  if (tydlynHtml) parts.push(tydlynHtml);
+
   // Gade-knoppie (slegs vir aangetroudes met 'n bekende Conradie-gade)
   if (r.is_spouse && r.spouses && r.spouses.length) {
     const gadeBtns = r.spouses
@@ -1921,6 +1936,128 @@ function buildPanelHTML(r) {
   }
 
   return parts.join('');
+}
+
+
+// ── TYDLYN ──
+function buildTydlyn(r) {
+  const gebeure = [];
+
+  function jaar(datumStr) {
+    if (!datumStr) return null;
+    const m = String(datumStr).match(/\d{4}/);
+    return m ? +m[0] : null;
+  }
+  function datumLabel(datumStr) {
+    if (!datumStr) return null;
+    const s = String(datumStr).trim();
+    if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
+      const [y,mo,d] = s.split('-');
+      const maande = ['Jan','Feb','Mrt','Apr','Mei','Jun','Jul','Aug','Sep','Okt','Nov','Des'];
+      return d + ' ' + maande[+mo-1] + ' ' + y;
+    }
+    return s;
+  }
+  function ouderdom(basisJaar, gebeurJaar) {
+    if (!basisJaar || !gebeurJaar) return '';
+    const diff = gebeurJaar - basisJaar;
+    if (diff < 0 || diff > 130) return '';
+    return ' (oud ' + diff + ')';
+  }
+
+  const ry = jaar(r.birth_date) || r.birth_year;
+
+  // Ouers se ouderdomme by geboorte van persoon
+  if (ry && r.parents && r.parents.length) {
+    const ouerNote = r.parents.map(p => {
+      const pr = indexById[p.id];
+      const py = pr ? (jaar(pr.birth_date) || pr.birth_year) : null;
+      if (!py) return null;
+      const diff = ry - py;
+      if (diff < 0 || diff > 80) return null;
+      return (p.role === 'father' ? 'Va' : 'Mo') + ' ' + diff + 'j';
+    }).filter(Boolean).join(', ');
+    if (ouerNote) {
+      gebeure.push({ jaar: ry, ikon: '🌱', titel: 'Gebore', detail: datumLabel(r.birth_date) + (r.birth_place ? ', ' + r.birth_place : '') + (ouerNote ? ' — ' + ouerNote : '') });
+    } else if (r.birth_date || r.birth_year) {
+      gebeure.push({ jaar: ry, ikon: '🌱', titel: 'Gebore', detail: datumLabel(r.birth_date || String(r.birth_year)) + (r.birth_place ? ', ' + r.birth_place : '') });
+    }
+  } else if (r.birth_date || r.birth_year) {
+    gebeure.push({ jaar: ry, ikon: '🌱', titel: 'Gebore', detail: datumLabel(r.birth_date || String(r.birth_year)) + (r.birth_place ? ', ' + r.birth_place : '') });
+  }
+
+  // Doop
+  if (r.baptism_date) {
+    const dy = jaar(r.baptism_date);
+    gebeure.push({ jaar: dy, ikon: '✝', titel: 'Gedoop', detail: datumLabel(r.baptism_date) + ouderdom(ry, dy) });
+  }
+
+  // Huwelike
+  if (r.spouses && r.spouses.length) {
+    r.spouses.forEach((sp, i) => {
+      const md = r.marr_dates && r.marr_dates[i] ? r.marr_dates[i] : null;
+      const mp = r.marr_places && r.marr_places[i] ? r.marr_places[i] : null;
+      const my = jaar(md);
+      const spBirthYear = sp.birth_year || jaar(sp.birth_date);
+      let detail = sp.name;
+      if (md) detail += ' — ' + datumLabel(md) + ouderdom(ry, my);
+      if (mp) detail += ', ' + mp;
+      if (spBirthYear) detail += ' (gade * ' + spBirthYear + ')';
+      const divorced = sp.divorced && sp.divorce_date
+        ? ' [Geskei ' + datumLabel(sp.divorce_date) + ']' : '';
+      gebeure.push({ jaar: my || ry, ikon: '💍', titel: 'Getroud' + (r.spouses.length > 1 ? ' (' + (i+1) + ')' : ''), detail: detail + divorced });
+    });
+  }
+
+  // Kinders
+  if (r.children_ids && r.children_ids.length) {
+    r.children_ids.forEach(cid => {
+      const ch = indexById[cid];
+      if (!ch) return;
+      const cy = ch.birth_year || jaar(ch.birth_date);
+      if (!cy) return;
+      const chOud = ouderdom(ry, cy);
+      const gadeNaam = ch.spouses && ch.spouses.length ? ch.spouses[0].name : null;
+      let detail = ch.name + (chOud ? chOud : '');
+      if (gadeNaam) detail += ' × ' + gadeNaam;
+      gebeure.push({ jaar: cy, ikon: '👶', titel: 'Kind gebore', detail: detail });
+    });
+  }
+
+  // Afsterwe
+  if (r.death_date || r.death_year) {
+    const dy = jaar(r.death_date) || r.death_year;
+    let detail = datumLabel(r.death_date || String(r.death_year));
+    if (r.death_place) detail += ', ' + r.death_place;
+    detail += ouderdom(ry, dy);
+    gebeure.push({ jaar: dy, ikon: '✦', titel: 'Oorlede', detail: detail });
+  }
+
+  // Begrafnis
+  if (r.burial_place && !r.death_date) {
+    gebeure.push({ jaar: jaar(r.death_date) || r.death_year || null, ikon: '⚰', titel: 'Begrawe', detail: r.burial_place });
+  }
+
+  // Sorteer op jaar, onbekende jare laaste
+  gebeure.sort((a, b) => {
+    if (!a.jaar && !b.jaar) return 0;
+    if (!a.jaar) return 1;
+    if (!b.jaar) return -1;
+    return a.jaar - b.jaar;
+  });
+
+  if (!gebeure.length) return '';
+
+  const items = gebeure.map(g => {
+    const jaarStr = g.jaar ? String(g.jaar) : '?';
+    return '<div class="tl-entry">'
+      + '<div class="tl-date">' + g.ikon + '  ' + jaarStr + '</div>'
+      + '<div class="tl-title">' + g.titel + '</div>'
+      + '<div class="tl-detail">' + escHtml(g.detail) + '</div>'
+      + '</div>';
+  }).join('');
+
+  return '<div class="panel-section"><h3>Tydlyn</h3><div class="timeline">' + items + '</div></div>';
 }
 
 // ── VOORVADER-KETTING ──
@@ -1989,7 +2126,7 @@ function escHtml(s) {
 
 function resetFilters() {
   state = { search:'', branches:new Set(), genMin:1, genMax:11,
-    yearMin:null, yearMax:null, showSpouses:false, onlyNarrative:false, sort:'code', page:1 };
+    yearMin:null, yearMax:null, showSpouses:false, onlyNarrative:false, sort:'birth_asc', onlyRef:false, page:1 };
   document.getElementById('search-input').value = '';
   document.getElementById('search-clear').classList.remove('visible');
   document.getElementById('gen-min').value = 1;
@@ -2000,7 +2137,8 @@ function resetFilters() {
   document.querySelector('input[name="fam-type"][value="all"]').checked = true;
   state.famType = 'all'; state.showSpouses = false;
   document.getElementById('toggle-narrative').checked = false;
-  document.getElementById('sort-select').value = 'code';
+  document.getElementById('toggle-only-ref').checked = false;
+  document.getElementById('sort-select').value = 'birth_asc';
   document.querySelectorAll('.branch-btn').forEach(b => b.classList.remove('active'));
   applyFilters();
 }

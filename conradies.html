@@ -12,15 +12,15 @@
   --parchment: #f5efe0;
   --parchment-dark: #ede3cc;
   --sepia: #8b6914;
-  --sepia-light: #d4aa50;
+  --sepia-light: #e0b84a;
   --sepia-pale: #f0e4c4;
   --rust: #8b3a1a;
   --forest: #2d4a2a;
-  --muted: #6b5a3a;
+  --muted: #a08c68;
   --line: #d4c49a;
   --card-bg: #fdf8ee;
   --panel-bg: #1a1208;
-  --panel-text: #f5efe0;
+  --panel-text: #f0e8d4;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -138,7 +138,7 @@ aside::-webkit-scrollbar-thumb { background: var(--sepia); border-radius: 2px; }
   transition: border-color 0.2s;
 }
 .search-wrap input:focus { border-color: var(--sepia-light); }
-.search-wrap input::placeholder { color: #6b5a3a; font-style: italic; }
+.search-wrap input::placeholder { color: #8a7055; font-style: italic; }
 .search-clear {
   position: absolute; right: 0.5rem; top: 50%; transform: translateY(-50%);
   background: none; border: none; color: var(--muted); cursor: pointer;
@@ -153,9 +153,9 @@ aside::-webkit-scrollbar-thumb { background: var(--sepia); border-radius: 2px; }
   gap: 0.35rem;
 }
 .branch-btn {
-  background: rgba(255,255,255,0.05);
-  border: 1px solid #3d3020;
-  color: var(--parchment-dark);
+  background: rgba(255,255,255,0.07);
+  border: 1px solid #4a3c25;
+  color: #d8c8a8;
   font-family: 'Josefin Sans', sans-serif;
   font-size: 0.65rem;
   letter-spacing: 0.08em;
@@ -230,7 +230,7 @@ aside::-webkit-scrollbar-thumb { background: var(--sepia); border-radius: 2px; }
   font-size: 0.65rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--parchment-dark);
+  color: #d8c8a8;
   cursor: pointer;
 }
 .toggle-row input[type=checkbox] { accent-color: var(--sepia-light); cursor: pointer; }
@@ -238,9 +238,9 @@ aside::-webkit-scrollbar-thumb { background: var(--sepia); border-radius: 2px; }
 /* Sort */
 .sort-select {
   width: 100%;
-  background: rgba(255,255,255,0.07);
-  border: 1px solid #3d3020;
-  color: var(--parchment);
+  background: rgba(255,255,255,0.09);
+  border: 1px solid #4a3c25;
+  color: #ede3cc;
   font-family: 'Josefin Sans', sans-serif;
   font-size: 0.7rem;
   padding: 0.4rem 0.5rem;
@@ -496,7 +496,7 @@ main {
   min-width: 60px;
   padding-top: 0.15rem;
 }
-.panel-row .value { color: var(--parchment-dark); }
+.panel-row .value { color: #e8dcc0; }
 
 .person-link {
   color: var(--sepia-light);
@@ -516,10 +516,10 @@ main {
 .narrative-text {
   font-size: 0.88rem;
   line-height: 1.7;
-  color: #c8b98a;
+  color: #ddd0a8;
   font-style: italic;
-  background: rgba(255,255,255,0.03);
-  border-left: 2px solid var(--sepia);
+  background: rgba(255,255,255,0.04);
+  border-left: 2px solid var(--sepia-light);
   padding: 0.8rem 1rem;
   border-radius: 0 2px 2px 0;
   max-height: 300px;
@@ -709,27 +709,42 @@ main {
 /* filter-toggle-btn: hidden on desktop (see base rule above) */
 /* ── TAB SWITCHER ── */
 .tab-bar {
-  background: #120e06;
-  border-bottom: 2px solid var(--sepia);
+  background: #0e0b04;
+  border-bottom: 3px solid var(--sepia);
   display: flex;
   gap: 0;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.4);
 }
 .tab-btn {
   font-family: 'Josefin Sans', sans-serif;
-  font-size: 0.65rem;
-  letter-spacing: 0.15em;
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--muted);
+  color: #7a6848;
   background: none;
   border: none;
   border-bottom: 3px solid transparent;
-  padding: 0.75rem 1.5rem;
+  padding: 0.95rem 1.8rem;
   cursor: pointer;
-  transition: all 0.15s;
-  margin-bottom: -2px;
+  transition: all 0.18s;
+  margin-bottom: -3px;
+  position: relative;
 }
-.tab-btn:hover { color: var(--parchment-dark); }
-.tab-btn.active { color: var(--sepia-light); border-bottom-color: var(--sepia-light); }
+.tab-btn:hover {
+  color: #c8b48a;
+  background: rgba(196,151,58,0.07);
+}
+.tab-btn.active {
+  color: #f0d878;
+  border-bottom-color: var(--sepia-light);
+  background: rgba(196,151,58,0.12);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+}
+/* subtle left separator between tabs */
+.tab-btn + .tab-btn {
+  border-left: 1px solid #2a2010;
+}
 
 /* ── NARRATIVE LAYOUT ── */
 
@@ -1269,6 +1284,90 @@ main {
   .vg-pyl { transform: rotate(90deg); padding: 0; }
   .vg-kaart { max-width: 100%; width: 100%; }
 }
+
+/* ── HELP TAB BUTTON ── */
+.help-tab-btn {
+  margin-left: auto;
+  color: #6a8a6a !important;
+}
+.help-tab-btn:hover { color: #8fc88f !important; }
+
+/* ── HELP MODAL ── */
+#help-boks {
+  background: var(--card-bg);
+  border: 2px solid var(--sepia);
+  border-radius: 8px;
+  padding: 1.8rem 1.6rem 1.4rem;
+  max-width: 480px;
+  width: 93vw;
+  max-height: 82vh;
+  overflow-y: auto;
+  box-shadow: 0 12px 48px rgba(0,0,0,0.45);
+  position: relative;
+  margin: auto;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  position: fixed;
+}
+#help-boks::-webkit-scrollbar { width: 4px; }
+#help-boks::-webkit-scrollbar-thumb { background: var(--sepia); border-radius: 2px; }
+#help-sluit {
+  position: absolute; top: 0.8rem; right: 1rem;
+  background: none; border: none;
+  font-size: 1.3rem; cursor: pointer;
+  color: var(--muted);
+  transition: color 0.15s;
+}
+#help-sluit:hover { color: var(--rust); }
+.help-tab-ind {
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--sepia);
+  margin-bottom: 0.4rem;
+}
+.help-heading {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.55rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--sepia-pale);
+}
+.help-section {
+  margin-bottom: 1.1rem;
+}
+.help-section h4 {
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--rust);
+  margin-bottom: 0.35rem;
+}
+.help-section p, .help-section li {
+  font-size: 0.88rem;
+  line-height: 1.65;
+  color: #3a2e18;
+}
+.help-section ul {
+  padding-left: 1.2rem;
+  margin-top: 0.2rem;
+}
+.help-section li { margin-bottom: 0.2rem; }
+.help-tip {
+  background: var(--sepia-pale);
+  border-left: 3px solid var(--sepia);
+  padding: 0.5rem 0.8rem;
+  border-radius: 0 3px 3px 0;
+  font-size: 0.83rem;
+  color: #4a3510;
+  line-height: 1.5;
+  margin-top: 0.5rem;
+}
 </style>
 </head>
 <body>
@@ -1288,8 +1387,18 @@ main {
 </header>
 <div class="tab-bar">
   <button class="tab-btn active" data-tab="stamvader">🏠 Stamvader &amp; Geskiedenis</button>
-  <button class="tab-btn" data-tab="search">🔍 Soek & Blaai</button>
+  <button class="tab-btn" data-tab="search">🔍 Soek &amp; Blaai</button>
   <button class="tab-btn" data-tab="admin">✏️ Admin</button>
+  <button class="tab-btn help-tab-btn" id="help-btn" title="Hulp">❓ Hulp</button>
+</div>
+
+<!-- HELP MODAL -->
+<div id="help-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:300;align-items:center;justify-content:center;"></div>
+<div id="help-modal" style="display:none;position:fixed;inset:0;z-index:301;align-items:center;justify-content:center;">
+  <div id="help-boks">
+    <button id="help-sluit" title="Sluit">✕</button>
+    <div id="help-inhoud"></div>
+  </div>
 </div>
 
 <div id="tab-search" class="tab-page" style="display:none">
@@ -2225,12 +2334,120 @@ window.addEventListener('load', function() {
   // Registreer tab-knoppe
   document.querySelectorAll('.tab-btn').forEach(function(btn) {
     btn.addEventListener('click', function() {
+      if (btn.id === 'help-btn') { openHelp(); return; }
       switchTab(btn.getAttribute('data-tab'));
     });
   });
   // Wys stamvader as verstek
   switchTab('stamvader');
+
+  // Help modal close
+  document.getElementById('help-sluit').addEventListener('click', closeHelp);
+  document.getElementById('help-overlay').addEventListener('click', closeHelp);
 });
+
+// ── HULP STELSEL ──
+const HULP_INHOUD = {
+  stamvader: {
+    titel: '🏠 Stamvader & Geskiedenis',
+    afdelings: [
+      {
+        kop: 'Wat sien ek hier?',
+        teks: 'Hierdie tab vertel die verhaal van Friedrich Conradie (±1668–1729), die Duitse immigrant wat in 1688 aan die Kaap geland het en die stamvader is van alle Suid-Afrikaanse Conradies.'
+      },
+      {
+        kop: 'Voorgeslagte-ketting',
+        teks: 'Die afdeling "Jou verbinding met die stamvader" wys die direkte lyn vanaf Friedrich Conradie deur die geslagsregister. Klik op enige naam om na daardie persoon se kaart oor te spring.'
+      },
+      {
+        kop: 'Lees meer / Stel voor',
+        teks: 'Klik op "📖 Lees meer" om die volledige inligting oor Friedrich Conradie in die detail-paneel te sien. Gebruik "✏️ Stel voor" om korrek­sies of aanvullings voor te stel — dit word na die registerhouer gestuur vir verifikasie.'
+      },
+      {
+        kop: 'Geskiedenistydlyn',
+        teks: 'Die tydlyn op hierdie tab plaas Friedrich se lewe in historiese konteks — Kaapse geskiedenisgebeure van 1652 tot 1994 word saam met persoonlike data getoon.'
+      }
+    ],
+    wenk: 'Begin hier vir die "groot prentjie" voordat jy in die databasis induik.'
+  },
+  search: {
+    titel: '🔍 Soek & Blaai',
+    afdelings: [
+      {
+        kop: 'Soek \'n persoon',
+        teks: 'Tik \'n naam, familiekode (bv. c2d4e8), 4-syfer rekordnommer, of geboortejaar in die soekveld. Resultate verskyn onmiddellik terwyl jy tik.'
+      },
+      {
+        kop: 'Filters (links)',
+        teks: 'Verfyn jou soektog met filters: kies \'n familietak (c1–c7), beperk geslagte (1–11), stel \'n geboortejaarreeks in, of toon slegs rekords met biografiese aantekening­s. Op mobiel: klik "🔍 Filters" bo om die filterpaneel oop te maak.'
+      },
+      {
+        kop: 'Persoonskaarttjies',
+        teks: 'Elke kaarttjie toon naam, familiekode, geboortedatum en geslag. \'n Goue kol-tjie (●) dui aan dat die persoon \'n biografiese aantekening het. Klik op die kaarttjie om die volledige detail-paneel te open.'
+      },
+      {
+        kop: 'Detail-paneel',
+        teks: 'Die paneel (regs) wys geboorte, dood, ouers, gade(s), kinders en tydlyn. Blou name is klikbaar — gebruik hulle om deur die familie te navigeer. Die broodkrummels bo-aan wys jou navigasie-geskiede­nis.'
+      },
+      {
+        kop: 'Sorteer',
+        teks: 'Verstek sort op geboortejaar (oudste eerste). Verander na naam, familiekode of geslag in die "Sorteer op"-aftreklys.'
+      }
+    ],
+    wenk: 'Weet jy net die van? Tik "Conradie" en beperk met die geslag-skuifbalk totdat jy die regte tydperk kry.'
+  },
+  admin: {
+    titel: '✏️ Admin',
+    afdelings: [
+      {
+        kop: 'Vir die Registerhouer',
+        teks: 'Hierdie tab is slegs vir die administrator (Dries de Vries). Hier kan rekords direk in die GitHub-databasis bygevoeg of gewysig word.'
+      },
+      {
+        kop: 'Wagwoord',
+        teks: 'Toegang vereis die admin-wagwoord. Sonder dit sal die blad leeg lyk.'
+      },
+      {
+        kop: 'Wil jy iets wysig?',
+        teks: 'As besoeker kan jy verandering­s voorstel deur op \'n persoon se kaarttjie te klik en dan "✏️ Stel voor" te gebruik. Jou voorstel word via WhatsApp of e-pos na die registerhouer gestuur.'
+      }
+    ],
+    wenk: 'Besoekers: gebruik die "Stel voor"-funksie op die Soek-tab om veranderinge voor te stel.'
+  }
+};
+
+let aktieweTab = 'stamvader';
+
+// Track which tab is active
+const _origSwitchTab = switchTab;
+function switchTab(tabName) {
+  _origSwitchTab(tabName);
+  if (tabName) aktieweTab = tabName;
+}
+
+function openHelp() {
+  const data = HULP_INHOUD[aktieweTab] || HULP_INHOUD['stamvader'];
+  let html = `<div class="help-tab-ind">Hulp — Huidige Aansig</div>`;
+  html += `<div class="help-heading">${data.titel}</div>`;
+  data.afdelings.forEach(a => {
+    html += `<div class="help-section"><h4>${a.kop}</h4><p>${a.teks}</p></div>`;
+  });
+  if (data.wenk) {
+    html += `<div class="help-tip">💡 <strong>Wenk:</strong> ${data.wenk}</div>`;
+  }
+  html += `<div style="margin-top:1.2rem;padding-top:0.8rem;border-top:1px solid var(--line);font-size:0.78rem;color:var(--muted);text-align:center;">
+    Vrae? Kontak <strong>Dries de Vries</strong><br>
+    📧 photographyisfun.za@gmail.com &nbsp;|&nbsp; 📱 +27 69 027 6568
+  </div>`;
+  document.getElementById('help-inhoud').innerHTML = html;
+  document.getElementById('help-overlay').style.display = 'block';
+  document.getElementById('help-modal').style.display = 'flex';
+}
+
+function closeHelp() {
+  document.getElementById('help-overlay').style.display = 'none';
+  document.getElementById('help-modal').style.display = 'none';
+}
 
 
 // ── CORRECTION / VOORSTEL SYSTEM ──

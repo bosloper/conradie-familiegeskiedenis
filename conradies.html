@@ -3029,10 +3029,15 @@ function attachCorrectionListeners() {
       html += '<button id="adm-email-btn" style="padding:0.5rem 1.1rem;background:#c49a3a;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:0.9rem;">✉️ E-pos</button>';
       html += '<button id="adm-laai-btn" style="padding:0.5rem 1.1rem;background:#3d3020;color:#e8dfc8;border:none;border-radius:4px;cursor:pointer;font-size:0.9rem;">⬇️ Laai JSON af</button>';
       html += '</div>';
-      html += '<div style="padding:0.9rem;background:#0e1208;border:1px solid #3a5a2a;border-radius:6px;">';
-      html += '<div style="color:#8ab08a;font-size:0.85rem;margin-bottom:0.5rem;">🔒 GitHub Direkte Stoor (PAT vereiste)</div>';
-      html += '<input id="adm-pat" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" style="width:100%;padding:0.4rem;background:#0d0a05;color:#d4b896;border:1px solid #3a5a2a;border-radius:4px;font-size:0.85rem;box-sizing:border-box;margin-bottom:0.5rem;"/>';
-      html += '<button id="adm-github-btn" onclick="admStoorGitHub()" style="padding:0.5rem 1.2rem;background:#2d6a2d;color:#e8f5e8;border:none;border-radius:4px;cursor:pointer;font-size:0.95rem;">☁️ Stoor na GitHub</button>';
+      html += '<div id="adm-github-boks" style="padding:0.9rem;background:#0e1208;border:1px solid #3a5a2a;border-radius:6px;">';
+      html += '<div style="color:#8ab08a;font-size:0.85rem;margin-bottom:0.6rem;">🔒 GitHub Direkte Stoor (PAT vereiste)</div>';
+      html += '<input id="adm-pat" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" ';
+      html += 'style="width:100%;padding:0.4rem;background:#0d0a05;color:#d4b896;border:1px solid #3a5a2a;border-radius:4px;font-size:0.85rem;box-sizing:border-box;margin-bottom:0.6rem;"/>';
+      html += '<div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.6rem;">';
+      html += '<button id="adm-pat-toets-btn" onclick="admToetsPAT()" style="padding:0.45rem 1rem;background:#1a3a4a;color:#8ab8d8;border:1px solid #3a6a8a;border-radius:4px;cursor:pointer;font-size:0.88rem;">🔍 Toets PAT</button>';
+      html += '<button id="adm-github-btn" onclick="admStoorGitHub()" style="padding:0.45rem 1.2rem;background:#2d6a2d;color:#e8f5e8;border:none;border-radius:4px;cursor:pointer;font-size:0.88rem;" disabled>☁️ Stoor na GitHub</button>';
+      html += '</div>';
+      html += '<div id="adm-github-status" style="font-size:0.85rem;min-height:1.1rem;line-height:1.5;"></div>';
       html += '</div>';
 
       html += '<div id="adm-status" style="margin-top:0.75rem;color:var(--sepia-light);font-size:0.9rem;min-height:1.2rem;"></div>';
@@ -3954,20 +3959,79 @@ function attachCorrectionListeners() {
     document.getElementById('adm-status').textContent = '⬇️ JSON afgelaai.';
   }
 
-  // ── Stoor direk na GitHub via API ──
-  async function admStoorGitHub() {
+  // ── Hulpfunksie: haal status element ──
+  function ghStatus(msg, kleur, logook) {
+    var el = document.getElementById('adm-github-status');
+    if (el) { el.textContent = msg; el.style.color = kleur || '#c49a3a'; }
+    console.log('[GitHub]', msg);
+  }
+
+  // ── Toets PAT voor stoor ──
+  window.admToetsPAT = async function admToetsPAT() {
     var pat = (document.getElementById('adm-pat') || {}).value || '';
     pat = pat.trim();
+    var stoorBtn = document.getElementById('adm-github-btn');
+    if (stoorBtn) { stoorBtn.disabled = true; stoorBtn.style.opacity = '0.5'; }
+
     if (!pat) {
-      document.getElementById('adm-status').textContent = 'Voer eers jou GitHub PAT in.';
+      ghStatus('⚠️ Plak eers jou PAT in die veld hierbo.', '#e07050');
       return;
     }
-    if (!window.CONRADIE_DATA) {
-      document.getElementById('adm-status').textContent = 'Geen data om te stoor nie.';
+    if (!pat.startsWith('ghp_') && !pat.startsWith('github_pat_')) {
+      ghStatus('⚠️ PAT-formaat lyk ongeldig (moet begin met ghp_ of github_pat_).', '#e07050');
       return;
     }
 
-    var statusEl = document.getElementById('adm-status');
+    ghStatus('⏳ Toets PAT en repo-toegang...', '#c49a3a');
+    try {
+      var r = await fetch('https://api.github.com/repos/bosloper/conradie-familiegeskiedenis', {
+        headers: {
+          'Authorization': 'token ' + pat,
+          'Accept': 'application/vnd.github+json'
+        }
+      });
+      if (r.status === 401) {
+        ghStatus('❌ PAT ongeldig of verval — GitHub weier toegang (401).', '#e05050');
+        return;
+      }
+      if (r.status === 403) {
+        ghStatus('❌ PAT het nie die regte toestemmings nie (benodig repo-skryftoegang, 403).', '#e05050');
+        return;
+      }
+      if (r.status === 404) {
+        ghStatus('❌ Repo nie gevind nie (404) — kontroleer repo-naam en PAT-toegang.', '#e05050');
+        return;
+      }
+      if (!r.ok) {
+        ghStatus('❌ Onverwagse fout van GitHub: HTTP ' + r.status, '#e05050');
+        return;
+      }
+      var repo = await r.json();
+      var pushOk = repo.permissions && repo.permissions.push;
+      if (!pushOk) {
+        ghStatus('⚠️ PAT geldig maar het geen skryftoegang tot die repo nie.', '#e07050');
+        return;
+      }
+      ghStatus('✅ PAT geverifieer — ' + repo.full_name + ' (skryftoegang bevestig). Klik nou "Stoor na GitHub".', '#5cb85c');
+      if (stoorBtn) { stoorBtn.disabled = false; stoorBtn.style.opacity = '1'; }
+    } catch(e) {
+      ghStatus('❌ Netwerkfout tydens PAT-toets: ' + e.message, '#e05050');
+    }
+  };
+
+  // ── Stoor direk na GitHub via API ──
+  window.admStoorGitHub = async function admStoorGitHub() {
+    var pat = (document.getElementById('adm-pat') || {}).value || '';
+    pat = pat.trim();
+    if (!pat) {
+      ghStatus('⚠️ Voer eers jou GitHub PAT in die veld hierbo in.', '#e07050');
+      return;
+    }
+    if (!window.CONRADIE_DATA) {
+      ghStatus('⚠️ Geen data om te stoor nie.', '#e07050');
+      return;
+    }
+
     var REPO = 'bosloper/conradie-familiegeskiedenis';
     var BASE = 'https://api.github.com/repos/' + REPO;
     var BRANCH = 'main';
@@ -3987,15 +4051,18 @@ function attachCorrectionListeners() {
       return r.json();
     }
 
+    var stoorBtn2 = document.getElementById('adm-github-btn');
+    if (stoorBtn2) { stoorBtn2.disabled = true; stoorBtn2.style.opacity = '0.5'; }
+
     try {
       var nou = new Date().toISOString();
       var tydsStempel = nou.slice(0,19).replace('T',' ');
 
-      statusEl.textContent = 'Stap 1/4: Kry tak-inligting...';
+      ghStatus('⏳ Stap 1/4: Kry tak-inligting van GitHub...');
       var refData = await ghFetch(BASE + '/git/refs/heads/' + BRANCH, { headers: headers });
       var huidigeCommitSha = refData.object.sha;
 
-      statusEl.textContent = 'Stap 2/4: Laai data op (8MB blob)...';
+      ghStatus('⏳ Stap 2/4: Laai databasis op (kan 10-30 sek neem)...');
       var jsonStr = JSON.stringify(CONRADIE_DATA);
       var blobData = await ghFetch(BASE + '/git/blobs', {
         method: 'POST',
@@ -4004,7 +4071,7 @@ function attachCorrectionListeners() {
       });
       var blobSha = blobData.sha;
 
-      statusEl.textContent = 'Stap 3/4: Skep nuwe boom...';
+      ghStatus('⏳ Stap 3/4: Skep nuwe lêerboom...');
       var commitData = await ghFetch(BASE + '/git/commits/' + huidigeCommitSha, { headers: headers });
       var huidigeTreeSha = commitData.tree.sha;
 
@@ -4023,7 +4090,7 @@ function attachCorrectionListeners() {
       });
       var nuweTreeSha = nuweTree.sha;
 
-      statusEl.textContent = 'Stap 4/4: Skep commit...';
+      ghStatus('⏳ Stap 4/4: Skep commit en dateer tak op...');
       var nuweCommit = await ghFetch(BASE + '/git/commits', {
         method: 'POST',
         headers: headers,
@@ -4043,10 +4110,11 @@ function attachCorrectionListeners() {
 
       await skryfTransaksie(pat, BASE, nou);
 
-      statusEl.textContent = 'Suksesvol gestoor na GitHub (' + tydsStempel + ')';
+      ghStatus('✅ Suksesvol gestoor na GitHub (' + tydsStempel + ')! Laai die bladsy oor om te bevestig.', '#5cb85c');
 
     } catch(err) {
-      statusEl.textContent = 'GitHub-fout: ' + err.message;
+      ghStatus('❌ GitHub-fout: ' + err.message + ' — Kontroleer die PAT en probeer weer.', '#e07050');
+      if (stoorBtn2) { stoorBtn2.disabled = false; stoorBtn2.style.opacity = '1'; }
       console.error('GitHub stoor-fout:', err);
     }
   }

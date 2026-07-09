@@ -2875,134 +2875,172 @@ function attachCorrectionListeners() {
     var el = document.getElementById('tab-admin');
     if (!el) return;
 
-    el.innerHTML = [
-      '<div style="max-width:720px;margin:0 auto;padding:1.5rem 1rem;">',
-      '<h2 style="color:var(--sepia-light);font-size:1.4rem;margin-bottom:1rem;">✏️ Admin — Conradie Databasis</h2>',
+    // ── Hulpfunksie: afdeling-opskrif ──
+    function _afd(ikoon, titel, kleur) {
+      kleur = kleur || '#8b6914';
+      return '<div style="color:' + kleur + ';font-size:0.95rem;font-weight:bold;' +
+             'margin:1.4rem 0 0.7rem;padding-bottom:0.4rem;border-bottom:1px solid ' + kleur + '33;">' +
+             ikoon + ' ' + titel + '</div>';
+    }
 
-      // ── Proses-verduideliking ──
-      '<div style="background:#1a1208;border:1px solid #8b6914;border-radius:6px;padding:1rem 1.2rem;margin-bottom:1.5rem;">',
-      '<div style="color:#c49a3a;font-weight:bold;font-size:1rem;margin-bottom:0.75rem;">📋 Hoe werk die wysigingsproses?</div>',
-      '<ol style="color:#e8dfc8;font-size:0.88rem;line-height:1.8;padding-left:1.4rem;margin:0 0 0.75rem 0;">',
-      '<li>Enige familielid kan <strong style="color:#c49a3a">✏️ Stel voor</strong> klik op enige persoon se bladsy.</li>',
-      '<li>Hulle vul die nuwe inligting in en stuur dit via <strong style="color:#25D366">WhatsApp</strong> of e-pos na die admin.</li>',
-      '<li>Die admin <strong style="color:#c49a3a">plak die boodskap</strong> hieronder en klik "Verwerk Voorstel".</li>',
-      '<li>Die stelsel wys die <strong style="color:#c49a3a">ou vs nuwe</strong> inligting — admin keur goed of verwerp.</li>',
-      '<li>Goedgekeurde wysigings word <strong style="color:#c49a3a">gestoor in geheue</strong> en afgelaai as JSON vir die databasis.</li>',
-      '</ol>',
-      '<div style="border-top:1px solid #3d3020;padding-top:0.6rem;color:#7a6a4a;font-size:0.82rem;">',
-      '⚠️ Wysigings is slegs <em>tydelik in geheue</em> — gebruik <strong>Stoor na GitHub</strong> om permanent te stoor. ',
-      'Nuwe lede of huwelike word onderaan bygevoeg via die <strong>Voeg by</strong>-afdeling.',
-      '</div>',
-      '</div>',
+    var html = '<div style="max-width:720px;margin:0 auto;padding:1.5rem 1rem;">';
+    html += '<h2 style="color:var(--sepia-light);font-size:1.4rem;margin-bottom:1.2rem;">✏️ Admin — Conradie Databasis</h2>';
 
-      // ── Admin-slot ──
-      adminOntsluit
-        ? '<!-- ontsluit -->'
-        : '<div id="adm-slot" style="text-align:center;padding:1.5rem 0 0.5rem;">' +
-          '<button onclick="admOntsluit()" style="padding:0.55rem 1.4rem;background:#3d3020;color:#c49a3a;' +
-          'border:1px solid #c49a3a;border-radius:20px;font-size:0.9rem;cursor:pointer;' +
-          'font-family:\'Josefin Sans\',sans-serif;letter-spacing:0.08em;">🔐 Admin Aanmelding</button>' +
-          '</div>',
+    // ── 1. Proses-verduideliking (altyd sigbaar) ──
+    html += '<div style="background:#1a1208;border:1px solid #8b6914;border-radius:6px;padding:1rem 1.2rem;margin-bottom:1.5rem;">';
+    html += '<div style="color:#c49a3a;font-weight:bold;font-size:1rem;margin-bottom:0.75rem;">📋 Hoe werk die wysigingsproses?</div>';
+    html += '<ol style="color:#e8dfc8;font-size:0.88rem;line-height:1.9;padding-left:1.4rem;margin:0 0 0.75rem 0;">';
+    html += '<li>Enige familielid kan <strong style="color:#c49a3a">✏️ Stel voor</strong> klik op enige persoon se kaart (Soek-tab).</li>';
+    html += '<li>Hulle vul die inligting in en stuur dit via <strong style="color:#25D366">WhatsApp</strong> of e-pos.</li>';
+    html += '<li>Admin plak die boodskap onder "Verwerk Voorstel" en keur oud-vs-nuut goed of verwerp dit.</li>';
+    html += '<li>Vir nuwe rekords (kinders, huwelike) gebruik die "Voeg by"-afdelings hieronder.</li>';
+    html += '<li>Alle wysigings is <em>tydelik in geheue</em> — gebruik <strong>Stoor na GitHub</strong> om permanent te stoor.</li>';
+    html += '</ol>';
+    html += '<div style="border-top:1px solid #3d3020;padding-top:0.6rem;color:#9a8060;font-size:0.82rem;">';
+    html += '💡 Besoekers wat veranderinge wil voorstel: klik op enige naam in die <strong>Soek-tab</strong> en gebruik ✏️ <strong>Stel voor</strong>.';
+    html += '</div></div>';
 
-      // ── Plak Voorstel (slegs as ontsluit) ──
-      adminOntsluit
-        ? '<div style="background:#1e1608;border:1px solid #c49a3a;border-radius:6px;padding:1rem;margin-bottom:1.5rem;">' +
-          '<div style="color:#c49a3a;font-weight:bold;margin-bottom:0.5rem;">📋 Plak Inkomende Voorstel</div>' +
-          '<textarea id="adm-plak" rows="8" placeholder="Plak WhatsApp- of e-posboodskap hier…" ' +
-          'style="width:100%;box-sizing:border-box;padding:0.5rem;background:#0d0a05;color:#e8dfc8;' +
-          'border:1px solid #3d3020;border-radius:4px;font-size:0.85rem;resize:vertical;"></textarea>' +
-          '<div style="display:flex;gap:0.5rem;margin-top:0.5rem;">' +
-          '<button id="adm-plak-btn" style="padding:0.4rem 1rem;background:#c49a3a;color:#1a1208;' +
-          'border:none;border-radius:4px;cursor:pointer;font-size:0.9rem;font-weight:bold;">🔍 Verwerk Voorstel</button>' +
-          '<button id="adm-plak-reset" style="padding:0.4rem 0.8rem;background:#3d3020;color:#e8dfc8;' +
-          'border:none;border-radius:4px;cursor:pointer;font-size:0.85rem;">✖ Maak skoon</button>' +
-          '</div>' +
-          '<div id="adm-plak-status" style="margin-top:0.4rem;color:#c49a3a;font-size:0.85rem;min-height:1rem;"></div>' +
-          '</div>'
-        : '',
+    // ── 2. Admin Aanmelding (altyd sigbaar, met waarskuwing) ──
+    if (!adminOntsluit) {
+      html += '<div style="background:#0e0b04;border:2px solid #8b3a1a;border-radius:8px;padding:1.2rem 1.4rem;margin-bottom:1.5rem;text-align:center;">';
+      html += '<div style="color:#e07050;font-weight:bold;font-size:0.95rem;margin-bottom:0.5rem;">🔐 Gemagtigde Toegang Slegs</div>';
+      html += '<div style="color:#a08060;font-size:0.83rem;line-height:1.6;margin-bottom:1rem;">';
+      html += 'Hierdie afdeling is uitsluitlik vir die <strong style="color:#e8dfc8">gemagtigde registerhouer</strong>.<br>';
+      html += 'Ongemagtigde toegang of wysigings is nie toegelaat nie.<br>';
+      html += 'Besoekers: gebruik <strong style="color:#c49a3a">✏️ Stel voor</strong> op die Soek-tab.';
+      html += '</div>';
+      html += '<button onclick="admOntsluit()" style="padding:0.6rem 1.8rem;background:#3d2010;color:#c49a3a;';
+      html += 'border:2px solid #8b6914;border-radius:20px;font-size:0.9rem;cursor:pointer;';
+      html += 'font-family:\'Josefin Sans\',sans-serif;letter-spacing:0.1em;">🔐 Meld aan as Admin</button>';
+      html += '</div>';
+    } else {
+      html += '<div style="background:#0a1a0a;border:1px solid #2d6a2d;border-radius:6px;padding:0.6rem 1rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:0.6rem;">';
+      html += '<span style="color:#5cb85c;font-size:1rem;">✅</span>';
+      html += '<span style="color:#8fc88f;font-size:0.88rem;">Admin aangemeld — alle wysigingsfunksies beskikbaar.</span>';
+      html += '</div>';
+    }
 
-      // Soek (slegs as ontsluit)
-      adminOntsluit ? '<div style="display:flex;gap:0.5rem;margin-bottom:1rem;">' : '',
-      adminOntsluit ? '<input id="adm-soek" type="text" placeholder="Naam, van of ref (bv. 1234)" ' : '',
-      adminOntsluit ? 'style="flex:1;padding:0.5rem 0.75rem;background:var(--panel);color:var(--parchment);' : '',
-      adminOntsluit ? 'border:1px solid var(--border-light);border-radius:4px;font-size:0.95rem;">' : '',
-      adminOntsluit ? '<button id="adm-soek-btn" style="padding:0.5rem 1rem;background:var(--sepia);color:#fff;' : '',
-      adminOntsluit ? 'border:none;border-radius:4px;cursor:pointer;font-size:0.95rem;">Soek</button>' : '',
-      adminOntsluit ? '</div>' : '',
+    // ── Alles hieronder slegs as ontsluit ──
+    if (adminOntsluit) {
 
-      // Resultate lys
-      adminOntsluit ? '<div id="adm-resultate" style="margin-bottom:1rem;"></div>' : '',
+      // ── 3. Verwerk Inkomende Voorstel ──
+      html += _afd('📋', 'Verwerk Inkomende Voorstel', '#c49a3a');
+      html += '<div style="background:#1e1608;border:1px solid #c49a3a;border-radius:6px;padding:1rem;margin-bottom:0.5rem;">';
+      html += '<div style="color:#9a8060;font-size:0.82rem;margin-bottom:0.5rem;">Plak die WhatsApp- of e-posboodskap wat \'n familielid gestuur het:</div>';
+      html += '<textarea id="adm-plak" rows="7" placeholder="Plak boodskap hier…" ';
+      html += 'style="width:100%;box-sizing:border-box;padding:0.5rem;background:#0d0a05;color:#e8dfc8;';
+      html += 'border:1px solid #3d3020;border-radius:4px;font-size:0.85rem;resize:vertical;"></textarea>';
+      html += '<div style="display:flex;gap:0.5rem;margin-top:0.5rem;">';
+      html += '<button id="adm-plak-btn" style="padding:0.4rem 1rem;background:#c49a3a;color:#1a1208;border:none;border-radius:4px;cursor:pointer;font-size:0.9rem;font-weight:bold;">🔍 Verwerk Voorstel</button>';
+      html += '<button id="adm-plak-reset" style="padding:0.4rem 0.8rem;background:#3d3020;color:#e8dfc8;border:none;border-radius:4px;cursor:pointer;font-size:0.85rem;">✖ Maak skoon</button>';
+      html += '</div>';
+      html += '<div id="adm-plak-status" style="margin-top:0.4rem;color:#c49a3a;font-size:0.85rem;min-height:1rem;"></div>';
+      html += '</div>';
 
-      // Bewerkingsblok (versteek totdat persoon gekies)
-      adminOntsluit ? '<div id="adm-vorm" style="display:none;">' : '',
-      '<div id="adm-naam-opskrif" style="color:var(--gold);font-size:1.1rem;font-weight:bold;margin-bottom:1rem;"></div>',
+      // ── 4. Soek & Wysig Bestaande Persoon ──
+      html += _afd('🔍', 'Soek & Wysig Bestaande Persoon');
+      html += '<div style="display:flex;gap:0.5rem;margin-bottom:1rem;">';
+      html += '<input id="adm-soek" type="text" placeholder="Naam, van of ref (bv. 1234)" ';
+      html += 'style="flex:1;padding:0.5rem 0.75rem;background:#2a2010;color:#f8f2e0;';
+      html += 'border:1px solid #8b6914;border-radius:4px;font-size:0.9rem;">';
+      html += '<button id="adm-soek-btn" style="padding:0.5rem 1rem;background:#8b6914;color:#fff;';
+      html += 'border:none;border-radius:4px;cursor:pointer;font-size:0.9rem;">Soek</button>';
+      html += '</div>';
+      html += '<div id="adm-resultate" style="margin-bottom:1rem;"></div>';
 
-      _veld('adm-given',       'Voornaam',       'text'),
-      _veld('adm-surname',     'Van',             'text'),
-      _veld('adm-birth-date',  'Geboortedatum',   'text', 'bv. 12 MAR 1845'),
-      _veld('adm-birth-place', 'Geboorteplek',    'text'),
-      _veld('adm-death-date',  'Sterfdatum',      'text'),
-      _veld('adm-death-place', 'Sterfplek',       'text'),
-      _veld('adm-burial',      'Begraafplek',     'text'),
-      _veld('adm-note',        'Nota',            'textarea'),
+      // Bewerkingsvorm (versteek totdat persoon gekies)
+      html += '<div id="adm-vorm" style="display:none;">';
+      html += '<div id="adm-naam-opskrif" style="color:#c49a3a;font-size:1.05rem;font-weight:bold;margin-bottom:1rem;padding:0.5rem 0.75rem;background:#1a1208;border-radius:4px;border-left:3px solid #c49a3a;"></div>';
 
-      // ── Huwelik Afdeling ──
-      '<hr style="border:none;border-top:1px solid #8b6914;margin:1.2rem 0;">',
-      '<div style="color:#8b6914;font-size:1rem;font-weight:bold;margin-bottom:0.8rem;">➕ Voeg Huwelik by</div>',
+      html += _afd('👤', 'Persoonlike Besonderhede', '#6a8a5a');
+      html += _veld('adm-given',       'Voornaam',       'text');
+      html += _veld('adm-surname',     'Van',             'text');
+      html += _veld('adm-birth-date',  'Geboortedatum',   'text', 'bv. 1845-03-12 of 12 MAR 1845');
+      html += _veld('adm-birth-place', 'Geboorteplek',    'text');
+      html += _veld('adm-death-date',  'Sterfdatum',      'text', 'bv. 1912-07-04');
+      html += _veld('adm-death-place', 'Sterfplek',       'text');
+      html += _veld('adm-burial',      'Begraafplek',     'text');
+      html += _veld('adm-note',        'Nota / Narratief', 'textarea');
 
-      '<div id="adm-huw-bestaande"></div>',
+      html += '<div style="margin-top:0.75rem;">';
+      html += '<button id="adm-stoor-btn" style="padding:0.5rem 1.2rem;background:#2d6a2d;color:#e8f5e8;border:none;border-radius:4px;cursor:pointer;font-size:0.95rem;">💾 Stoor Wysigings in Geheue</button>';
+      html += '</div>';
 
-      _veld('adm-huw-naam',   'Gade se volle naam',    'text', 'bv. Maria JOUBERT'),
-      _veld('adm-huw-datum',  'Huweliksdatum',          'text', 'bv. 14 APR 1867'),
-      _veld('adm-huw-plek',   'Huweliksplek',           'text', 'bv. Robertson'),
-      _veld('adm-huw-egsk',   'Egskeidingsdatum',       'text', '(indien van toepassing)'),
+      // ── 5. Huwelik Afdeling ──
+      html += _afd('💍', 'Huwelike — Wysig of Voeg by');
+      html += '<div id="adm-huw-bestaande"></div>';
+      html += _veld('adm-huw-naam',  'Gade se volle naam',  'text', 'bv. Maria JOUBERT');
+      html += _veld('adm-huw-datum', 'Huweliksdatum',        'text', 'bv. 1867-04-14 of 14 APR 1867');
+      html += _veld('adm-huw-plek',  'Huweliksplek',         'text', 'bv. Robertson');
+      html += _veld('adm-huw-egsk',  'Egskeidingsdatum',     'text', '(indien van toepassing)');
 
-      '<div id="adm-huw-dateer-wrap" style="display:none;margin-bottom:0.8rem;">',
-      '<button id="adm-huw-dateer-btn" onclick="admDateerHuw()" style="padding:0.5rem 1.1rem;background:#c49a3a;color:#1a1208;border:none;border-radius:4px;cursor:pointer;font-size:0.9rem;font-weight:bold;">💾 Dateer Huweliksdatum/Plek op</button>',
-      '<button onclick="admHuwRedigeerKanselleer()" style="padding:0.5rem 1.1rem;background:#5c4510;color:#e8dfc8;border:none;border-radius:4px;cursor:pointer;font-size:0.9rem;margin-left:0.5rem;">✖ Kanselleer</button>',
-      '</div>',
+      html += '<div id="adm-huw-dateer-wrap" style="display:none;margin-bottom:0.8rem;">';
+      html += '<button id="adm-huw-dateer-btn" onclick="admDateerHuw()" style="padding:0.5rem 1.1rem;background:#c49a3a;color:#1a1208;border:none;border-radius:4px;cursor:pointer;font-size:0.9rem;font-weight:bold;">💾 Dateer Huweliksdatum/Plek op</button>';
+      html += '<button onclick="admHuwRedigeerKanselleer()" style="padding:0.5rem 1.1rem;background:#5c4510;color:#e8dfc8;border:none;border-radius:4px;cursor:pointer;font-size:0.9rem;margin-left:0.5rem;">✖ Kanselleer</button>';
+      html += '</div>';
 
-      '<div style="margin-bottom:0.6rem;">',
-      '<label style="display:block;color:#e0b87a;font-size:0.82rem;margin-bottom:0.4rem;">Is die gade \'n Conradie?</label>',
-      '<div style="display:flex;gap:0.5rem;">',
-      '<button id="adm-huw-ja" style="padding:0.35rem 0.9rem;background:#eee;color:#1a1208;border:1px solid #ccc;border-radius:4px;cursor:pointer;font-size:0.85rem;">✅ Ja</button>',
-      '<button id="adm-huw-nee" style="padding:0.35rem 0.9rem;background:#eee;color:#1a1208;border:1px solid #ccc;border-radius:4px;cursor:pointer;font-size:0.85rem;">❌ Nee</button>',
-      '<button id="adm-huw-onseker" style="padding:0.35rem 0.9rem;background:#eee;color:#1a1208;border:1px solid #ccc;border-radius:4px;cursor:pointer;font-size:0.85rem;">❓ Onseker</button>',
-      '</div>',
-      '<div id="adm-huw-conradie-veld" style="display:none;margin-top:0.6rem;">',
-      _veld('adm-huw-geslag', 'Geslag van Conradie-gade', 'text', 'M of F'),
-      '</div>',
-      '</div>',
+      html += '<div style="margin-bottom:0.6rem;">';
+      html += '<label style="display:block;color:#c8a870;font-size:0.82rem;margin-bottom:0.4rem;">Is die gade \'n Conradie?</label>';
+      html += '<div style="display:flex;gap:0.5rem;">';
+      html += '<button id="adm-huw-ja"      style="padding:0.35rem 0.9rem;background:#eee;color:#1a1208;border:1px solid #ccc;border-radius:4px;cursor:pointer;font-size:0.85rem;">✅ Ja</button>';
+      html += '<button id="adm-huw-nee"     style="padding:0.35rem 0.9rem;background:#eee;color:#1a1208;border:1px solid #ccc;border-radius:4px;cursor:pointer;font-size:0.85rem;">❌ Nee</button>';
+      html += '<button id="adm-huw-onseker" style="padding:0.35rem 0.9rem;background:#eee;color:#1a1208;border:1px solid #ccc;border-radius:4px;cursor:pointer;font-size:0.85rem;">❓ Onseker</button>';
+      html += '</div>';
+      html += '<div id="adm-huw-conradie-veld" style="display:none;margin-top:0.6rem;">';
+      html += _veld('adm-huw-geslag', 'Geslag van Conradie-gade', 'text', 'M of F');
+      html += '</div></div>';
 
-      '<div id="adm-huw-kind-bevestig" style="display:none;background:#f5f0e8;border:1px solid #c49a3a;border-radius:6px;padding:0.75rem;margin-bottom:0.75rem;">',
-      '<div id="adm-huw-kind-tekst" style="color:#1a1208;font-size:0.9rem;margin-bottom:0.6rem;"></div>',
-      '<div style="display:flex;gap:0.5rem;">',
-      '<button id="adm-huw-kind-ok" style="padding:0.35rem 0.9rem;background:#1a5c2a;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:0.85rem;">✅ Bevestig</button>',
-      '<button id="adm-huw-kind-kanselleer" style="padding:0.35rem 0.9rem;background:#8b3a1a;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:0.85rem;">✖ Kanselleer</button>',
-      '</div>',
-      '</div>',
+      html += '<div id="adm-huw-kind-bevestig" style="display:none;background:#f5f0e8;border:1px solid #c49a3a;border-radius:6px;padding:0.75rem;margin-bottom:0.75rem;">';
+      html += '<div id="adm-huw-kind-tekst" style="color:#1a1208;font-size:0.9rem;margin-bottom:0.6rem;"></div>';
+      html += '<div style="display:flex;gap:0.5rem;">';
+      html += '<button id="adm-huw-kind-ok" style="padding:0.35rem 0.9rem;background:#1a5c2a;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:0.85rem;">✅ Bevestig</button>';
+      html += '<button id="adm-huw-kind-kanselleer" style="padding:0.35rem 0.9rem;background:#8b3a1a;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:0.85rem;">✖ Kanselleer</button>';
+      html += '</div></div>';
 
-      '<button id="adm-huw-voeg-btn" style="padding:0.5rem 1.2rem;background:#5c4510;color:#e8dfc8;border:none;border-radius:4px;cursor:pointer;font-size:0.95rem;margin-bottom:1rem;">💍 Voeg Huwelik by</button>',
+      html += '<button id="adm-huw-voeg-btn" style="padding:0.5rem 1.2rem;background:#5c4510;color:#e8dfc8;border:none;border-radius:4px;cursor:pointer;font-size:0.95rem;margin-bottom:0.5rem;">💍 Voeg Nuwe Huwelik by</button>';
 
-      '<div style="display:flex;gap:0.75rem;margin-top:1.25rem;flex-wrap:wrap;">',
-      '<button id="adm-stoor-btn" style="padding:0.5rem 1.2rem;background:var(--green);color:#fff;',
-      'border:none;border-radius:4px;cursor:pointer;font-size:0.95rem;">💾 Stoor Wysigings</button>',
-      '<button id="adm-wa-btn" style="padding:0.5rem 1.2rem;background:#25D366;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:0.95rem;">📱 WhatsApp (App)</button> ',
-      '<button id="adm-wa-web-btn" style="padding:0.5rem 1.2rem;background:#128C7E;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:0.95rem;">🌐 WhatsApp Web</button> ',
-      '<button id="adm-email-btn" style="padding:0.5rem 1.2rem;background:#c49a3a;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:0.95rem;">✉️ E-pos</button>',
-      '<button id="adm-laai-btn" style="padding:0.5rem 1.2rem;background:var(--sepia-dark);color:var(--parchment);',
-      'border:none;border-radius:4px;cursor:pointer;font-size:0.95rem;">⬇️ Laai JSON af</button>',
-      '</div>',
-      '<div style="margin-top:1rem;padding:0.8rem;background:#1a1208;border:1px solid #5c4a2a;border-radius:6px;">',
-      '<p style="color:var(--sepia-light);font-size:0.85rem;margin:0 0 0.5rem;">🔒 GitHub Direkte Stoor (PAT vereiste)</p>',
-      '<input id="adm-pat" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" style="width:100%;padding:0.4rem;background:#0d0a05;color:#d4b896;border:1px solid #5c4a2a;border-radius:4px;font-size:0.85rem;box-sizing:border-box;margin-bottom:0.5rem;"/>',
-      '<button id="adm-github-btn" onclick="admStoorGitHub()" style="padding:0.5rem 1.2rem;background:#2d6a2d;color:#e8f5e8;border:none;border-radius:4px;cursor:pointer;font-size:0.95rem;">☁️ Stoor na GitHub</button>',
-      '</div>',
-      adminOntsluit ? '<div id="adm-status" style="margin-top:0.75rem;color:var(--sepia-light);font-size:0.9rem;min-height:1.2rem;"></div>' : '',
-      adminOntsluit ? '</div>' : '',  // end adm-vorm
+      // ── 6. Nuwe Kind byvoeg ──
+      html += _afd('👶', 'Voeg Nuwe Kind by', '#5a7a8a');
+      html += '<div style="background:#0e1418;border:1px solid #3a5a6a;border-radius:6px;padding:0.9rem;margin-bottom:0.5rem;">';
+      html += '<div style="color:#8ab0c0;font-size:0.82rem;margin-bottom:0.7rem;">Die kind word as nuwe I-rekord bygevoeg en as kind van die huidige persoon gekoppel.</div>';
+      html += _veld('adm-kind-naam',    'Kind se volle naam',   'text', 'bv. Pieter Johannes CONRADIE');
+      html += _veld('adm-kind-geboort', 'Geboortedatum',        'text', 'bv. 1892-05-23 of 23 MEI 1892');
+      html += _veld('adm-kind-plek',    'Geboorteplek',         'text');
+      html += '<div style="margin-bottom:0.6rem;">';
+      html += '<label style="display:block;color:#8ab0c0;font-size:0.82rem;margin-bottom:0.4rem;">Geslag</label>';
+      html += '<div style="display:flex;gap:0.5rem;">';
+      html += '<button id="adm-kind-m" style="padding:0.35rem 0.9rem;background:#eee;color:#1a1208;border:1px solid #ccc;border-radius:4px;cursor:pointer;font-size:0.85rem;">♂ Seun</button>';
+      html += '<button id="adm-kind-f" style="padding:0.35rem 0.9rem;background:#eee;color:#1a1208;border:1px solid #ccc;border-radius:4px;cursor:pointer;font-size:0.85rem;">♀ Dogter</button>';
+      html += '</div></div>';
+      html += '<div id="adm-kind-bevestig" style="display:none;background:#e8f0e8;border:1px solid #2d6a2d;border-radius:6px;padding:0.75rem;margin-bottom:0.75rem;">';
+      html += '<div id="adm-kind-bevestig-tekst" style="color:#1a1208;font-size:0.9rem;margin-bottom:0.6rem;"></div>';
+      html += '<div style="display:flex;gap:0.5rem;">';
+      html += '<button id="adm-kind-ok" style="padding:0.35rem 0.9rem;background:#1a5c2a;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:0.85rem;">✅ Bevestig</button>';
+      html += '<button id="adm-kind-kanselleer" style="padding:0.35rem 0.9rem;background:#8b3a1a;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:0.85rem;">✖ Kanselleer</button>';
+      html += '</div></div>';
+      html += '<button id="adm-kind-voeg-btn" style="padding:0.5rem 1.2rem;background:#3a5a6a;color:#e8f4f8;border:none;border-radius:4px;cursor:pointer;font-size:0.95rem;">👶 Voeg Kind by</button>';
+      html += '</div>';
 
-      '</div>'   // end wrapper
-    ].join('');
+      // ── 7. Stoor & Uitvoer ──
+      html += _afd('☁️', 'Stoor & Uitvoer', '#4a7a4a');
+      html += '<div style="display:flex;gap:0.75rem;flex-wrap:wrap;margin-bottom:1rem;">';
+      html += '<button id="adm-wa-btn" style="padding:0.5rem 1.1rem;background:#25D366;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:0.9rem;">📱 WhatsApp (App)</button>';
+      html += '<button id="adm-wa-web-btn" style="padding:0.5rem 1.1rem;background:#128C7E;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:0.9rem;">🌐 WhatsApp Web</button>';
+      html += '<button id="adm-email-btn" style="padding:0.5rem 1.1rem;background:#c49a3a;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:0.9rem;">✉️ E-pos</button>';
+      html += '<button id="adm-laai-btn" style="padding:0.5rem 1.1rem;background:#3d3020;color:#e8dfc8;border:none;border-radius:4px;cursor:pointer;font-size:0.9rem;">⬇️ Laai JSON af</button>';
+      html += '</div>';
+      html += '<div style="padding:0.9rem;background:#0e1208;border:1px solid #3a5a2a;border-radius:6px;">';
+      html += '<div style="color:#8ab08a;font-size:0.85rem;margin-bottom:0.5rem;">🔒 GitHub Direkte Stoor (PAT vereiste)</div>';
+      html += '<input id="adm-pat" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" style="width:100%;padding:0.4rem;background:#0d0a05;color:#d4b896;border:1px solid #3a5a2a;border-radius:4px;font-size:0.85rem;box-sizing:border-box;margin-bottom:0.5rem;"/>';
+      html += '<button id="adm-github-btn" onclick="admStoorGitHub()" style="padding:0.5rem 1.2rem;background:#2d6a2d;color:#e8f5e8;border:none;border-radius:4px;cursor:pointer;font-size:0.95rem;">☁️ Stoor na GitHub</button>';
+      html += '</div>';
+
+      html += '<div id="adm-status" style="margin-top:0.75rem;color:var(--sepia-light);font-size:0.9rem;min-height:1.2rem;"></div>';
+      html += '</div>'; // end adm-vorm
+    }
+
+    html += '</div>'; // end wrapper
+    el.innerHTML = html;
 
     // Knoppie-luisteraars
     // Plak Voorstel luisteraars
@@ -3041,6 +3079,35 @@ function attachCorrectionListeners() {
           (window.admHuwConradie === 'ja') ? 'block' : 'none';
       });
     });
+    // Kind-geslag keuse knoppies
+    window.admKindGeslag = null;
+    ['adm-kind-m','adm-kind-f'].forEach(function(bid) {
+      var b = document.getElementById(bid);
+      if (!b) return;
+      b.addEventListener('click', function() {
+        ['adm-kind-m','adm-kind-f'].forEach(function(x) {
+          var el2 = document.getElementById(x);
+          if (el2) { el2.style.background = '#eee'; el2.style.color = '#1a1208'; el2.style.fontWeight = 'normal'; }
+        });
+        this.style.background = '#3a5a6a';
+        this.style.color = '#e8f4f8';
+        this.style.fontWeight = 'bold';
+        window.admKindGeslag = (bid === 'adm-kind-m') ? 'M' : 'F';
+      });
+    });
+
+    // Kind byvoeg knoppie
+    var kindVoegBtn = document.getElementById('adm-kind-voeg-btn');
+    if (kindVoegBtn) kindVoegBtn.addEventListener('click', admKindVoeg);
+
+    // Kind bevestiging knoppies
+    var kindOk = document.getElementById('adm-kind-ok');
+    if (kindOk) kindOk.addEventListener('click', admKindBevestig);
+    var kindKan = document.getElementById('adm-kind-kanselleer');
+    if (kindKan) kindKan.addEventListener('click', function() {
+      document.getElementById('adm-kind-bevestig').style.display = 'none';
+    });
+
     var waBtn = document.getElementById('adm-wa-btn');
     if (waBtn) waBtn.addEventListener('click', admWhatsApp);
     var admWaWebBtn = document.getElementById('adm-wa-web-btn');
@@ -3648,6 +3715,130 @@ function attachCorrectionListeners() {
 
     statusLyne.push('Gebruik "Stoor na GitHub" om te stoor.');
     document.getElementById('adm-status').textContent = statusLyne.join(' ');
+  }
+
+  // ── Voeg nuwe Kind by ──
+  function admKindVoeg() {
+    if (!admCurrentId || !window.indexById) {
+      alert('Soek en kies eers \u2018n persoon.');
+      return;
+    }
+    var p = window.indexById[admCurrentId];
+    if (!p) return;
+
+    function get(id) { var el=document.getElementById(id); return el?el.value.trim():''; }
+    var naam   = get('adm-kind-naam');
+    var gebDat = get('adm-kind-geboort');
+    var gebPlek = get('adm-kind-plek');
+    var geslag = window.admKindGeslag;
+
+    if (!naam) {
+      document.getElementById('adm-status').textContent = '⚠️ Voer die kind se naam in.';
+      return;
+    }
+    if (!geslag) {
+      document.getElementById('adm-status').textContent = '⚠️ Kies die kind se geslag.';
+      return;
+    }
+
+    var kinderTel = (p.children_ids || []).length;
+    var tekst = 'Bevestig: ' + naam + ' (' + (geslag === 'M' ? 'Seun' : 'Dogter') + ')' +
+      (gebDat ? ', geb. ' + gebDat : '') +
+      ' sal as kind nr. ' + (kinderTel + 1) + ' van ' + p.name + ' bygevoeg word.';
+
+    document.getElementById('adm-kind-bevestig-tekst').textContent = tekst;
+    document.getElementById('adm-kind-bevestig').style.display = 'block';
+
+    window.admKindPending = { naam:naam, gebDat:gebDat, gebPlek:gebPlek, geslag:geslag };
+  }
+
+  function admKindBevestig() {
+    document.getElementById('adm-kind-bevestig').style.display = 'none';
+    var d = window.admKindPending;
+    window.admKindPending = null;
+    if (!d) return;
+
+    var p = window.indexById[admCurrentId];
+    var data = (typeof CONRADIE_DATA !== 'undefined') ? CONRADIE_DATA : window.CONRADIE_DATA;
+
+    // Nuwe ref nommer
+    var maxRef = 0;
+    data.forEach(function(rec) {
+      if (rec && /^\d+$/.test(rec.ref || '')) {
+        var n = parseInt(rec.ref); if (n > maxRef) maxRef = n;
+      }
+    });
+    var nuweNr = String(maxRef + 1).padStart(4, '0');
+    var nuweId = 'I' + nuweNr;
+
+    // Bereken family_code vir nuwe kind
+    var ouerKode = p.family_code || '';
+    // Kind se kode = ouer se kode + volgende vrye letter
+    var bestaandeKindKodes = (p.children_ids || []).map(function(kid) {
+      var kr = window.indexById[kid];
+      return kr ? (kr.family_code || '') : '';
+    }).filter(Boolean);
+    // Vind volgende beskikbare letter
+    var gebruikteLetters = bestaandeKindKodes.map(function(k) {
+      return k.length > ouerKode.length ? k[ouerKode.length] : '';
+    }).filter(Boolean);
+    var volgende = 'a';
+    for (var c = 97; c <= 122; c++) {
+      var letter = String.fromCharCode(c);
+      if (gebruikteLetters.indexOf(letter) === -1) { volgende = letter; break; }
+    }
+    var nuweKode = ouerKode + volgende;
+
+    // Bereken geslag-afkagting
+    var gebJaar = null;
+    if (d.gebDat) {
+      var m = d.gebDat.match(/\b(\d{4})\b/);
+      if (m) gebJaar = parseInt(m[1]);
+    }
+
+    // Skep nuwe kind-rekord
+    var naamDele = d.naam.trim().split(' ');
+    var van   = naamDele[naamDele.length - 1];
+    var gegee = naamDele.slice(0, -1).join(' ');
+
+    var nuweRek = {
+      id: nuweId, ref: nuweNr,
+      name: d.naam, given: gegee, surname: van,
+      sex: d.geslag,
+      family_code: nuweKode,
+      branch: p.branch || '',
+      generation: (p.generation || 0) + 1,
+      birth_date: d.gebDat || '', birth_year: gebJaar,
+      birth_place: d.gebPlek || '',
+      death_date: '', death_year: null, death_place: '',
+      burial_place: '', baptism_date: '', baptism_place: '',
+      birth_circa: false, nickname: '', maiden_name: '',
+      is_spouse: false, uncertain: false,
+      spouses: [], children_ids: [],
+      parents: [{ id: p.id, name: p.name, sex: p.sex || '' }],
+      marr_dates: [], marr_places: [],
+      narrative: '', note: ''
+    };
+
+    data.push(nuweRek);
+    window.indexById[nuweId] = nuweRek;
+
+    // Koppel kind aan ouer
+    if (!p.children_ids) p.children_ids = [];
+    p.children_ids.push(nuweId);
+
+    // Reset kind-velde
+    ['adm-kind-naam','adm-kind-geboort','adm-kind-plek'].forEach(function(id) {
+      var el = document.getElementById(id); if (el) el.value = '';
+    });
+    ['adm-kind-m','adm-kind-f'].forEach(function(bid) {
+      var el = document.getElementById(bid);
+      if (el) { el.style.background = '#eee'; el.style.color = '#1a1208'; el.style.fontWeight = 'normal'; }
+    });
+    window.admKindGeslag = null;
+
+    var status = '👶 Kind bygevoeg: ' + d.naam + ' (' + nuweId + ', kode: ' + nuweKode + '). Gebruik "Stoor na GitHub" om te stoor.';
+    document.getElementById('adm-status').textContent = status;
   }
 
   // ── Stuur gewysigde velde via WhatsApp ──

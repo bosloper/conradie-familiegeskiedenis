@@ -1049,11 +1049,11 @@ main {
 .img-float-left { float:left; width:190px; margin:0 1.5rem 1rem 0; }
 .img-float-left .bio-img { width:190px; }
 .clearfix::after { content:''; display:block; clear:both; }
-.hero-crest { position:absolute; right:2.5rem; top:50%; transform:translateY(-50%); width:85px; opacity:0.9; filter:drop-shadow(0 0 12px rgba(196,151,58,0.4)); }
+.hero-crest { position:absolute; right:1.5rem; top:1rem; width:72px; opacity:0.9; filter:drop-shadow(0 0 12px rgba(196,151,58,0.4)); max-height:80%; object-fit:contain; }
 .img-pair { display:grid; grid-template-columns:1fr 1fr; gap:0.8rem; margin:1.6rem 0; }
 .archive-img { background:#120e06; padding:0.7rem; border:1px solid var(--sepia); border-radius:2px; }
 .archive-img .bio-img { filter:sepia(15%) contrast(1.05); }
-@media(max-width:700px){.img-float-right,.img-float-left{float:none;width:100%;margin:1rem 0;} .img-float-right .bio-img,.img-float-left .bio-img{width:100%;} .hero-crest{display:none;} .img-pair{grid-template-columns:1fr;}}
+@media(max-width:700px){.img-float-right,.img-float-left{float:none;width:100%;margin:1rem 0;} .img-float-right .bio-img,.img-float-left .bio-img{width:100%;} .img-pair{grid-template-columns:1fr;}} @media(max-width:900px){.hero-crest{display:none;}}
 
 /* ── CORRECTION FORM ── */
 .panel-actions {

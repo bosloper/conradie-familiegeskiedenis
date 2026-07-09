@@ -2335,15 +2335,21 @@ window.addEventListener('load', function() {
   document.querySelectorAll('.tab-btn').forEach(function(btn) {
     btn.addEventListener('click', function() {
       if (btn.id === 'help-btn') { openHelp(); return; }
-      switchTab(btn.getAttribute('data-tab'));
+      var t = btn.getAttribute('data-tab');
+      aktieweTab = t;
+      switchTab(t);
     });
   });
   // Wys stamvader as verstek
   switchTab('stamvader');
 
-  // Help modal close
-  document.getElementById('help-sluit').addEventListener('click', closeHelp);
-  document.getElementById('help-overlay').addEventListener('click', closeHelp);
+  // Help modal close — click + touchend vir Android
+  function addClose(el) {
+    el.addEventListener('click', closeHelp);
+    el.addEventListener('touchend', function(e) { e.preventDefault(); closeHelp(); });
+  }
+  addClose(document.getElementById('help-sluit'));
+  addClose(document.getElementById('help-overlay'));
 });
 
 // ── HULP STELSEL ──
@@ -2417,13 +2423,6 @@ const HULP_INHOUD = {
 };
 
 let aktieweTab = 'stamvader';
-
-// Track which tab is active
-const _origSwitchTab = switchTab;
-function switchTab(tabName) {
-  _origSwitchTab(tabName);
-  if (tabName) aktieweTab = tabName;
-}
 
 function openHelp() {
   const data = HULP_INHOUD[aktieweTab] || HULP_INHOUD['stamvader'];

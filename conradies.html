@@ -881,6 +881,15 @@ main {
   font-style: italic;
   line-height: 1.4;
 }
+.tl-hist .tl-date { color: var(--muted); opacity:0.75; }
+.tl-hist .tl-title { color: var(--muted); font-size:0.9rem; font-weight:400; }
+.tl-hist .tl-detail { font-size:0.8rem; opacity:0.8; }
+.tl-hist::before {
+  background: var(--line);
+  width: 6px; height: 6px;
+  left: -1.45rem; top: 0.4rem;
+  box-shadow: none;
+}
 
 /* Fact cards */
 .fact-grid {
@@ -1550,6 +1559,43 @@ async function laaiData() {
 laaiData();
 </script>
 <script>
+// ── GESKIEDKUNDIGE GEBEURE ──
+const GESKIEDENIS = [
+  {jaar:1652, ikon:'🌍', teks:'Jan van Riebeeck land aan die Kaap'},
+  {jaar:1685, ikon:'🌍', teks:'Hugenote-vlugtelinge kom aan die Kaap aan'},
+  {jaar:1688, ikon:'🌍', teks:'Friedrich Conradie (stamvader) kom aan die Kaap aan'},
+  {jaar:1795, ikon:'🌍', teks:'Eerste Britse besetting van die Kaap'},
+  {jaar:1803, ikon:'🌍', teks:'Kaap terug aan die Bataafse Republiek'},
+  {jaar:1806, ikon:'🌍', teks:'Tweede Britse besetting — Kaap word permanent Brits'},
+  {jaar:1816, ikon:'🌏', teks:'Jaar sonder somer — Tambora-vulkaan veroorsaak wêreldwye misoes'},
+  {jaar:1820, ikon:'🌍', teks:'4,000 Engelse setlaars vestig in die Oos-Kaap'},
+  {jaar:1828, ikon:'🌍', teks:'Ordonnansie 50 — vryswartes kry gelyke regte voor die hof'},
+  {jaar:1833, ikon:'🌏', teks:'Slawerny afgeskaf in die Britse Ryk'},
+  {jaar:1835, ikon:'🌍', teks:'Die Groot Trek begin — Boere verlaat die Kaapkolonie'},
+  {jaar:1838, ikon:'🌍', teks:'Slag van Bloedrivier — Voortrekkers verslaan Zoeloe-mag'},
+  {jaar:1843, ikon:'🌍', teks:'Natal word Britse kolonie'},
+  {jaar:1853, ikon:'🌍', teks:'Kaapkolonie kry verteenwoordigende bestuur'},
+  {jaar:1867, ikon:'🌍', teks:'Diamante ontdek naby Kimberley'},
+  {jaar:1871, ikon:'🌍', teks:'Kimberley-diamantvelde open — stortvloed van goudsoeker'},
+  {jaar:1877, ikon:'🌍', teks:'Transvaal geannekseer deur Brittanje'},
+  {jaar:1880, ikon:'🌍', teks:'Eerste Vryheidsoorlog — Transvaal herwin onafhanklikheid'},
+  {jaar:1886, ikon:'🌍', teks:'Goud ontdek op die Witwatersrand'},
+  {jaar:1899, ikon:'🌍', teks:'Anglo-Boereoorlog begin'},
+  {jaar:1902, ikon:'🌍', teks:'Vrede van Vereeniging — einde van Anglo-Boereoorlog'},
+  {jaar:1910, ikon:'🌍', teks:'Unie van Suid-Afrika gestig'},
+  {jaar:1914, ikon:'🌏', teks:'Eerste Wêreldoorlog begin'},
+  {jaar:1918, ikon:'🌏', teks:'Spaaanse griep — wêreldwyd meer as 50 miljoen dood'},
+  {jaar:1918, ikon:'🌏', teks:'Eerste Wêreldoorlog eindig'},
+  {jaar:1938, ikon:'🌍', teks:'Eeufees — Simboliese Groot Trek-herdenking by Bloedrivier'},
+  {jaar:1939, ikon:'🌍', teks:'Ossewa-Brandwag gestig (Februarie 1939)'},
+  {jaar:1939, ikon:'🌏', teks:'Tweede Wêreldoorlog begin'},
+  {jaar:1945, ikon:'🌏', teks:'Tweede Wêreldoorlog eindig'},
+  {jaar:1948, ikon:'🌍', teks:'Nasionale Party aan bewind — Apartheid-beleid begin'},
+  {jaar:1961, ikon:'🌍', teks:'Republiek van Suid-Afrika verklaar'},
+  {jaar:1990, ikon:'🌍', teks:'Nelson Mandela vrygelaat na 27 jaar'},
+  {jaar:1994, ikon:'🌍', teks:'Eerste demokratiese verkiesing in Suid-Afrika'},
+];
+
 // ── STATE ──
 const PAGE_SIZE = 80;
 let state = {
@@ -2038,22 +2084,37 @@ function buildTydlyn(r) {
     gebeure.push({ jaar: jaar(r.death_date) || r.death_year || null, ikon: '⚰', titel: 'Begrawe', detail: r.burial_place });
   }
 
+  // Voeg geskiedkundige agtergrondgebeure by (slegs binne persoon se lewenspan)
+  const vanJaar = ry ? ry - 5 : null;
+  const dy = (jaar(r.death_date) || r.death_year);
+  const totJaar = dy ? dy + 2 : (ry ? ry + 100 : null);
+  if (vanJaar && totJaar) {
+    GESKIEDENIS.forEach(g => {
+      if (g.jaar >= vanJaar && g.jaar <= totJaar) {
+        gebeure.push({ jaar: g.jaar, ikon: g.ikon, titel: g.teks, detail: '', hist: true });
+      }
+    });
+  }
+
   // Sorteer op jaar, onbekende jare laaste
   gebeure.sort((a, b) => {
     if (!a.jaar && !b.jaar) return 0;
     if (!a.jaar) return 1;
     if (!b.jaar) return -1;
-    return a.jaar - b.jaar;
+    if (a.jaar !== b.jaar) return a.jaar - b.jaar;
+    return (a.hist ? 1 : 0) - (b.hist ? 1 : 0); // persoonlike gebeure eerste as selfde jaar
   });
 
   if (!gebeure.length) return '';
 
   const items = gebeure.map(g => {
     const jaarStr = g.jaar ? String(g.jaar) : '?';
-    return '<div class="tl-entry">'
+    const histKlas = g.hist ? ' tl-hist' : '';
+    const detail = g.detail ? '<div class="tl-detail">' + escHtml(g.detail) + '</div>' : '';
+    return '<div class="tl-entry' + histKlas + '">'
       + '<div class="tl-date">' + g.ikon + '  ' + jaarStr + '</div>'
-      + '<div class="tl-title">' + g.titel + '</div>'
-      + '<div class="tl-detail">' + escHtml(g.detail) + '</div>'
+      + '<div class="tl-title">' + escHtml(g.titel) + '</div>'
+      + detail
       + '</div>';
   }).join('');
 

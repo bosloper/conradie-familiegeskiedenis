@@ -2786,9 +2786,19 @@ function attachCorrectionListeners() {
     if (typeof admLaaiPersoon === 'function') {
       admLaaiPersoon(persId);
     }
-    setTimeout(function() {
-      if (window.admVulHuwIn) window.admVulHuwIn(huwIndeks);
-    }, 300);
+    // Wag tot adm-vorm sigbaar is voor ons probeer velde invul
+    var pogings = 0;
+    var wag = setInterval(function() {
+      var vorm = document.getElementById('adm-vorm');
+      var datum = document.getElementById('adm-huw-datum');
+      pogings++;
+      if ((vorm && vorm.style.display !== 'none' && datum) || pogings > 20) {
+        clearInterval(wag);
+        if (window.admVulHuwIn) window.admVulHuwIn(huwIndeks);
+        // Blaai na huwelik-afdeling
+        if (datum) datum.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }, 100);
   };
 
   window.admKoppelSRekord = function() {

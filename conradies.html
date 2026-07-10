@@ -4582,12 +4582,17 @@ function attachCorrectionListeners() {
       var refData = await ghFetch(BASE + '/git/refs/heads/' + BRANCH, { headers: headers });
       var huidigeCommitSha = refData.object.sha;
 
-      ghStatus('⏳ Stap 2/4: Laai databasis op (kan 10-30 sek neem)...');
+      ghStatus('⏳ Stap 2/4: Laai databasis op (kan 10-60 sek neem)...');
+      // Gebruik base64 encoding — meer betroubaar vir groot lêers via GitHub API
       var jsonStr = JSON.stringify(CONRADIE_DATA);
+      // Kodeer UTF-8 string na base64 (hanteer Unicode karakters korrek)
+      var utf8Bytes = new TextEncoder().encode(jsonStr);
+      var binStr = Array.from(utf8Bytes).map(function(b) { return String.fromCharCode(b); }).join('');
+      var b64Str = btoa(binStr);
       var blobData = await ghFetch(BASE + '/git/blobs', {
         method: 'POST',
         headers: headers,
-        body: JSON.stringify({ content: jsonStr, encoding: 'utf-8' })
+        body: JSON.stringify({ content: b64Str, encoding: 'base64' })
       });
       var blobSha = blobData.sha;
 

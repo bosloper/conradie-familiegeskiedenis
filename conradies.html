@@ -1543,6 +1543,13 @@ main {
   <div class="corr-grid single">
     <div class="corr-field"><label>Gade(s)</label><input id="corr-spouse" type="text" placeholder="Naam; Tweede naam indien meer as een"></div>
   </div>
+  <div class="corr-grid">
+    <div class="corr-field"><label>Huweliksdatum</label><input id="corr-huw-datum" type="text" placeholder="bv. 1867-04-14 of 14 APR 1867"></div>
+    <div class="corr-field"><label>Huweliksplek</label><input id="corr-huw-plek" type="text" placeholder="bv. Robertson"></div>
+  </div>
+  <div class="corr-grid single" id="corr-huw-indeks-wrap" style="display:none;">
+    <div class="corr-field"><label style="font-size:0.78rem;color:#9a7a50;">Huwelik nommer (as meer as een)</label><input id="corr-huw-indeks" type="number" min="1" value="1" style="width:4rem;"></div>
+  </div>
 
   <div class="corr-section-label">Aantekening / Narratief</div>
   <div class="corr-grid single">
@@ -2036,7 +2043,7 @@ function buildPanelHTML(r) {
       const huwInfo  = huwDatum
         ? `<div style="font-size:0.78rem;color:var(--sepia);margin-top:2px">&#9901; ${huwDatum}${huwPlek ? ', ' + huwPlek : ''}</div>`
         : `<div style="font-size:0.75rem;color:var(--muted);margin-top:2px;font-style:italic;">Huweliksdatum onbekend
-            <button onclick="admVulHuwPaneel('${r.id}',${i})" style="margin-left:0.4rem;padding:0.1rem 0.4rem;background:var(--sepia-light);color:#fff;border:none;border-radius:3px;cursor:pointer;font-size:0.7rem;">✏️ Voeg by</button>
+            <button onclick="openCorrDrawerHuw('${r.id}',${i})" style="margin-left:0.4rem;padding:0.1rem 0.4rem;background:var(--sepia-light);color:#fff;border:none;border-radius:3px;cursor:pointer;font-size:0.7rem;">✏️ Stel voor</button>
           </div>`;
       return `<div class="panel-row"><span class="label">Gade</span><span class="value">${linked}${spDates}${huwInfo}</span></div>`;
     }).join('');
@@ -2527,6 +2534,9 @@ function buildWhatsAppMessage() {
     ['Vader',           get('corr-father')],
     ['Moeder',          get('corr-mother')],
     ['Gade(s)',         get('corr-spouse')],
+    ['Huweliksdatum',   get('corr-huw-datum')],
+    ['Huweliksplek',    get('corr-huw-plek')],
+    ['HuwelikNommer',   get('corr-huw-indeks')],
   ].filter(([, v]) => v);
 
   const narrative   = get('corr-narrative');
@@ -2563,6 +2573,9 @@ function buildWhatsAppMessage() {
     'Vader':         'VADER',
     'Moeder':        'MOEDER',
     'Gade(s)':       'GADES',
+    'Huweliksdatum': 'HUWELIKSDATUM',
+    'Huweliksplek':  'HUWELIKSPLEK',
+    'HuwelikNommer': 'HUWELIK_NR',
   };
 
   if (fields.length) {
@@ -2587,6 +2600,28 @@ function buildWhatsAppMessage() {
   if (contContact) msg += `INDIENER_KONTAK: ${contContact}\n`;
 
   return msg;
+}
+
+// Open Stel voor-laai vir huweliksdatum-voorstel
+function openCorrDrawerHuw(persId, huwIndeks) {
+  // Oop die Stel voor-laai vir hierdie persoon
+  if (typeof toggleCorrectionDrawer === 'function') {
+    toggleCorrectionDrawer(persId, true); // force open
+  }
+  // Toon die huwelik-nommer-veld as meer as een moontlik
+  var indeksWrap = document.getElementById('corr-huw-indeks-wrap');
+  var indeksEl   = document.getElementById('corr-huw-indeks');
+  if (indeksEl)   indeksEl.value = huwIndeks + 1; // 1-gebaseer vir gebruiker
+  if (indeksWrap) indeksWrap.style.display = huwIndeks > 0 ? '' : 'none';
+
+  // Blaai na die huweliksdatum-veld
+  setTimeout(function() {
+    var el = document.getElementById('corr-huw-datum');
+    if (el) {
+      el.focus();
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, 200);
 }
 
 function closeCorrectionDrawer() {
@@ -3214,18 +3249,25 @@ function attachCorrectionListeners() {
     var ekstra      = parsed['EKSTRA'] || '';
     var indiener    = parsed['INDIENER_NAAM'] || '';
 
-    if (!verskille.length && !narrVervang && !narrVoegBy) {
+    // Hanteer huweliksdatum/plek as aparte struktuur
+    var huwDatum = parsed['HUWELIKSDATUM'] || '';
+    var huwPlek  = parsed['HUWELIKSPLEK']  || '';
+    var huwNr    = parsed['HUWELIK_NR'] ? (parseInt(parsed['HUWELIK_NR']) - 1) : 0;
+    if (isNaN(huwNr) || huwNr < 0) huwNr = 0;
+    var huwInfo  = (huwDatum || huwPlek) ? { datum: huwDatum, plek: huwPlek, indeks: huwNr } : null;
+
+    if (!verskille.length && !narrVervang && !narrVoegBy && !huwInfo) {
       statusEl.textContent = '⚠️ Geen bekende veldwysigings gevind nie.';
       return;
     }
 
     // Wys vergelyking
-    admWysVergelyking(persoon, verskille, narrVervang, narrVoegBy, ekstra, indiener);
+    admWysVergelyking(persoon, verskille, narrVervang, narrVoegBy, ekstra, indiener, huwInfo);
     statusEl.textContent = '✅ Voorstel verwerk vir: ' + persoon.name + ' (REF ' + ref + ')';
   }
 
   // ── Wys Oud vs Nuut Vergelyking ──
-  function admWysVergelyking(persoon, verskille, narrVervang, narrVoegBy, ekstra, indiener) {
+  function admWysVergelyking(persoon, verskille, narrVervang, narrVoegBy, ekstra, indiener, huwInfo) {
     // Laai die persoon in die vorm
     admLaaiPersoon(persoon.id);
 
@@ -3270,6 +3312,26 @@ function attachCorrectionListeners() {
               '<span style="color:#c49a3a;font-size:0.8rem;">Aanvaar</span></label>' +
               '</td></tr>';
     });
+    // Huweliksdatum-ry
+    if (huwInfo && (huwInfo.datum || huwInfo.plek)) {
+      var bestaandeDatum = (persoon.marr_dates && persoon.marr_dates[huwInfo.indeks]) || '';
+      var bestaandePlek  = (persoon.marr_places && persoon.marr_places[huwInfo.indeks]) || '';
+      var oudTeks  = [bestaandeDatum, bestaandePlek].filter(Boolean).join(', ') || '<em>leeg</em>';
+      var nuutTeks = [huwInfo.datum, huwInfo.plek].filter(Boolean).join(', ');
+      html += '<tr style="background:#0e1a0e;">' +
+              '<td style="padding:0.3rem 0.5rem;color:#7a6a4a;">HUWELIK #' + (huwInfo.indeks + 1) + '</td>' +
+              '<td style="padding:0.3rem 0.5rem;color:#5c4510;">' + oudTeks + '</td>' +
+              '<td style="padding:0.3rem 0.5rem;color:#5cb85c;">' + nuutTeks + '</td>' +
+              '<td style="padding:0.3rem 0.5rem;">' +
+              '<label style="display:flex;align-items:center;gap:0.3rem;cursor:pointer;">' +
+              '<input type="checkbox" id="adm-vgl-huw" ' +
+              'data-indeks="' + huwInfo.indeks + '" ' +
+              'data-datum="' + (huwInfo.datum || '').replace(/"/g,'&quot;') + '" ' +
+              'data-plek="'  + (huwInfo.plek  || '').replace(/"/g,'&quot;') + '" ' +
+              'checked style="cursor:pointer;width:16px;height:16px;accent-color:#5cb85c;"> ' +
+              '<span style="color:#5cb85c;font-size:0.8rem;">Aanvaar</span></label>' +
+              '</td></tr>';
+    }
     html += '</table>';
 
     if (narrVervang || narrVoegBy) {
@@ -3347,8 +3409,23 @@ function attachCorrectionListeners() {
       }
     }
 
+    // Huweliksdatum direk in databasis-rekord toepas (nie via adm-vorm nie)
+    var huwCb = document.getElementById('adm-vgl-huw');
+    if (huwCb && huwCb.checked) {
+      var hIndeks = parseInt(huwCb.getAttribute('data-indeks')) || 0;
+      var hDatum  = huwCb.getAttribute('data-datum') || '';
+      var hPlek   = huwCb.getAttribute('data-plek')  || '';
+      if (!persoon.marr_dates)  persoon.marr_dates  = [];
+      if (!persoon.marr_places) persoon.marr_places = [];
+      while (persoon.marr_dates.length  <= hIndeks) persoon.marr_dates.push('');
+      while (persoon.marr_places.length <= hIndeks) persoon.marr_places.push('');
+      if (hDatum) persoon.marr_dates[hIndeks]  = hDatum;
+      if (hPlek)  persoon.marr_places[hIndeks] = hPlek;
+      toegepas++;
+    }
+
     document.getElementById('adm-status').textContent =
-      '✅ ' + toegepas + ' veld(e) toegepas — klik "Stoor Wysigings" om te bevestig.';
+      '✅ ' + toegepas + ' veld(e) toegepas — klik "Stoor Wysigings" dan "Stoor na GitHub".';
 
     // Verwyder vergelyking-paneel
     var vglDiv = document.getElementById('adm-vgl-paneel');

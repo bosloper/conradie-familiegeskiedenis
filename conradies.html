@@ -1504,7 +1504,7 @@ main {
   </div>
 <!-- Injected into panel, after panel-close div -->
 <div class="panel-actions" id="panel-actions" style="display:none">
-  <button class="btn-edit" id="btn-edit">✏️ Stel voor</button>
+  <button class="btn-edit" id="btn-edit">✏️ Stel wysiging voor</button>
 </div>
 <div id="correction-drawer">
   <div class="drawer-heading" id="corr-person-label">Voorstelle</div>
@@ -1634,6 +1634,7 @@ async function laaiData() {
     const resp = await fetch('data/conradies.json');
     if (!resp.ok) throw new Error('HTTP ' + resp.status);
     CONRADIE_DATA = await resp.json();
+    window.CONRADIE_DATA = CONRADIE_DATA; // Admin IIFE het window.CONRADIE_DATA nodig
     // Bereken tak-tellings
     BRANCH_COUNTS = {};
     for (const r of CONRADIE_DATA) {
@@ -2042,9 +2043,7 @@ function buildPanelHTML(r) {
       const huwPlek  = r.marr_places && r.marr_places[i] ? r.marr_places[i] : '';
       const huwInfo  = huwDatum
         ? `<div style="font-size:0.78rem;color:var(--sepia);margin-top:2px">&#9901; ${huwDatum}${huwPlek ? ', ' + huwPlek : ''}</div>`
-        : `<div style="font-size:0.75rem;color:var(--muted);margin-top:2px;font-style:italic;">Huweliksdatum onbekend
-            <button onclick="openCorrDrawerHuw('${r.id}',${i})" style="margin-left:0.4rem;padding:0.1rem 0.4rem;background:var(--sepia-light);color:#fff;border:none;border-radius:3px;cursor:pointer;font-size:0.7rem;">✏️ Stel voor</button>
-          </div>`;
+        : `<div style="font-size:0.75rem;color:var(--muted);margin-top:2px;font-style:italic;">Huweliksdatum onbekend</div>`;
       return `<div class="panel-row"><span class="label">Gade</span><span class="value">${linked}${spDates}${huwInfo}</span></div>`;
     }).join('');
     parts.push(`<div class="panel-section"><h3>Gades</h3>${spRows}</div>`);
@@ -2373,7 +2372,7 @@ const HULP_INHOUD = {
         teks: 'Die afdeling "Jou verbinding met die stamvader" wys die direkte lyn vanaf Friedrich Conradie deur die geslagsregister. Klik op enige naam om na daardie persoon se kaart oor te spring.'
       },
       {
-        kop: 'Lees meer / Stel voor',
+        kop: 'Lees meer / Stel wysiging voor',
         teks: 'Klik op "📖 Lees meer" om die volledige inligting oor Friedrich Conradie in die detail-paneel te sien. Gebruik "✏️ Stel voor" om korrek­sies of aanvullings voor te stel — dit word na die registerhouer gestuur vir verifikasie.'
       },
       {
@@ -2500,7 +2499,7 @@ function toggleCorrectionDrawer(id) {
   if (isOpen && correctionPersonId === id) {
     drawer.classList.remove('open');
     btn.classList.remove('active');
-    btn.textContent = '✏️ Stel voor';
+    btn.textContent = '✏️ Stel wysiging voor';
   } else {
     initCorrectionForm(id);
     drawer.classList.add('open');

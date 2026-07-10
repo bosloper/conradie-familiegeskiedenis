@@ -1104,118 +1104,276 @@ main {
 .btn-edit.active { background: var(--sepia); color: var(--ink); }
 
 /* Correction drawer */
-#correction-drawer {
+/* ── Voorstel full-screen modal ── */
+#voorstel-overlay {
   display: none;
-  background: #0e0a04;
-  border-top: 2px solid var(--sepia);
-  padding: 1.2rem 1.4rem 1.6rem;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.72);
+  z-index: 350;
 }
-#correction-drawer.open { display: block; }
+#voorstel-overlay.oop { display: block; }
 
-.drawer-heading {
+#voorstel-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 351;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+#voorstel-modal.oop { display: block; }
+
+#voorstel-modal-boks {
+  background: #0e0a04;
+  min-height: 100vh;
+  padding: 0 0 2rem;
+}
+
+/* Modal header */
+#voorstel-modal-kop {
+  position: sticky;
+  top: 0;
+  background: #0e0b04;
+  border-bottom: 2px solid var(--sepia);
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 10;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.5);
+}
+#voorstel-modal-titel {
   font-family: 'Josefin Sans', sans-serif;
-  font-size: 0.6rem;
+  font-size: 0.62rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--sepia-light);
-  margin-bottom: 1rem;
-  padding-bottom: 0.4rem;
-  border-bottom: 1px solid #2d2518;
+  line-height: 1.3;
 }
-.corr-section-label {
+#voorstel-modal-sluit-bo {
+  background: rgba(196,151,58,0.15);
+  border: 1px solid var(--sepia);
+  color: var(--sepia-light);
+  font-size: 1.1rem;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 2px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Sections */
+.vm-afdeling {
+  padding: 0.9rem 1rem 0.5rem;
+  border-bottom: 1px solid #1e1810;
+}
+.vm-afdeling-label {
   font-family: 'Josefin Sans', sans-serif;
-  font-size: 0.55rem;
-  letter-spacing: 0.18em;
+  font-size: 0.54rem;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--muted);
-  margin: 0.9rem 0 0.4rem;
+  margin-bottom: 0.65rem;
 }
-.corr-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.5rem;
-}
-.corr-grid.single { grid-template-columns: 1fr; }
 
-.corr-field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
+/* Three-column field table */
+.vm-tabel {
+  width: 100%;
+  border-collapse: collapse;
 }
-.corr-field label {
+.vm-tabel th {
   font-family: 'Josefin Sans', sans-serif;
-  font-size: 0.65rem;
-  letter-spacing: 0.1em;
+  font-size: 0.52rem;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #e0b87a;
+  color: #7a6a4a;
+  padding: 0.25rem 0.4rem;
+  border-bottom: 1px solid #2d2518;
+  text-align: left;
 }
-.corr-field input,
-.corr-field textarea,
-.corr-field select {
-  background: rgba(255,255,255,0.13);
-  border: 1px solid #7a6040;
+.vm-tabel td {
+  padding: 0.25rem 0.4rem;
+  vertical-align: middle;
+  border-bottom: 1px solid #1a1208;
+}
+.vm-veld-naam {
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #c49a3a;
+  width: 28%;
+}
+.vm-huidig {
+  font-family: 'EB Garamond', serif;
+  font-size: 0.9rem;
+  color: #7a6a4a;
+  font-style: italic;
+  width: 30%;
+  word-break: break-word;
+}
+.vm-huidig.leeg { color: #3d3020; }
+.vm-nuut input {
+  width: 100%;
+  box-sizing: border-box;
+  background: rgba(255,255,255,0.10);
+  border: 1px solid #5a4830;
+  border-radius: 2px;
+  color: #f5ecd4;
+  font-family: 'EB Garamond', serif;
+  font-size: 0.9rem;
+  padding: 0.3rem 0.45rem;
+  outline: none;
+}
+.vm-nuut input:focus { border-color: #c49742; box-shadow: 0 0 0 2px rgba(196,151,66,0.2); }
+.vm-nuut input::placeholder { color: #5a4830; font-style: italic; }
+
+/* Huwelik blocks */
+.vm-huw-blok {
+  background: #150f05;
+  border: 1px solid #2d2518;
+  border-radius: 4px;
+  padding: 0.6rem 0.8rem;
+  margin-bottom: 0.5rem;
+}
+.vm-huw-nr {
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 0.55rem;
+  letter-spacing: 0.15em;
+  color: var(--sepia-light);
+  margin-bottom: 0.4rem;
+}
+
+/* Textarea fields */
+.vm-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid #5a4830;
+  border-radius: 2px;
   color: #f5ecd4;
   font-family: 'EB Garamond', serif;
   font-size: 0.95rem;
-  padding: 0.45rem 0.55rem;
-  border-radius: 2px;
+  padding: 0.5rem 0.6rem;
   outline: none;
-  transition: border-color 0.15s;
-  width: 100%;
+  resize: vertical;
+  line-height: 1.5;
 }
-.corr-field input:focus,
-.corr-field textarea:focus { border-color: #c49742; box-shadow: 0 0 0 2px rgba(196,151,66,0.25); }
-.corr-field textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
-.corr-field input::placeholder,
-.corr-field textarea::placeholder { color: #9a8060; font-style: italic; }
-.corr-field select { cursor: pointer; }
-.corr-field select option { background: #1a1208; }
+.vm-textarea:focus { border-color: #c49742; box-shadow: 0 0 0 2px rgba(196,151,66,0.2); }
+.vm-textarea::placeholder { color: #5a4830; font-style: italic; }
 
-.corr-narrative-note {
-  font-size: 0.75rem;
-  color: #9a7a50;
-  font-style: italic;
-  margin-top: 0.2rem;
+/* Nuwe persoon toggle */
+.vm-nuutpers-toggle {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.6rem;
+}
+.vm-nuutpers-toggle button {
+  flex: 1;
+  padding: 0.5rem;
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: 1px solid #3d3020;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.15s;
+  background: #150f05;
+  color: #7a6a4a;
+}
+.vm-nuutpers-toggle button.aktief {
+  background: rgba(196,151,58,0.2);
+  border-color: var(--sepia);
+  color: var(--sepia-light);
 }
 
-/* Contributor section */
-.corr-contributor {
-  margin-top: 1rem;
-  padding-top: 0.8rem;
-  border-top: 1px solid #2d2518;
+/* Contributor */
+.vm-beses {
+  padding: 0.9rem 1rem 0.5rem;
+  border-bottom: 1px solid #1e1810;
+  background: #0a0804;
 }
+.vm-fout { color: #e07050; font-size: 0.78rem; margin-top: 0.25rem; display: none; }
 
-/* Send button */
-.btn-whatsapp {
+/* Send buttons */
+.vm-stuur-knoppies {
+  padding: 0.8rem 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.vm-btn {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.6rem;
   width: 100%;
-  margin-top: 1.2rem;
-  background: #1a5c2a;
-  border: 1px solid #2d8a3e;
-  color: #efffef;
+  padding: 0.75rem 1rem;
   font-family: 'Josefin Sans', sans-serif;
   font-size: 0.65rem;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  padding: 0.7rem 1rem;
   border-radius: 2px;
   cursor: pointer;
   transition: all 0.15s;
-  justify-content: center;
 }
-.btn-whatsapp:hover { background: #1f7a35; }
-.btn-whatsapp .wa-icon { font-size: 1.1rem; }
+.vm-btn-wa  { background: #1a5c2a; border: 1px solid #2d8a3e; color: #efffef; }
+.vm-btn-wa:hover  { background: #1f7a35; }
+.vm-btn-email { background: #c49a3a; border: 1px solid #e0b84a; color: #1a1208; }
+.vm-btn-email:hover { background: #d4aa50; }
+.vm-btn-kopieer { background: #3d3020; border: 1px solid #5a4830; color: #e8dfc8; }
+.vm-btn-kopieer:hover { background: #4d4028; }
 
-.corr-disclaimer {
+/* Copied message area */
+#vm-boodskap-boks {
+  display: none;
+  margin: 0.6rem 1rem 0;
+  padding: 0.6rem;
+  background: #0d0a05;
+  border: 1px solid #2d2518;
+  border-radius: 4px;
+}
+#vm-kopieer-status { color: #c49a3a; font-size: 0.8rem; margin-top: 0.3rem; min-height: 1rem; }
+
+/* Disclaimer */
+.vm-disclaimer {
   font-size: 0.7rem;
   color: #7a6040;
   text-align: center;
-  margin-top: 0.6rem;
+  padding: 0.8rem 1rem 0;
   font-style: italic;
-  line-height: 1.4;
+  line-height: 1.5;
 }
+
+/* Bottom close button */
+#voorstel-modal-sluit-onder {
+  display: block;
+  width: calc(100% - 2rem);
+  margin: 1.5rem 1rem 0.5rem;
+  padding: 0.9rem;
+  background: #1e1810;
+  border: 1px solid #3d3020;
+  color: #a08c68;
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  border-radius: 2px;
+  cursor: pointer;
+  text-align: center;
+}
+#voorstel-modal-sluit-onder:hover { background: #2d2518; color: var(--sepia-light); }
+
+/* Keep old drawer hidden; modal replaces it */
+#correction-drawer { display: none !important; }
+.corr-contributor { margin-top:1rem; padding-top:0.8rem; border-top:1px solid #2d2518; }
+.btn-whatsapp { display:none; }
+.corr-disclaimer { display:none; }
 
 
 /* ── Voorgeslagte-ketting ── */
@@ -1615,6 +1773,195 @@ main {
 
   <div class="panel-content" id="panel-content"></div>
 </div>
+
+<!-- ══════════════════════════════════════════════════════
+     VOORSTEL FULL-SCREEN MODAL
+     ══════════════════════════════════════════════════════ -->
+<div id="voorstel-overlay"></div>
+<div id="voorstel-modal" role="dialog" aria-modal="true">
+  <div id="voorstel-modal-boks">
+
+    <!-- Sticky header -->
+    <div id="voorstel-modal-kop">
+      <div id="voorstel-modal-titel">✏️ Stel Wysiging Voor<br>
+        <span id="vm-persoon-naam" style="color:#c49a3a;font-size:0.68rem;"></span>
+      </div>
+      <button id="voorstel-modal-sluit-bo" onclick="sluitVoorstelModal()" title="Sluit">✕</button>
+    </div>
+
+    <!-- ── 1. WYSIGBARE VELDE (drie kolomme) ── -->
+    <div class="vm-afdeling">
+      <div class="vm-afdeling-label">📋 Wysigings — vul slegs in wat jy wil verander</div>
+      <table class="vm-tabel">
+        <thead>
+          <tr>
+            <th>Veld</th>
+            <th>Huidige waarde</th>
+            <th>Nuwe waarde</th>
+          </tr>
+        </thead>
+        <tbody id="vm-veld-tabel-lyf">
+          <!-- Reëls word deur JS ingevoeg via vulVoorstelModal() -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ── 2. HUWELIKE ── -->
+    <div class="vm-afdeling" id="vm-huwelik-afdeling">
+      <div class="vm-afdeling-label">💍 Huwelike — datum &amp; plek</div>
+      <div id="vm-huw-blokke"></div>
+      <div style="font-size:0.78rem;color:#7a6a4a;margin-top:0.4rem;line-height:1.4;">
+        💡 Nuwe gade of egskeiding? Gebruik die "Meer inligting"-veld hieronder.
+      </div>
+    </div>
+
+    <!-- ── 3. NOTA / VERTEL MEER ── -->
+    <div class="vm-afdeling">
+      <div class="vm-afdeling-label">📝 Nota &amp; Verhaal</div>
+      <div style="font-size:0.82rem;color:#9a8060;margin-bottom:0.5rem;line-height:1.45;">
+        Weet jy meer van hierdie persoon? Enige herinnering, beroep, skool, kerk, woonplek of
+        interessante besonderheid is welkom — al is dit net 'n sin of twee.
+      </div>
+      <textarea id="vm-nota" class="vm-textarea" rows="4"
+        placeholder="bv. Sy was bekend as 'Tannie Griet' en het op die plaas Rietfontein naby Calvinia gewoon…"></textarea>
+      <div style="margin-top:0.5rem;">
+        <label style="font-family:'Josefin Sans',sans-serif;font-size:0.58rem;letter-spacing:0.1em;text-transform:uppercase;color:#7a6a4a;">
+          <input type="radio" name="vm-nota-aksie" value="voeg_by" checked style="accent-color:#c49a3a;">
+          Voeg by bestaande teks
+        </label>
+        &nbsp;
+        <label style="font-family:'Josefin Sans',sans-serif;font-size:0.58rem;letter-spacing:0.1em;text-transform:uppercase;color:#7a6a4a;">
+          <input type="radio" name="vm-nota-aksie" value="vervang" style="accent-color:#c49a3a;">
+          Vervang bestaande teks
+        </label>
+      </div>
+    </div>
+
+    <!-- ── 4. MEER INLIGTING (ekstra / nuwe persoon) ── -->
+    <div class="vm-afdeling">
+      <div class="vm-afdeling-label">➕ Nuwe persone / Meer inligting</div>
+      <div style="font-size:0.82rem;color:#9a8060;margin-bottom:0.5rem;line-height:1.45;">
+        Moet 'n kind, kleinkind, broer, suster, gade of egskeiding bygevoeg word?
+      </div>
+      <div class="vm-nuutpers-toggle">
+        <button id="vm-nee-btn" class="aktief" onclick="vmToggleNuutPers(false)">Nee, net wysigings</button>
+        <button id="vm-ja-btn" onclick="vmToggleNuutPers(true)">Ja, nuwe persoon</button>
+      </div>
+      <div id="vm-nuutpers-vorm" style="display:none;">
+        <div style="font-size:0.78rem;color:#c49a3a;margin-bottom:0.5rem;padding:0.4rem 0.6rem;background:#1a1208;border-radius:3px;border-left:2px solid #c49a3a;">
+          Hierdie inligting word apart per e-pos gestuur vir handmatige verwerking.
+        </div>
+        <table class="vm-tabel" style="margin-bottom:0.4rem;">
+          <tbody>
+            <tr>
+              <td class="vm-veld-naam">Volledige naam</td>
+              <td class="vm-huidig leeg">—</td>
+              <td class="vm-nuut"><input id="vm-np-naam" type="text" placeholder="Voornaam en van"></td>
+            </tr>
+            <tr>
+              <td class="vm-veld-naam">Geboortedatum</td>
+              <td class="vm-huidig leeg">—</td>
+              <td class="vm-nuut"><input id="vm-np-gebdatum" type="text" placeholder="bv. 1923-05-14"></td>
+            </tr>
+            <tr>
+              <td class="vm-veld-naam">Geboorteplek</td>
+              <td class="vm-huidig leeg">—</td>
+              <td class="vm-nuut"><input id="vm-np-gebplek" type="text" placeholder="Dorp of distrik"></td>
+            </tr>
+            <tr>
+              <td class="vm-veld-naam">Geslag</td>
+              <td class="vm-huidig leeg">—</td>
+              <td class="vm-nuut">
+                <select id="vm-np-geslag" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,0.10);border:1px solid #5a4830;border-radius:2px;color:#f5ecd4;font-family:'EB Garamond',serif;font-size:0.9rem;padding:0.3rem 0.45rem;outline:none;">
+                  <option value="">— Kies —</option>
+                  <option value="M">Manlik</option>
+                  <option value="V">Vroulik</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td class="vm-veld-naam">Verhouding</td>
+              <td class="vm-huidig leeg">—</td>
+              <td class="vm-nuut"><input id="vm-np-verhouding" type="text" placeholder="bv. Kind van hierdie persoon, Broer, Gade"></td>
+            </tr>
+            <tr>
+              <td class="vm-veld-naam">Sterfdatum</td>
+              <td class="vm-huidig leeg">—</td>
+              <td class="vm-nuut"><input id="vm-np-sterfdat" type="text" placeholder="Opsioneel"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── 5. JOU BESONDERHEDE ── -->
+    <div class="vm-beses">
+      <div class="vm-afdeling-label">👤 Jou Besonderhede</div>
+      <table class="vm-tabel">
+        <tbody>
+          <tr>
+            <td class="vm-veld-naam">Jou naam &amp; van <span style="color:#e07050;">*</span></td>
+            <td class="vm-huidig leeg" style="font-size:0.78rem;color:#5a4830;font-style:italic;"></td>
+            <td class="vm-nuut">
+              <input id="vm-beses-naam" type="text" placeholder="Verpligtend">
+              <div id="vm-naam-fout" class="vm-fout">⚠️ Vul asseblief jou naam en van in.</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="vm-veld-naam">Familiekode</td>
+            <td class="vm-huidig leeg"></td>
+            <td class="vm-nuut"><input id="vm-beses-kode" type="text" placeholder="bv. c2d4e8…"></td>
+          </tr>
+          <tr>
+            <td class="vm-veld-naam">Kontak <span style="color:#e07050;">*</span></td>
+            <td class="vm-huidig leeg" style="font-size:0.78rem;color:#5a4830;font-style:italic;"></td>
+            <td class="vm-nuut">
+              <input id="vm-beses-kontak" type="text" placeholder="+27… of e-posadres">
+              <div id="vm-kontak-fout" class="vm-fout">⚠️ Vul asseblief jou kontaknommer of e-posadres in.</div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="font-size:0.72rem;color:#5a4830;margin-top:0.4rem;font-style:italic;">
+        * Verpligte velde — sodat ons jou kan kontak as ons meer wil weet.
+      </div>
+    </div>
+
+    <!-- ── 6. STUUR KNOPPIES ── -->
+    <div class="vm-stuur-knoppies">
+      <button class="vm-btn vm-btn-wa" onclick="vmStuurWA(false)">
+        💬 WhatsApp (App)
+      </button>
+      <button class="vm-btn vm-btn-wa" style="background:#1a5c1a;" onclick="vmStuurWA(true)">
+        🌐 WhatsApp Web
+      </button>
+      <button class="vm-btn vm-btn-email" onclick="vmStuurEmail()">
+        ✉️ Stuur per E-pos
+      </button>
+      <button class="vm-btn vm-btn-kopieer" onclick="vmKopieer()">
+        ✂️ Kopieer Boodskap
+      </button>
+    </div>
+    <div id="vm-boodskap-boks">
+      <div style="font-size:0.75rem;color:#9a7a50;margin-bottom:0.3rem;">📋 Boodskap (kopieer en plak):</div>
+      <textarea id="vm-boodskap-teks" rows="10" readonly class="vm-textarea"
+        style="font-size:0.78rem;"></textarea>
+      <div id="vm-kopieer-status"></div>
+    </div>
+
+    <div class="vm-disclaimer">
+      Jou voorstel word na die registerhouer gestuur vir verifikasie.<br>
+      Slegs goedgekeurde veranderinge word in die register opgeneem.<br>
+      <span style="color:#c49a3a;font-size:0.78rem;">📧 photographyisfun.za@gmail.com &nbsp;|&nbsp; 📱 +27 69 027 6568</span>
+    </div>
+
+    <!-- Afsluit-knoppie onderaan -->
+    <button id="voorstel-modal-sluit-onder" onclick="sluitVoorstelModal()">
+      ✕ &nbsp; Sluit Voorstel-skerm
+    </button>
+
+  </div><!-- /voorstel-modal-boks -->
+</div><!-- /voorstel-modal -->
 
 <!-- ── TAB 2: NARRATIVE BROWSER ── -->
 
@@ -2459,250 +2806,318 @@ function closeHelp() {
 const VERIFIER_WA = '27690276568';
 let correctionPersonId = null;
 
-function initCorrectionForm(id) {
+// ── VOORSTEL MODAL ──────────────────────────────────────────
+// Velde wat in die drie-kolom tabel verskyn (label, rekord-sleutel, placeholder)
+var VM_VELDE = [
+  ['Voornaam',           'given',        'Nuwe voornaam'],
+  ['Van',                'surname',      'Nuwe van'],
+  ['Bynaam / Noemnaam',  'nickname',     'bv. Boetie, Griet'],
+  ['Geboortedatum',      'birth_date',   'bv. 1845-03-12'],
+  ['Geboorteplek',       'birth_place',  'Dorp of distrik'],
+  ['Sterfdatum',         'death_date',   'bv. 1912-07-04'],
+  ['Sterfplek',          'death_place',  'Dorp of distrik'],
+  ['Begraafplek',        'burial_place', 'Kerkhof / dorp'],
+  ['Beroep',             'occupation',   'bv. Boer, Onderwyser'],
+  ['Distrik',            'district',     'bv. Montagu, Calvinia'],
+];
+
+function vulVoorstelModal(id) {
   correctionPersonId = id;
-  const r = indexById[id];
+  var r = indexById[id];
   if (!r) return;
 
-  // Pre-fill current values as placeholders
-  const set = (fieldId, val) => {
-    const el = document.getElementById(fieldId);
-    if (el && val) el.placeholder = val;
-  };
+  // Opdateer kop
+  var naamEl = document.getElementById('vm-persoon-naam');
+  if (naamEl) naamEl.textContent = r.name + ' — ' + (r.family_code || r.id);
 
-  set('corr-given',       r.given || '');
-  set('corr-surname',     r.surname || '');
-  set('corr-nickname',    r.nickname || '');
-  set('corr-birth-date',  r.birth_date || '');
-  set('corr-birth-place', r.birth_place || '');
-  set('corr-death-date',  r.death_date || '');
-  set('corr-death-place', r.death_place || '');
-  set('corr-burial',      r.burial_place || '');
-  set('corr-spouse',      r.spouses ? r.spouses.map(s=>s.name).join('; ') : '');
-  set('corr-father',      r.parents ? (r.parents.find(p=>p.role==='father')||{}).name||'' : '');
-  set('corr-mother',      r.parents ? (r.parents.find(p=>p.role==='mother')||{}).name||'' : '');
-
-  // Clear all inputs
-  document.querySelectorAll('#correction-drawer input, #correction-drawer textarea')
-    .forEach(el => { if (el.id !== 'corr-contributor-code') el.value = ''; });
-
-  // Show person name in drawer heading
-  const heading = document.getElementById('corr-person-label');
-  if (heading) heading.textContent = `Voorstelle vir: ${r.name} (${r.family_code || r.id})`;
-}
-
-function toggleCorrectionDrawer(id) {
-  const drawer = document.getElementById('correction-drawer');
-  const btn = document.getElementById('btn-edit');
-  const isOpen = drawer.classList.contains('open');
-
-  if (isOpen && correctionPersonId === id) {
-    drawer.classList.remove('open');
-    btn.classList.remove('active');
-    btn.textContent = '✏️ Stel wysiging voor';
-  } else {
-    initCorrectionForm(id);
-    drawer.classList.add('open');
-    btn.classList.add('active');
-    btn.textContent = '✕ Sluit';
-    // Scroll drawer into view
-    setTimeout(() => drawer.scrollIntoView({behavior:'smooth', block:'nearest'}), 100);
+  // Bou drie-kolom tabel
+  var lyf = document.getElementById('vm-veld-tabel-lyf');
+  if (lyf) {
+    lyf.innerHTML = VM_VELDE.map(function(v) {
+      var label = v[0], sleutel = v[1], ph = v[2];
+      var huidig = (r[sleutel] || '').toString().trim();
+      var leegKlas = huidig ? '' : ' leeg';
+      var huidigTeks = huidig || '—';
+      return '<tr>' +
+        '<td class="vm-veld-naam">' + label + '</td>' +
+        '<td class="vm-huidig' + leegKlas + '">' + huidigTeks + '</td>' +
+        '<td class="vm-nuut"><input type="text" id="vmi-' + sleutel + '" placeholder="' + ph + '"></td>' +
+        '</tr>';
+    }).join('');
   }
+
+  // Huwelik-blokke
+  var huwDiv = document.getElementById('vm-huw-blokke');
+  if (huwDiv) {
+    if (r.spouses && r.spouses.length) {
+      huwDiv.innerHTML = r.spouses.map(function(sp, i) {
+        var huidigDatum = (r.marr_dates  && r.marr_dates[i])  ? r.marr_dates[i]  : '';
+        var huidigPlek  = (r.marr_places && r.marr_places[i]) ? r.marr_places[i] : '';
+        return '<div class="vm-huw-blok">' +
+          '<div class="vm-huw-nr">Huwelik ' + (i+1) + ': ' + (sp.name || '?') + '</div>' +
+          '<table class="vm-tabel"><tbody>' +
+          '<tr>' +
+            '<td class="vm-veld-naam">Datum</td>' +
+            '<td class="vm-huidig' + (huidigDatum ? '' : ' leeg') + '">' + (huidigDatum || '—') + '</td>' +
+            '<td class="vm-nuut"><input type="text" id="vmi-huw' + i + '-datum" placeholder="bv. 1867-04-14"></td>' +
+          '</tr>' +
+          '<tr>' +
+            '<td class="vm-veld-naam">Plek</td>' +
+            '<td class="vm-huidig' + (huidigPlek ? '' : ' leeg') + '">' + (huidigPlek || '—') + '</td>' +
+            '<td class="vm-nuut"><input type="text" id="vmi-huw' + i + '-plek" placeholder="Troudorp / kerk"></td>' +
+          '</tr>' +
+          '</tbody></table></div>';
+      }).join('');
+    } else {
+      huwDiv.innerHTML = '<div style="font-size:0.82rem;color:#5a4830;font-style:italic;">Geen gade in rekord. Gebruik “Meer inligting” hieronder om ‘n gade voor te stel.</div>';
+    }
+  }
+
+  // Reset nota, nuwe persoon, en stuur-kassie
+  var notaEl = document.getElementById('vm-nota');
+  if (notaEl) notaEl.value = '';
+  var radios = document.querySelectorAll('input[name="vm-nota-aksie"]');
+  if (radios.length) radios[0].checked = true;
+  vmToggleNuutPers(false);
+  var boksEl = document.getElementById('vm-boodskap-boks');
+  if (boksEl) boksEl.style.display = 'none';
+  var statusEl = document.getElementById('vm-kopieer-status');
+  if (statusEl) statusEl.textContent = '';
+
+  // Fout-elemente terug verstop
+  ['vm-naam-fout','vm-kontak-fout'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
 }
 
-function buildWhatsAppMessage() {
-  const r = indexById[correctionPersonId];
+function oopVoorstelModal(id) {
+  vulVoorstelModal(id);
+  document.getElementById('voorstel-overlay').classList.add('oop');
+  var modal = document.getElementById('voorstel-modal');
+  modal.classList.add('oop');
+  modal.scrollTop = 0;
+  document.body.style.overflow = 'hidden';
+}
+
+function sluitVoorstelModal() {
+  document.getElementById('voorstel-overlay').classList.remove('oop');
+  document.getElementById('voorstel-modal').classList.remove('oop');
+  document.body.style.overflow = '';
+  var btn = document.getElementById('btn-edit');
+  if (btn) { btn.textContent = '✏️ Stel wysiging voor'; btn.classList.remove('active'); }
+}
+
+function vmToggleNuutPers(ja) {
+  var vorm = document.getElementById('vm-nuutpers-vorm');
+  var jaBtn  = document.getElementById('vm-ja-btn');
+  var neeBtn = document.getElementById('vm-nee-btn');
+  if (vorm)   vorm.style.display = ja ? 'block' : 'none';
+  if (jaBtn)  jaBtn.classList.toggle('aktief', ja);
+  if (neeBtn) neeBtn.classList.toggle('aktief', !ja);
+}
+
+function vmValideerBeses() {
+  var naam    = (document.getElementById('vm-beses-naam')   || {}).value || '';
+  var kontak  = (document.getElementById('vm-beses-kontak') || {}).value || '';
+  var naamFout   = document.getElementById('vm-naam-fout');
+  var kontakFout = document.getElementById('vm-kontak-fout');
+  var geldig = true;
+  if (!naam.trim()) {
+    if (naamFout) naamFout.style.display = 'block';
+    geldig = false;
+  } else {
+    if (naamFout) naamFout.style.display = 'none';
+  }
+  if (!kontak.trim()) {
+    if (kontakFout) kontakFout.style.display = 'block';
+    geldig = false;
+  } else {
+    if (kontakFout) kontakFout.style.display = 'none';
+  }
+  return geldig;
+}
+
+function vmBouBoodskap(nuutPersAppart) {
+  var r = indexById[correctionPersonId];
   if (!r) return null;
 
-  const get = id => {
-    const el = document.getElementById(id);
+  var get = function(id) {
+    var el = document.getElementById(id);
     return el ? el.value.trim() : '';
   };
 
-  const fields = [
-    ['Voornaam',        get('corr-given')],
-    ['Van',             get('corr-surname')],
-    ['Bynaam/Alias',    get('corr-nickname')],
-    ['Geboortedatum',   get('corr-birth-date')],
-    ['Geboorteplek',    get('corr-birth-place')],
-    ['Sterfdatum',      get('corr-death-date')],
-    ['Sterfplek',       get('corr-death-place')],
-    ['Begraafplek',     get('corr-burial')],
-    ['Beroep',          get('corr-occupation')],
-    ['Distrik',         get('corr-district')],
-    ['Vader',           get('corr-father')],
-    ['Moeder',          get('corr-mother')],
-    ['Gade(s)',         get('corr-spouse')],
-    ['Huweliksdatum',   get('corr-huw-datum')],
-    ['Huweliksplek',    get('corr-huw-plek')],
-    ['HuwelikNommer',   get('corr-huw-indeks')],
-  ].filter(([, v]) => v);
+  // Wysigings uit veld-tabel
+  var lyne = [];
+  VM_VELDE.forEach(function(v) {
+    var sleutel = v[1];
+    var val = get('vmi-' + sleutel);
+    if (val) {
+      var sleutelMap = {
+        given:'VOORNAAM', surname:'VAN', nickname:'BYNAAM',
+        birth_date:'GEBOORTEDATUM', birth_place:'GEBOORTEPLEK',
+        death_date:'STERFDATUM',    death_place:'STERFPLEK',
+        burial_place:'BEGRAAFPLEK', occupation:'BEROEP', district:'DISTRIK'
+      };
+      lyne.push((sleutelMap[sleutel] || sleutel.toUpperCase()) + ': ' + val);
+    }
+  });
 
-  const narrative   = get('corr-narrative');
-  const narr_action = get('corr-narrative-action');
-  const extra       = get('corr-extra');
-  const contName    = get('corr-contributor-name');
-  const contCode    = get('corr-contributor-code');
-  const contContact = get('corr-contributor-contact');
-
-  if (!fields.length && !narrative && !extra) {
-    alert('Vul asseblief ten minste een veld in voor jy stuur.');
-    return null;
-  }
-
-  const today = new Date().toLocaleDateString('af-ZA');
-  let msg = `CONRADIE VOORSTEL\n`;
-  msg += `DATUM: ${today}\n`;
-  msg += `REF: ${r.id}\n`;
-  msg += `NAAM: ${r.name}\n`;
-  msg += `FAMILIEKODE: ${r.family_code || r.id}\n`;
-  msg += `---\n`;
-
-  // Gestandaardiseerde veldname vir Admin-parser
-  const veldmap = {
-    'Voornaam':      'VOORNAAM',
-    'Van':           'VAN',
-    'Geboortedatum': 'GEBOORTEDATUM',
-    'Geboorteplek':  'GEBOORTEPLEK',
-    'Sterfdatum':    'STERFDATUM',
-    'Sterfplek':     'STERFPLEK',
-    'Begraafplek':   'BEGRAAFPLEK',
-    'Beroep':        'BEROEP',
-    'Distrik':       'DISTRIK',
-    'Vader':         'VADER',
-    'Moeder':        'MOEDER',
-    'Gade(s)':       'GADES',
-    'Huweliksdatum': 'HUWELIKSDATUM',
-    'Huweliksplek':  'HUWELIKSPLEK',
-    'HuwelikNommer': 'HUWELIK_NR',
-  };
-
-  if (fields.length) {
-    fields.forEach(([label, val]) => {
-      const sleutel = veldmap[label] || label.toUpperCase();
-      msg += `${sleutel}: ${val}\n`;
+  // Huwelike
+  if (r.spouses && r.spouses.length) {
+    r.spouses.forEach(function(sp, i) {
+      var datum = get('vmi-huw' + i + '-datum');
+      var plek  = get('vmi-huw' + i + '-plek');
+      if (datum) lyne.push('HUWELIKSDATUM: ' + datum);
+      if (plek)  lyne.push('HUWELIKSPLEK: '  + plek);
+      if ((datum || plek) && r.spouses.length > 1) lyne.push('HUWELIK_NR: ' + (i+1));
     });
   }
 
-  if (narrative) {
-    const action = narr_action === 'replace' ? 'VERVANG' : 'VOEG BY';
-    msg += `NARRATIEF_${action}: ${narrative}\n`;
+  // Nota
+  var nota = get('vm-nota');
+  if (nota) {
+    var aksie = document.querySelector('input[name="vm-nota-aksie"]:checked');
+    var aksieWaarde = aksie ? aksie.value : 'voeg_by';
+    lyne.push('NARRATIEF_' + (aksieWaarde === 'vervang' ? 'VERVANG' : 'VOEG BY') + ': ' + nota);
   }
 
-  if (extra) {
-    msg += `EKSTRA: ${extra}\n`;
+  var kontriNaam    = get('vm-beses-naam');
+  var kontriKode    = get('vm-beses-kode');
+  var kontriKontak  = get('vm-beses-kontak');
+
+  var today = new Date().toLocaleDateString('af-ZA');
+  var msg = 'CONRADIE VOORSTEL\n';
+  msg += 'DATUM: ' + today + '\n';
+  msg += 'REF: '   + r.id  + '\n';
+  msg += 'NAAM: '  + r.name + '\n';
+  msg += 'FAMILIEKODE: ' + (r.family_code || r.id) + '\n';
+  msg += '---\n';
+  if (lyne.length) msg += lyne.join('\n') + '\n';
+  msg += '---\n';
+  msg += 'INDIENER_NAAM: '    + (kontriNaam    || '') + '\n';
+  if (kontriKode)    msg += 'INDIENER_KODE: '    + kontriKode   + '\n';
+  if (kontriKontak)  msg += 'INDIENER_KONTAK: '  + kontriKontak + '\n';
+
+  // Nuwe persoon (apart vir e-pos)
+  if (nuutPersAppart) {
+    var npNaam      = get('vm-np-naam');
+    var npGebDatum  = get('vm-np-gebdatum');
+    var npGebPlek   = get('vm-np-gebplek');
+    var npGeslag    = get('vm-np-geslag');
+    var npVerhouding = get('vm-np-verhouding');
+    var npSterfdat  = get('vm-np-sterfdat');
+    if (npNaam) {
+      msg += '\n--- NUWE PERSOON ---\n';
+      msg += 'NP_NAAM: '        + npNaam        + '\n';
+      msg += 'NP_VERHOUDING: '  + (npVerhouding || '') + '\n';
+      if (npGebDatum)  msg += 'NP_GEBOORTEDATUM: ' + npGebDatum  + '\n';
+      if (npGebPlek)   msg += 'NP_GEBOORTEPLEK: '  + npGebPlek   + '\n';
+      if (npGeslag)    msg += 'NP_GESLAG: '         + npGeslag    + '\n';
+      if (npSterfdat)  msg += 'NP_STERFDATUM: '     + npSterfdat  + '\n';
+    }
   }
-
-  msg += `---\n`;
-  msg += `INDIENER_NAAM: ${contName || ''}\n`;
-  if (contCode)    msg += `INDIENER_KODE: ${contCode}\n`;
-  if (contContact) msg += `INDIENER_KONTAK: ${contContact}\n`;
-
   return msg;
 }
 
-// Open Stel voor-laai vir huweliksdatum-voorstel
-function openCorrDrawerHuw(persId, huwIndeks) {
-  // Oop die Stel voor-laai vir hierdie persoon
-  if (typeof toggleCorrectionDrawer === 'function') {
-    toggleCorrectionDrawer(persId, true); // force open
-  }
-  // Toon die huwelik-nommer-veld as meer as een moontlik
-  var indeksWrap = document.getElementById('corr-huw-indeks-wrap');
-  var indeksEl   = document.getElementById('corr-huw-indeks');
-  if (indeksEl)   indeksEl.value = huwIndeks + 1; // 1-gebaseer vir gebruiker
-  if (indeksWrap) indeksWrap.style.display = huwIndeks > 0 ? '' : 'none';
-
-  // Blaai na die huweliksdatum-veld
-  setTimeout(function() {
-    var el = document.getElementById('corr-huw-datum');
-    if (el) {
-      el.focus();
-      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-  }, 200);
-}
-
-function closeCorrectionDrawer() {
-  const drawer = document.getElementById('correction-drawer');
-  const editB  = document.getElementById('btn-edit');
-  if (drawer) drawer.classList.remove('open');
-  if (editB)  editB.classList.remove('active');
-}
-
-function kopieerBoodskap() {
-  const msg = buildWhatsAppMessage();
+function vmStuurWA(web) {
+  if (!vmValideerBeses()) return;
+  var msg = vmBouBoodskap(false);
   if (!msg) return;
-  const boks = document.getElementById('corr-boodskap-boks');
-  const teks = document.getElementById('corr-boodskap-teks');
-  const status = document.getElementById('corr-kopieer-status');
+  var encoded = encodeURIComponent(msg);
+  if (web) {
+    window.open('https://web.whatsapp.com/send?phone=' + VERIFIER_WA + '&text=' + encoded, '_blank');
+  } else {
+    window.location.href = 'whatsapp://send?phone=' + VERIFIER_WA + '&text=' + encoded;
+  }
+}
+
+function vmStuurEmail() {
+  if (!vmValideerBeses()) return;
+  var r = indexById[correctionPersonId];
+  var heeftNuutPers = document.getElementById('vm-ja-btn') &&
+                      document.getElementById('vm-ja-btn').classList.contains('aktief');
+  var msg = vmBouBoodskap(heeftNuutPers);
+  if (!msg) return;
+  var naam = r ? r.name : 'Onbekend';
+  var onderwerp = encodeURIComponent('Conradie Voorstel: ' + naam + ' (REF ' + (r ? r.id : '') + ')');
+  var liggaam   = encodeURIComponent(msg);
+  window.open('mailto:photographyisfun.za@gmail.com?subject=' + onderwerp + '&body=' + liggaam, '_blank');
+}
+
+function vmKopieer() {
+  if (!vmValideerBeses()) return;
+  var heeftNuutPers = document.getElementById('vm-ja-btn') &&
+                      document.getElementById('vm-ja-btn').classList.contains('aktief');
+  var msg = vmBouBoodskap(heeftNuutPers);
+  if (!msg) return;
+  var boks   = document.getElementById('vm-boodskap-boks');
+  var teks   = document.getElementById('vm-boodskap-teks');
+  var status = document.getElementById('vm-kopieer-status');
+  if (!teks) return;
   teks.value = msg;
-  boks.style.display = 'block';
+  if (boks) boks.style.display = 'block';
   if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(msg).then(() => {
-      status.textContent = '✅ Boodskap na knipbord gekopieer!';
-    }).catch(() => {
-      status.textContent = 'Kopieer handmatig uit die kassie hierbo.';
+    navigator.clipboard.writeText(msg).then(function() {
+      if (status) status.textContent = '✅ Boodskap na knipbord gekopieer!';
+    }).catch(function() {
+      if (status) status.textContent = 'Kopieer handmatig uit die kassie hierbo.';
     });
   } else {
     teks.select();
-    try { document.execCommand('copy'); status.textContent = '✅ Gekopieer!'; }
-    catch(e) { status.textContent = 'Kopieer handmatig uit die kassie hierbo.'; }
+    try { document.execCommand('copy'); if (status) status.textContent = '✅ Gekopieer!'; }
+    catch(e) { if (status) status.textContent = 'Kopieer handmatig uit die kassie hierbo.'; }
   }
 }
 
-function sendViaWhatsApp() {
-  const msg = buildWhatsAppMessage();
-  if (!msg) return;
-  const encoded = encodeURIComponent(msg);
-  // whatsapp:// opens the installed app directly on Android
-  window.location.href = 'whatsapp://send?phone=' + VERIFIER_WA + '&text=' + encoded;
-}
-
-function sendViaWhatsAppWeb() {
-  const msg = buildWhatsAppMessage();
-  if (!msg) return;
-  const encoded = encodeURIComponent(msg);
-  window.open(`https://web.whatsapp.com/send?phone=${VERIFIER_WA}&text=${encoded}`, '_blank');
-  closeCorrectionDrawer();
-}
-
-async function sendViaEmail() {
-  const msg = buildWhatsAppMessage();
-  if (!msg) return;
-  const r = indexById[correctionPersonId];
-  const naam = r ? r.name : 'Onbekend';
-  const onderwerpPlain = 'Conradie Voorstel: ' + naam + ' (REF ' + (r ? r.ref||r.id : '') + ')';
-  // Probeer eers Android se Deel-kieslys (bly oop totdat gebruiker self 'n app kies)
-  if (navigator.share) {
-    try {
-      await navigator.share({ title: onderwerpPlain, text: msg + '\n\nStuur asseblief aan: photographyisfun.za@gmail.com' });
-      closeCorrectionDrawer();
-      return;
-    } catch (e) {
-      if (e && e.name === 'AbortError') { return; } // gebruiker het self gekanselleer
-      // anders: val terug op mailto hieronder
-    }
+// Achterwaartse versoenbaarheid: ou funksie-name
+function initCorrectionForm(id) { vulVoorstelModal(id); }
+function toggleCorrectionDrawer(id) {
+  var btn = document.getElementById('btn-edit');
+  if (btn && btn.classList.contains('active') && correctionPersonId === id) {
+    sluitVoorstelModal();
+  } else {
+    if (btn) { btn.classList.add('active'); btn.textContent = '✕ Sluit'; }
+    oopVoorstelModal(id);
   }
-  const onderwerp = encodeURIComponent(onderwerpPlain);
-  const liggaam  = encodeURIComponent(msg);
-  const url = 'mailto:photographyisfun.za@gmail.com?subject=' + onderwerp + '&body=' + liggaam;
-  window.open(url, '_blank');
-  closeCorrectionDrawer();
 }
 
-// Wire up send button after panel renders
+// openCorrDrawerHuw: oop modal direk op huwelik-afdeling
+function openCorrDrawerHuw(persId, huwIndeks) {
+  oopVoorstelModal(persId);
+  // Blaai na huwelik-afdeling na opening
+  setTimeout(function() {
+    var el = document.getElementById('vm-huwelik-afdeling');
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 200);
+}
+
+function closeCorrectionDrawer() { sluitVoorstelModal(); }
+function buildWhatsAppMessage()  { return vmBouBoodskap(false); }
+function kopieerBoodskap()       { vmKopieer(); }
+function sendViaWhatsApp()       { vmStuurWA(false); }
+function sendViaWhatsAppWeb()    { vmStuurWA(true);  }
+function sendViaEmail()          { vmStuurEmail(); }
+
 function attachCorrectionListeners() {
-  const editBtn   = document.getElementById('btn-edit');
-  const sendBtn   = document.getElementById('btn-wa-send');
-  const emailBtn  = document.getElementById('btn-email-send');
-  const kopieerBtn = document.getElementById('btn-kopieer-send');
-  if (kopieerBtn) kopieerBtn.addEventListener('click', kopieerBoodskap);
-  if (editBtn)  editBtn.addEventListener('click',  () => toggleCorrectionDrawer(correctionPersonId));
-  if (sendBtn)  sendBtn.addEventListener('click',  sendViaWhatsApp);
-  const waWebBtn = document.getElementById('btn-wa-web-send');
-  if (waWebBtn) waWebBtn.addEventListener('click', sendViaWhatsAppWeb);
-  if (emailBtn) emailBtn.addEventListener('click', sendViaEmail);
+  var editBtn = document.getElementById('btn-edit');
+  if (editBtn) {
+    editBtn.addEventListener('click', function() {
+      toggleCorrectionDrawer(correctionPersonId);
+    });
+    editBtn.addEventListener('touchend', function(e) {
+      e.preventDefault();
+      toggleCorrectionDrawer(correctionPersonId);
+    });
+  }
+  // Overlay sluit modal
+  var ov = document.getElementById('voorstel-overlay');
+  if (ov) {
+    ov.addEventListener('click', sluitVoorstelModal);
+    ov.addEventListener('touchend', function(e) {
+      e.preventDefault(); sluitVoorstelModal();
+    });
+  }
 }
 
 </script>
@@ -2999,11 +3414,14 @@ function attachCorrectionListeners() {
       html += _afd('👤', 'Persoonlike Besonderhede', '#6a8a5a');
       html += _veld('adm-given',       'Voornaam',       'text');
       html += _veld('adm-surname',     'Van',             'text');
+      html += _veld('adm-nickname',    'Bynaam / Noemnaam', 'text', 'bv. Boetie, Koos, Jan Groot');
       html += _veld('adm-birth-date',  'Geboortedatum',   'text', 'bv. 1845-03-12 of 12 MAR 1845');
       html += _veld('adm-birth-place', 'Geboorteplek',    'text');
       html += _veld('adm-death-date',  'Sterfdatum',      'text', 'bv. 1912-07-04');
       html += _veld('adm-death-place', 'Sterfplek',       'text');
       html += _veld('adm-burial',      'Begraafplek',     'text');
+      html += _veld('adm-occupation',  'Beroep',          'text');
+      html += _veld('adm-district',    'Distrik',         'text');
       html += _veld('adm-note',        'Nota / Narratief', 'textarea');
 
       html += '<div style="margin-top:0.75rem;">';
@@ -3188,6 +3606,10 @@ function attachCorrectionListeners() {
   var VELD_MAP = {
     'VOORNAAM':      'given',
     'VAN':           'surname',
+    'BYNAAM':        'nickname',
+    'NOEMNAAM':      'nickname',
+    'ALIAS':         'nickname',
+    'BYNAAM/ALIAS':  'nickname',
     'GEBOORTEDATUM': 'birth_date',
     'GEBOORTEPLEK':  'birth_place',
     'STERFDATUM':    'death_date',
@@ -3384,9 +3806,12 @@ function attachCorrectionListeners() {
       // Wys in die vorm
       var veldId = {
         given:'adm-given', surname:'adm-surname',
+        nickname:'adm-nickname',
         birth_date:'adm-birth-date', birth_place:'adm-birth-place',
         death_date:'adm-death-date', death_place:'adm-death-place',
-        burial_place:'adm-burial', note:'adm-note'
+        burial_place:'adm-burial',
+        occupation:'adm-occupation', district:'adm-district',
+        note:'adm-note'
       }[veld];
       if (veldId) {
         var el = document.getElementById(veldId);
@@ -3517,22 +3942,28 @@ function attachCorrectionListeners() {
     }
     set('adm-given',       p.given);
     set('adm-surname',     p.surname);
+    set('adm-nickname',    p.nickname);
     set('adm-birth-date',  p.birth_date);
     set('adm-birth-place', p.birth_place);
     set('adm-death-date',  p.death_date);
     set('adm-death-place', p.death_place);
     set('adm-burial',      p.burial_place);
+    set('adm-occupation',  p.occupation);
+    set('adm-district',    p.district);
     set('adm-note',        p.note);
 
     // Stoor oorspronklike waardes vir vergelyking
     window.admOrig = {
       given:       p.given       || '',
       surname:     p.surname     || '',
+      nickname:    p.nickname    || '',
       birth_date:  p.birth_date  || '',
       birth_place: p.birth_place || '',
       death_date:  p.death_date  || '',
       death_place: p.death_place || '',
       burial_place:p.burial_place|| '',
+      occupation:  p.occupation  || '',
+      district:    p.district    || '',
       note:        p.note        || ''
     };
 
@@ -3587,11 +4018,14 @@ function attachCorrectionListeners() {
 
     p.given       = get('adm-given')       || p.given;
     p.surname     = get('adm-surname')     || p.surname;
+    p.nickname    = get('adm-nickname');
     p.birth_date  = get('adm-birth-date');
     p.birth_place = get('adm-birth-place');
     p.death_date  = get('adm-death-date');
     p.death_place = get('adm-death-place');
     p.burial_place= get('adm-burial');
+    p.occupation  = get('adm-occupation');
+    p.district    = get('adm-district');
     p.note        = get('adm-note');
 
     // Herbereken name

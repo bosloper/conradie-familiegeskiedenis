@@ -1528,6 +1528,60 @@ main {
   line-height: 1.5;
   margin-top: 0.5rem;
 }
+
+/* ── STATS TAB ── */
+.stats-paneel {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 1.1rem 1.2rem;
+  margin-bottom: 1.2rem;
+}
+.stats-paneel h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.15rem;
+  color: var(--sepia);
+  margin: 0 0 0.8rem 0;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 0.4rem;
+}
+.stats-ry {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+  font-size: 0.85rem;
+}
+.stats-ry .stats-naam {
+  flex: 0 0 160px;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.stats-ry .stats-balk-wrap {
+  flex: 1;
+  background: var(--line);
+  border-radius: 3px;
+  height: 14px;
+  overflow: hidden;
+}
+.stats-ry .stats-balk {
+  height: 100%;
+  background: var(--sepia);
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+.stats-ry .stats-telling {
+  flex: 0 0 36px;
+  text-align: right;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+.stats-klikbaar { cursor: pointer; }
+.stats-klikbaar:hover .stats-naam { color: var(--sepia); text-decoration: underline; }
+.stats-grafiek { width: 100%; overflow-x: auto; }
+.stats-grafiek svg { width: 100%; height: auto; display: block; }
 </style>
 </head>
 <body>
@@ -1549,6 +1603,7 @@ main {
   <button class="tab-btn active" data-tab="stamvader">🏠 Stamvader</button>
   <button class="tab-btn" data-tab="search">🔍 Soek</button>
   <button class="tab-btn" data-tab="admin">✏️ Admin</button>
+  <button class="tab-btn" data-tab="stats">📊 Stats</button>
   <button class="tab-btn help-tab-btn" id="help-btn" title="Hulp">❓ Hulp</button>
 </div>
 
@@ -2086,6 +2141,13 @@ function initApp() {
   buildBranchButtons();
   attachListeners();
   applyFilters();
+
+  // ── Diep-skakel: #I1234 of #S1234 in URL ──
+  var hash = window.location.hash.replace('#', '');
+  if (hash && (hash.charAt(0) === 'I' || hash.charAt(0) === 'S') && indexById[hash]) {
+    switchTab('search');
+    setTimeout(function() { openPanel(hash); }, 80);
+  }
 }
 
 // ── BRANCH BUTTONS ──
@@ -2310,6 +2372,7 @@ function openPanel(id) {
   const r = indexById[id];
   if (!r) return;
 
+  history.pushState({ tab: aktieweTab, persoon: id }, '', '#' + id);
   document.getElementById('panel-id-label').textContent = r.family_code || r.id;
   document.getElementById('panel-content').innerHTML = buildPanelHTML(r);
 
@@ -2507,7 +2570,7 @@ function deelPersoon(id) {
 
   reëls.push('');
   reëls.push('🌐 Conradie Familiegeskiedenis');
-  reëls.push('https://bosloper.github.io/conradie-familiegeskiedenis');
+  reëls.push('https://bosloper.github.io/conradie-familiegeskiedenis#' + id);
 
   const teks = reëls.join('\n');
 
@@ -2526,6 +2589,153 @@ function deelPersoon(id) {
   }
 }
 
+
+
+// ── INTERESSANTHEDE / STATS ──
+var statsGebou = false;
+
+function bouStats() {
+  if (statsGebou) return;
+  statsGebou = true;
+
+  var panele = document.getElementById('stats-panele');
+  if (!panele) return;
+
+  // Slegs bloedverwante I-rekords
+  var iRekords = CONRADIE_DATA.filter(function(r) {
+    return r.id && r.id.charAt(0) === 'I' && !r.is_spouse;
+  });
+
+  // ── Hulpfunksie: top-N frekwensietelling ──
+  function topN(arr, n) {
+    var tel = {};
+    arr.forEach(function(v) {
+      if (v && v.trim()) tel[v.trim()] = (tel[v.trim()] || 0) + 1;
+    });
+    return Object.entries(tel)
+      .sort(function(a, b) { return b[1] - a[1]; })
+      .slice(0, n);
+  }
+
+  // ── Hulpfunksie: bou horisontale balkgrafiek ──
+  function bouBalkPaneel(titel, data, klikId) {
+    if (!data.length) return '';
+    var maksimum = data[0][1];
+    var rye = data.map(function(item, i) {
+      var naam = item[0];
+      var telling = item[1];
+      var persentasie = Math.round((telling / maksimum) * 100);
+      var klikAttr = klikId && klikId[i]
+        ? ' class="stats-ry stats-klikbaar" onclick="openPanel(\'' + klikId[i] + '\')" title="Maak kaart oop"'
+        : ' class="stats-ry"';
+      return '<div' + klikAttr + '>' +
+        '<div class="stats-naam">' + naam + '</div>' +
+        '<div class="stats-balk-wrap"><div class="stats-balk" style="width:' + persentasie + '%"></div></div>' +
+        '<div class="stats-telling">' + telling + '</div>' +
+        '</div>';
+    }).join('');
+    return '<div class="stats-paneel"><h3>' + titel + '</h3>' + rye + '</div>';
+  }
+
+  var html = '';
+
+  // ── 1. Top 10 Mansname ──
+  var mansname = iRekords
+    .filter(function(r) { return r.sex === 'M' && r.given; })
+    .map(function(r) { return r.given.trim().split(/\s+/)[0]; });
+  html += bouBalkPaneel('📛 Top 10 Mansname', topN(mansname, 10));
+
+  // ── 2. Top 10 Vrouename ──
+  var vrouename = iRekords
+    .filter(function(r) { return r.sex === 'F' && r.given; })
+    .map(function(r) { return r.given.trim().split(/\s+/)[0]; });
+  html += bouBalkPaneel('📛 Top 10 Vrouename', topN(vrouename, 10));
+
+  // ── 3. Geboortes per dekade (SVG-grafiek) ──
+  var dekades = {};
+  iRekords.forEach(function(r) {
+    var jaar = r.birth_year
+      ? parseInt(r.birth_year)
+      : (r.birth_date ? parseInt(r.birth_date) : null);
+    if (jaar && jaar > 1650 && jaar < 2030) {
+      var dekade = Math.floor(jaar / 10) * 10;
+      dekades[dekade] = (dekades[dekade] || 0) + 1;
+    }
+  });
+  var dekLys = Object.entries(dekades)
+    .map(function(e) { return [parseInt(e[0]), e[1]]; })
+    .sort(function(a, b) { return a[0] - b[0]; });
+
+  if (dekLys.length) {
+    var svgBreed = 560, svgHoog = 180;
+    var linksMargin = 36, regsMargin = 8, boMargin = 10, onderMargin = 38;
+    var grafBreed = svgBreed - linksMargin - regsMargin;
+    var grafHoog = svgHoog - boMargin - onderMargin;
+    var maksimumDek = Math.max.apply(null, dekLys.map(function(d) { return d[1]; }));
+    var balkBreed = Math.max(4, Math.floor(grafBreed / dekLys.length) - 2);
+
+    var balkeSVG = dekLys.map(function(d, i) {
+      var x = linksMargin + Math.round(i * grafBreed / dekLys.length);
+      var balkHoog = Math.round((d[1] / maksimumDek) * grafHoog);
+      var y = boMargin + grafHoog - balkHoog;
+      var etiket = (d[0] % 50 === 0) ? String(d[0]) : '';
+      return '<rect x="' + x + '" y="' + y + '" width="' + balkBreed + '" height="' + balkHoog +
+        '" fill="var(--sepia)" opacity="0.85" rx="1"/>' +
+        (etiket ? '<text x="' + (x + balkBreed/2) + '" y="' + (svgHoog - 6) +
+          '" text-anchor="middle" font-size="9" fill="var(--muted)">' + etiket + '</text>' : '');
+    }).join('');
+
+    // Y-as etikette
+    var yEtikette = [0, 0.25, 0.5, 0.75, 1].map(function(f) {
+      var waarde = Math.round(maksimumDek * f);
+      var y = boMargin + grafHoog - Math.round(f * grafHoog);
+      return '<text x="' + (linksMargin - 4) + '" y="' + (y + 3) +
+        '" text-anchor="end" font-size="9" fill="var(--muted)">' + waarde + '</text>' +
+        '<line x1="' + linksMargin + '" y1="' + y + '" x2="' + (svgBreed - regsMargin) + '" y2="' + y +
+        '" stroke="var(--line)" stroke-width="0.5"/>';
+    }).join('');
+
+    var svgHtml = '<svg viewBox="0 0 ' + svgBreed + ' ' + svgHoog +
+      '" xmlns="http://www.w3.org/2000/svg">' + yEtikette + balkeSVG + '</svg>';
+
+    html += '<div class="stats-paneel"><h3>📅 Geboortes per Dekade</h3>' +
+      '<div class="stats-grafiek">' + svgHtml + '</div></div>';
+  }
+
+  // ── 4. Top 10 Begraafplekke ──
+  var begraafplekke = iRekords
+    .filter(function(r) { return r.burial_place; })
+    .map(function(r) { return r.burial_place.trim(); });
+  html += bouBalkPaneel('⛪ Top 10 Begraafplekke', topN(begraafplekke, 10));
+
+  // ── 5. Top 10 Distrikte ──
+  var distrikte = iRekords
+    .filter(function(r) { return r.district; })
+    .map(function(r) { return r.district.trim(); });
+  html += bouBalkPaneel('🗺️ Top 10 Distrikte', topN(distrikte, 10));
+
+  // ── 6. Grootste gesinne (Top 10) ──
+  var gesinne = iRekords
+    .filter(function(r) { return r.children_ids && r.children_ids.length >= 5; })
+    .map(function(r) { return [r.name || r.id, r.children_ids.length, r.id]; })
+    .sort(function(a, b) { return b[1] - a[1]; })
+    .slice(0, 10);
+
+  if (gesinne.length) {
+    var maksimumKinders = gesinne[0][1];
+    var gesinRye = gesinne.map(function(g) {
+      var persentasie = Math.round((g[1] / maksimumKinders) * 100);
+      return '<div class="stats-ry stats-klikbaar" onclick="openPanel(\'' + g[2] + '\')" title="Maak kaart oop">' +
+        '<div class="stats-naam">' + g[0] + '</div>' +
+        '<div class="stats-balk-wrap"><div class="stats-balk" style="width:' + persentasie + '%"></div></div>' +
+        '<div class="stats-telling">' + g[1] + '</div>' +
+        '</div>';
+    }).join('');
+    html += '<div class="stats-paneel"><h3>👨‍👩‍👧‍👦 Grootste Gesinne (kinders)</h3>' + gesinRye + '</div>';
+  }
+
+  panele.innerHTML = html;
+}
 
 // ── TYDLYN ──
 function buildTydlyn(r) {
@@ -2767,6 +2977,7 @@ function switchTab(tabName) {
   var page = document.getElementById('tab-' + tabName);
   if (page) page.style.display = '';
   if (tabName === 'admin') { if (typeof buildAdminUI === 'function') buildAdminUI(); }
+  if (tabName === 'stats') { if (typeof bouStats === 'function') bouStats(); }
 }
 
 // Registreer tab-knoppe na alle inhoud gelaai is
@@ -2779,6 +2990,12 @@ function switchTabMetGeskiedenis(tabNaam) {
   switchTab(tabNaam);
 }
 window.addEventListener('popstate', function(e) {
+  // Sluit persoonskaart as ons terugnavigeer
+  var paneel = document.getElementById('detail-panel');
+  if (paneel && paneel.classList.contains('open')) {
+    closePanel();
+    return;
+  }
   var tab = (e.state && e.state.tab) ? e.state.tab : 'stamvader';
   switchTab(tab);
 });
@@ -5189,6 +5406,14 @@ function attachCorrectionListeners() {
     </div><!-- end stamvader-sidebar -->
   </div><!-- end stamvader-body -->
 </div><!-- end tab-stamvader -->
+
+<div id="tab-stats" class="tab-page" style="display:none">
+  <div id="stats-inhoud" style="max-width:700px;margin:0 auto;padding:1.2rem 1rem 3rem;">
+    <div style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;color:var(--sepia);margin-bottom:0.3rem">📊 Interessanthede</div>
+    <div style="font-size:0.82rem;color:var(--muted);margin-bottom:1.5rem">Statistieke bereken uit die volledige databasis</div>
+    <div id="stats-panele"></div>
+  </div>
+</div>
 
 <div id="tab-admin" class="tab-page" style="display:none"></div>
 

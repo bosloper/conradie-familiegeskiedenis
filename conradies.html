@@ -4016,17 +4016,22 @@ function attachCorrectionListeners() {
       return el ? el.value.trim() : '';
     }
 
+    // Behou bestaande waarde as invoerveld leeg is
+    var _g = function(fId, bestaande) {
+      var v = get(fId);
+      return v !== '' ? v : (bestaande || '');
+    };
     p.given       = get('adm-given')       || p.given;
     p.surname     = get('adm-surname')     || p.surname;
-    p.nickname    = get('adm-nickname');
-    p.birth_date  = get('adm-birth-date');
-    p.birth_place = get('adm-birth-place');
-    p.death_date  = get('adm-death-date');
-    p.death_place = get('adm-death-place');
-    p.burial_place= get('adm-burial');
-    p.occupation  = get('adm-occupation');
-    p.district    = get('adm-district');
-    p.note        = get('adm-note');
+    p.nickname    = _g('adm-nickname',    p.nickname);
+    p.birth_date  = _g('adm-birth-date',  p.birth_date);
+    p.birth_place = _g('adm-birth-place', p.birth_place);
+    p.death_date  = _g('adm-death-date',  p.death_date);
+    p.death_place = _g('adm-death-place', p.death_place);
+    p.burial_place= _g('adm-burial',      p.burial_place);
+    p.occupation  = _g('adm-occupation',  p.occupation);
+    p.district    = _g('adm-district',    p.district);
+    p.note        = _g('adm-note',        p.note);
 
     // Herbereken name
     if (p.given || p.surname) {

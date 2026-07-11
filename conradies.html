@@ -455,6 +455,8 @@ main {
   font-weight: 600;
   line-height: 1.1;
   margin-bottom: 0.2rem;
+  user-select: text;
+  -webkit-user-select: text;
 }
 .panel-name .psurname { color: var(--sepia-light); }
 .panel-sex-gen {
@@ -1544,8 +1546,8 @@ main {
   </div>
 </header>
 <div class="tab-bar">
-  <button class="tab-btn active" data-tab="stamvader">🏠 Stamvader &amp; Geskiedenis</button>
-  <button class="tab-btn" data-tab="search">🔍 Soek &amp; Blaai</button>
+  <button class="tab-btn active" data-tab="stamvader">🏠 Stamvader</button>
+  <button class="tab-btn" data-tab="search">🔍 Soek</button>
   <button class="tab-btn" data-tab="admin">✏️ Admin</button>
   <button class="tab-btn help-tab-btn" id="help-btn" title="Hulp">❓ Hulp</button>
 </div>
@@ -2702,15 +2704,27 @@ function switchTab(tabName) {
 // Registreer tab-knoppe na alle inhoud gelaai is
 window.addEventListener('load', function() {
   // Registreer tab-knoppe
+
+// ── Android Terug-pyl fix ──
+function switchTabMetGeskiedenis(tabNaam) {
+  history.pushState({ tab: tabNaam }, '', '#' + tabNaam);
+  switchTab(tabNaam);
+}
+window.addEventListener('popstate', function(e) {
+  var tab = (e.state && e.state.tab) ? e.state.tab : 'stamvader';
+  switchTab(tab);
+});
+
   document.querySelectorAll('.tab-btn').forEach(function(btn) {
     btn.addEventListener('click', function() {
       if (btn.id === 'help-btn') { openHelp(); return; }
       var t = btn.getAttribute('data-tab');
       aktieweTab = t;
-      switchTab(t);
+      switchTabMetGeskiedenis(t);
     });
   });
   // Wys stamvader as verstek
+  history.replaceState({ tab: 'stamvader' }, '', '#stamvader');
   switchTab('stamvader');
 
   // Help modal close — click + touchend vir Android

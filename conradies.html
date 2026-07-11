@@ -2347,25 +2347,35 @@ function buildPanelHTML(r) {
   const displayName = given ? `${given} ${surname}` : surname || r.name;
   const sexLabel = r.sex === 'M' ? 'Man' : r.sex === 'F' ? 'Vrou' : '';
   const genLabel = r.generation > 0 ? `Geslag ${r.generation}` : '';
-  const metaLabel = [sexLabel, genLabel, r.is_spouse ? 'Aangetroude' : ''].filter(Boolean).join(' · ');
+  const refLabel = r.ref ? `Nr. ${r.ref}` : '';
+  const metaLabel = [sexLabel, genLabel, r.is_spouse ? 'Aangetroude' : '', refLabel].filter(Boolean).join(' · ');
+  const nickLine = r.nickname ? `<div style="font-size:0.85rem;color:var(--sepia-light);font-style:italic;margin-top:0.2rem">"${r.nickname}"</div>` : '';
 
   parts.push(`
     <div class="panel-name">${displayName}</div>
     <div class="panel-sex-gen">${metaLabel}</div>
+    ${nickLine}
   `);
 
   // Dates & places
+  const b = (s) => s ? `<strong>${s}</strong>` : '';
   const dateRows = [];
-  if (r.birth_date) dateRows.push(`<div class="panel-row"><span class="label">Gebore</span><span class="value">${r.birth_date}${r.birth_place ? ', '+r.birth_place : ''}</span></div>`);
-  if (r.baptism_date) dateRows.push(`<div class="panel-row"><span class="label">Gedoop</span><span class="value">${r.baptism_date}</span></div>`);
-  if (r.death_date) dateRows.push(`<div class="panel-row"><span class="label">Oorlede</span><span class="value">${r.death_date}${r.death_place ? ', '+r.death_place : ''}</span></div>`);
-  if (r.burial_place) dateRows.push(`<div class="panel-row"><span class="label">Begrawe</span><span class="value">${r.burial_place}</span></div>`);
+  const gebDatum = r.birth_date || (r.birth_year ? String(r.birth_year) : '');
+  if (gebDatum) dateRows.push(`<div class="panel-row"><span class="label">Gebore</span><span class="value">${b(gebDatum)}${r.birth_place ? ', '+r.birth_place : ''}</span></div>`);
+  if (r.baptism_date) dateRows.push(`<div class="panel-row"><span class="label">Gedoop</span><span class="value">${b(r.baptism_date)}</span></div>`);
+  if (r.nickname) dateRows.push(`<div class="panel-row"><span class="label">Bynaam</span><span class="value">${r.nickname}</span></div>`);
+  if (r.occupation) dateRows.push(`<div class="panel-row"><span class="label">Beroep</span><span class="value">${r.occupation}</span></div>`);
+  if (r.district) dateRows.push(`<div class="panel-row"><span class="label">Distrik</span><span class="value">${r.district}</span></div>`);
   if (r.marr_dates && r.marr_dates.length) {
     r.marr_dates.forEach((md, i) => {
       const mp = r.marr_places && r.marr_places[i] ? ', '+r.marr_places[i] : '';
-      dateRows.push(`<div class="panel-row"><span class="label">Getroud</span><span class="value">${md}${mp}</span></div>`);
+      if (md) dateRows.push(`<div class="panel-row"><span class="label">Getroud</span><span class="value">${b(md)}${mp}</span></div>`);
     });
   }
+  const sterfDatum = r.death_date || (r.death_year ? String(r.death_year) : '');
+  if (sterfDatum) dateRows.push(`<div class="panel-row"><span class="label">Oorlede</span><span class="value">${b(sterfDatum)}${r.death_place ? ', '+r.death_place : ''}</span></div>`);
+  if (r.burial_place) dateRows.push(`<div class="panel-row"><span class="label">Begrawe</span><span class="value">${r.burial_place}</span></div>`);
+  if (r.note) dateRows.push(`<div class="panel-row"><span class="label">Nota</span><span class="value">${escHtml(r.note)}</span></div>`);
   if (dateRows.length) parts.push(`<div class="panel-section"><h3>Lewensdata</h3>${dateRows.join('')}</div>`);
 
   // Parents
@@ -2507,6 +2517,9 @@ function buildTydlyn(r) {
       const mp = r.marr_places && r.marr_places[i] ? r.marr_places[i] : null;
       const my = jaar(md);
       const spBirthYear = sp.birth_year || jaar(sp.birth_date);
+      const spRek = indexById[sp.id];
+      const spDeathDate = spRek ? (spRek.death_date || (spRek.death_year ? String(spRek.death_year) : '')) : '';
+      const spDeathYear = spRek ? (jaar(spRek.death_date) || spRek.death_year) : null;
       let detail = sp.name;
       if (md) detail += ' — ' + datumLabel(md) + ouderdom(ry, my);
       if (mp) detail += ', ' + mp;
@@ -2514,6 +2527,10 @@ function buildTydlyn(r) {
       const divorced = sp.divorced && sp.divorce_date
         ? ' [Geskei ' + datumLabel(sp.divorce_date) + ']' : '';
       gebeure.push({ jaar: my || ry, ikon: '💍', titel: 'Getroud' + (r.spouses.length > 1 ? ' (' + (i+1) + ')' : ''), detail: detail + divorced });
+      // Laaste gade se sterfdatum as afsonderlike gebeurtenis
+      if (i === r.spouses.length - 1 && spDeathYear) {
+        gebeure.push({ jaar: spDeathYear, ikon: '✦', titel: 'Gade oorlede', detail: sp.name + (spDeathDate ? ' — ' + datumLabel(spDeathDate) : '') });
+      }
     });
   }
 

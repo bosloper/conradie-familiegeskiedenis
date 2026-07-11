@@ -4021,6 +4021,17 @@ function attachCorrectionListeners() {
       var v = get(fId);
       return v !== '' ? v : (bestaande || '');
     };
+
+    // Vang voor-waardes vir ouditspoor
+    var voor = {
+      given: p.given || '', surname: p.surname || '',
+      nickname: p.nickname || '', birth_date: p.birth_date || '',
+      birth_place: p.birth_place || '', death_date: p.death_date || '',
+      death_place: p.death_place || '', burial_place: p.burial_place || '',
+      occupation: p.occupation || '', district: p.district || '',
+      note: p.note || ''
+    };
+
     p.given       = get('adm-given')       || p.given;
     p.surname     = get('adm-surname')     || p.surname;
     p.nickname    = _g('adm-nickname',    p.nickname);
@@ -4037,6 +4048,21 @@ function attachCorrectionListeners() {
     if (p.given || p.surname) {
       p.name = ((p.given || '') + ' ' + (p.surname || '')).trim();
     }
+
+    // Bou wysigings-objek (slegs velde wat werklik verander het)
+    var na = {
+      given: p.given || '', surname: p.surname || '',
+      nickname: p.nickname || '', birth_date: p.birth_date || '',
+      birth_place: p.birth_place || '', death_date: p.death_date || '',
+      death_place: p.death_place || '', burial_place: p.burial_place || '',
+      occupation: p.occupation || '', district: p.district || '',
+      note: p.note || ''
+    };
+    var wysigings = {};
+    Object.keys(voor).forEach(function(k) {
+      if (voor[k] !== na[k]) wysigings[k] = { oud: voor[k], nuut: na[k] };
+    });
+    window.admLaastеWysigings = { rekord_id: admCurrentId, naam: p.name, wysigings: wysigings };
 
     document.getElementById('adm-status').textContent =
       '✅ Gewysig in geheue: ' + p.name + ' — gebruik "Stoor na GitHub" om te stoor.';
@@ -4620,12 +4646,15 @@ function attachCorrectionListeners() {
   // ── Skryf transaksie-inskrywing na logs/transaksies.json ──
   // Gebruik Contents API (lêer is klein genoeg)
   async function skryfTransaksie(pat, BASE, tydstempel) {
+    var laaste = window.admLaastеWysigings || {};
     var nuweInskrywing = {
       tyd: tydstempel,
       gebruiker: 'admin',
-      aksie: 'wysiging',
-      rekords: window.CONRADIE_DATA ? window.CONRADIE_DATA.length : 0
+      rekord_id: laaste.rekord_id || '',
+      naam: laaste.naam || '',
+      wysigings: laaste.wysigings || {}
     };
+    window.admLaastеWysigings = null;
     var CONTENTS = BASE + '/contents/logs/transaksies.json';
     var headers = {
       'Authorization': 'token ' + pat,

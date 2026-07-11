@@ -703,8 +703,8 @@ main {
   }
   header h1 { font-size: 1.4rem; }
   .header-stats { display: none; }
-  .tab-bar { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-  .tab-btn { padding: 0.65rem 0.9rem; font-size: 0.58rem; white-space: nowrap; }
+  .tab-bar { overflow-x: visible; -webkit-overflow-scrolling: touch; display: flex; width: 100%; }
+  .tab-btn { padding: 0.55rem 0.4rem; font-size: 0.52rem; white-space: nowrap; flex: 1; text-align: center; }
 }
 /* filter-toggle-btn: hidden on desktop (see base rule above) */
 /* ── TAB SWITCHER ── */
@@ -2510,7 +2510,7 @@ function buildTydlyn(r) {
       let detail = sp.name;
       if (md) detail += ' — ' + datumLabel(md) + ouderdom(ry, my);
       if (mp) detail += ', ' + mp;
-      if (spBirthYear) detail += ' (gade * ' + spBirthYear + ')';
+      if (spBirthYear && (!ry || spBirthYear > ry)) detail += ' (gade * ' + spBirthYear + ')';
       const divorced = sp.divorced && sp.divorce_date
         ? ' [Geskei ' + datumLabel(sp.divorce_date) + ']' : '';
       gebeure.push({ jaar: my || ry, ikon: '💍', titel: 'Getroud' + (r.spouses.length > 1 ? ' (' + (i+1) + ')' : ''), detail: detail + divorced });

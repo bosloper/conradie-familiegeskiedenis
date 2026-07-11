@@ -2642,13 +2642,13 @@ function bouStats() {
   // ── 1. Top 10 Mansname ──
   var mansname = iRekords
     .filter(function(r) { return r.sex === 'M' && r.given; })
-    .map(function(r) { return r.given.trim().split(/\s+/)[0]; });
+    .map(function(r) { return r.given.trim(); });
   html += bouBalkPaneel('📛 Top 10 Mansname', topN(mansname, 10));
 
   // ── 2. Top 10 Vrouename ──
   var vrouename = iRekords
     .filter(function(r) { return r.sex === 'F' && r.given; })
-    .map(function(r) { return r.given.trim().split(/\s+/)[0]; });
+    .map(function(r) { return r.given.trim(); });
   html += bouBalkPaneel('📛 Top 10 Vrouename', topN(vrouename, 10));
 
   // ── 3. Geboortes per dekade (SVG-grafiek) ──

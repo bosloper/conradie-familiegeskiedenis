@@ -2639,17 +2639,19 @@ function bouStats() {
 
   var html = '';
 
-  // ── 1. Top 10 Mansname ──
-  var mansname = iRekords
-    .filter(function(r) { return r.sex === 'M' && r.given; })
-    .map(function(r) { return r.given.trim(); });
-  html += bouBalkPaneel('📛 Top 10 Mansname', topN(mansname, 10));
-
-  // ── 2. Top 10 Vrouename ──
-  var vrouename = iRekords
-    .filter(function(r) { return r.sex === 'F' && r.given; })
-    .map(function(r) { return r.given.trim(); });
-  html += bouBalkPaneel('📛 Top 10 Vrouename', topN(vrouename, 10));
+  // ── 1 & 2. Top 20 Voornaamkombinasies ──
+  // Groepeer op eerste twee woorde van 'given' (sex-veld is grootliks leeg in databasis)
+  var naamTel = {};
+  iRekords.forEach(function(r) {
+    if (!r.given || !r.given.trim()) return;
+    var woorde = r.given.trim().split(/\s+/);
+    var sleutel = woorde.length >= 2 ? woorde[0] + ' ' + woorde[1] : woorde[0];
+    naamTel[sleutel] = (naamTel[sleutel] || 0) + 1;
+  });
+  var naamLys = Object.entries(naamTel)
+    .sort(function(a, b) { return b[1] - a[1]; })
+    .slice(0, 20);
+  html += bouBalkPaneel('📛 Top 20 Voornaamkombinasies', naamLys);
 
   // ── 3. Geboortes per dekade (SVG-grafiek) ──
   var dekades = {};

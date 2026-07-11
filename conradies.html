@@ -2455,7 +2455,75 @@ function buildPanelHTML(r) {
     </div>`);
   }
 
+  // Deel-knoppie (altyd sigbaar)
+  parts.push(`<div style="margin-top:1.2rem;text-align:center;padding-bottom:0.5rem">
+    <button onclick="deelPersoon('${r.id}')" style="
+      background:var(--sepia);color:var(--parchment);border:none;border-radius:20px;
+      padding:0.5rem 1.3rem;font-size:0.9rem;cursor:pointer;font-family:inherit;
+      display:inline-flex;align-items:center;gap:0.5rem">
+      📤 Deel hierdie persoon
+    </button>
+  </div>`);
+
   return parts.join('');
+}
+
+// ── DEEL PERSOON ──
+function deelPersoon(id) {
+  const r = indexById[id];
+  if (!r) return;
+
+  const naam = r.name || [r.given, r.surname].filter(Boolean).join(' ');
+  const reëls = [];
+
+  reëls.push('👤 ' + naam);
+  if (r.family_code) reëls.push('🔖 Geslagskode: ' + r.family_code);
+
+  const gebDatum = r.birth_date || (r.birth_year ? String(r.birth_year) : '');
+  if (gebDatum) reëls.push('📅 Gebore: ' + gebDatum + (r.birth_place ? ', ' + r.birth_place : ''));
+  if (r.baptism_date) reëls.push('⛪ Gedoop: ' + r.baptism_date);
+  if (r.nickname) reëls.push('🏷️ Bynaam: ' + r.nickname);
+  if (r.occupation) reëls.push('💼 Beroep: ' + r.occupation);
+  if (r.district) reëls.push('📍 Distrik: ' + r.district);
+
+  if (r.spouses && r.spouses.length) {
+    r.spouses.forEach(function(sp, i) {
+      var huwDatum = r.marr_dates && r.marr_dates[i] ? r.marr_dates[i] : '';
+      var huwPlek  = r.marr_places && r.marr_places[i] ? r.marr_places[i] : '';
+      var huwInfo  = huwDatum ? ' (' + huwDatum + (huwPlek ? ', ' + huwPlek : '') + ')' : '';
+      reëls.push('💍 Getroud: ' + sp.name + huwInfo);
+    });
+  }
+
+  const sterfDatum = r.death_date || (r.death_year ? String(r.death_year) : '');
+  if (sterfDatum) reëls.push('✝️ Oorlede: ' + sterfDatum + (r.death_place ? ', ' + r.death_place : ''));
+  if (r.burial_place) reëls.push('⚰️ Begrawe: ' + r.burial_place);
+
+  if (r.children_ids && r.children_ids.length) {
+    reëls.push('👨‍👩‍👧‍👦 Kinders: ' + r.children_ids.length);
+  }
+
+  if (r.note) reëls.push('📝 Nota: ' + r.note);
+
+  reëls.push('');
+  reëls.push('🌐 Conradie Familiegeskiedenis');
+  reëls.push('https://bosloper.github.io/conradie-familiegeskiedenis');
+
+  const teks = reëls.join('\n');
+
+  if (navigator.share) {
+    navigator.share({
+      title: 'Conradie Familiegeskiedenis — ' + naam,
+      text: teks
+    }).catch(function() {});
+  } else {
+    // Terugval: kopieer na knipbord
+    navigator.clipboard.writeText(teks).then(function() {
+      alert('Gekopieer na knipbord!');
+    }).catch(function() {
+      alert('Deel nie beskikbaar op hierdie toestel nie.');
+    });
+  }
 }
 
 

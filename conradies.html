@@ -4554,22 +4554,13 @@ function attachCorrectionListeners() {
 
     var REPO = 'bosloper/conradie-familiegeskiedenis';
     var BASE = 'https://api.github.com/repos/' + REPO;
-    var BRANCH = 'main';
     var LEER_PAD = 'data/conradies.json';
+    var CONTENTS_URL = BASE + '/contents/' + LEER_PAD;
     var headers = {
       'Authorization': 'token ' + pat,
       'Accept': 'application/vnd.github+json',
       'Content-Type': 'application/json'
     };
-
-    async function ghFetch(url, opts) {
-      var r = await fetch(url, opts);
-      if (!r.ok) {
-        var e = await r.json().catch(function() { return {}; });
-        throw new Error((e.message || r.status) + ' [' + url.split('/').pop() + ']');
-      }
-      return r.json();
-    }
 
     var stoorBtn2 = document.getElementById('adm-github-btn');
     if (stoorBtn2) { stoorBtn2.disabled = true; stoorBtn2.style.opacity = '0.5'; }
@@ -4578,69 +4569,46 @@ function attachCorrectionListeners() {
       var nou = new Date().toISOString();
       var tydsStempel = nou.slice(0,19).replace('T',' ');
 
-      ghStatus('⏳ Stap 1/4: Kry tak-inligting van GitHub...');
-      var refData = await ghFetch(BASE + '/git/refs/heads/' + BRANCH, { headers: headers });
-      var huidigeCommitSha = refData.object.sha;
+      // ── Opsie C: Contents API (een stap, geen blob/tree/commit nodig) ──
+      ghStatus('⏳ Stap 1/2: Kry huidige lêer-SHA van GitHub...');
+      var bestaandeResp = await fetch(CONTENTS_URL, { headers: headers });
+      if (!bestaandeResp.ok) {
+        var e = await bestaandeResp.json().catch(function(){ return {}; });
+        throw new Error('Kon nie lêer-SHA kry nie: ' + (e.message || bestaandeResp.status));
+      }
+      var bestaande = await bestaandeResp.json();
+      var huidigeShа = bestaande.sha;
 
-      ghStatus('⏳ Stap 2/4: Laai databasis op (kan 10-60 sek neem)...');
-      // Gebruik base64 encoding — meer betroubaar vir groot lêers via GitHub API
+      ghStatus('⏳ Stap 2/2: Laai databasis op via Contents API (kan 30-90 sek neem)...');
       var jsonStr = JSON.stringify(CONRADIE_DATA);
-      // Kodeer UTF-8 string na base64 (hanteer Unicode karakters korrek)
+      // Kodeer UTF-8 korrek na base64
       var utf8Bytes = new TextEncoder().encode(jsonStr);
       var binStr = Array.from(utf8Bytes).map(function(b) { return String.fromCharCode(b); }).join('');
       var b64Str = btoa(binStr);
-      var blobData = await ghFetch(BASE + '/git/blobs', {
-        method: 'POST',
-        headers: headers,
-        body: JSON.stringify({ content: b64Str, encoding: 'base64' })
-      });
-      var blobSha = blobData.sha;
 
-      ghStatus('⏳ Stap 3/4: Skep nuwe lêerboom...');
-      var commitData = await ghFetch(BASE + '/git/commits/' + huidigeCommitSha, { headers: headers });
-      var huidigeTreeSha = commitData.tree.sha;
-
-      var nuweTree = await ghFetch(BASE + '/git/trees', {
-        method: 'POST',
+      var putResp = await fetch(CONTENTS_URL, {
+        method: 'PUT',
         headers: headers,
         body: JSON.stringify({
-          base_tree: huidigeTreeSha,
-          tree: [{
-            path: LEER_PAD,
-            mode: '100644',
-            type: 'blob',
-            sha: blobSha
-          }]
+          message: 'Admin-wysiging (Contents API): ' + nou,
+          content: b64Str,
+          sha: huidigeShа
         })
       });
-      var nuweTreeSha = nuweTree.sha;
 
-      ghStatus('⏳ Stap 4/4: Skep commit en dateer tak op...');
-      var nuweCommit = await ghFetch(BASE + '/git/commits', {
-        method: 'POST',
-        headers: headers,
-        body: JSON.stringify({
-          message: 'Admin-wysiging: ' + nou,
-          tree: nuweTreeSha,
-          parents: [huidigeCommitSha]
-        })
-      });
-      var nuweCommitSha = nuweCommit.sha;
-
-      await ghFetch(BASE + '/git/refs/heads/' + BRANCH, {
-        method: 'PATCH',
-        headers: headers,
-        body: JSON.stringify({ sha: nuweCommitSha })
-      });
+      if (!putResp.ok) {
+        var pe = await putResp.json().catch(function(){ return {}; });
+        throw new Error('Contents API PUT misluk: ' + (pe.message || putResp.status));
+      }
 
       await skryfTransaksie(pat, BASE, nou);
 
-      ghStatus('✅ Suksesvol gestoor na GitHub (' + tydsStempel + ')! Laai die bladsy oor om te bevestig.', '#5cb85c');
+      ghStatus('✅ Suksesvol gestoor via Contents API (' + tydsStempel + ')! Laai die bladsy oor om te bevestig.', '#5cb85c');
 
     } catch(err) {
       ghStatus('❌ GitHub-fout: ' + err.message + ' — Kontroleer die PAT en probeer weer.', '#e07050');
       if (stoorBtn2) { stoorBtn2.disabled = false; stoorBtn2.style.opacity = '1'; }
-      console.error('GitHub stoor-fout:', err);
+      console.error('GitHub stoor-fout (Contents API):', err);
     }
   }
 

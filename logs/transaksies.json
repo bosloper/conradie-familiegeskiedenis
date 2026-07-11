@@ -28,5 +28,21 @@
     "gebruiker": "admin",
     "aksie": "wysiging",
     "rekords": 11138
+  },
+  {
+    "tyd": "2026-07-11T18:22:47.868Z",
+    "gebruiker": "admin",
+    "rekord_id": "S4011",
+    "naam": "Hermanus MacDonald DE VRIES",
+    "wysigings": {
+      "birth_place": {
+        "oud": "",
+        "nuut": "Springbok, Namakwaland, Kaapkolonie"
+      },
+      "occupation": {
+        "oud": "",
+        "nuut": "Motorwerktuigkundige, motorhawe-eienaar, dorpsraadlid"
+      }
+    }
   }
 ]

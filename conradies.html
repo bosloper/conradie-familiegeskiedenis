@@ -714,8 +714,15 @@ main {
 #druk-inhoud { display: none; }
 
 @media print {
-  body > * { display: none !important; }
-  #druk-inhoud { display: block !important; }
+  body > *:not(#druk-inhoud) { display: none !important; }
+  #druk-inhoud {
+    display: block !important;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    z-index: 9999;
+    background: #fff;
+  }
   #druk-wrapper {
     display: block !important;
     font-family: 'EB Garamond', Georgia, serif;

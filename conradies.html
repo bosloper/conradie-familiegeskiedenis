@@ -1888,7 +1888,7 @@ main {
 <!-- Injected into panel, after panel-close div -->
 <div class="panel-actions" id="panel-actions" style="display:none">
   <button class="btn-edit" id="btn-edit">✏️ Stel wysiging voor</button>
-  <button class="btn-druk" id="btn-druk" title="Druk / stoor as PDF">🖨️ Druk / PDF</button>
+  <button class="btn-druk" id="btn-druk" onclick="if(correctionPersonId){var r=indexById[correctionPersonId];if(r)oopDrukSkerp(r);}" title="Druk / stoor as PDF">🖨️ Druk / PDF</button>
 </div>
 <div id="druk-inhoud"></div>
 <div id="druk-skerp" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;
@@ -2428,12 +2428,7 @@ function attachListeners() {
     state.page = 1; applyFilters();
   });
   document.getElementById('reset-btn').addEventListener('click', resetFilters);
-  document.getElementById('btn-druk').addEventListener('click', function() {
-    if (!correctionPersonId) return;
-    const r = indexById[correctionPersonId];
-    if (!r) return;
-    oopDrukSkerp(r);
-  });
+  // btn-druk: onclick direk op knoppie gestel (sien HTML)
 
   // Panel close
   document.getElementById('panel-close-btn').addEventListener('click', closePanel);

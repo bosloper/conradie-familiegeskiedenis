@@ -709,6 +709,53 @@ main {
   .tab-btn { padding: 0.55rem 0.4rem; font-size: 0.52rem; white-space: nowrap; flex: 1; text-align: center; }
 }
 /* filter-toggle-btn: hidden on desktop (see base rule above) */
+
+/* ── Druk / PDF styl ── */
+#druk-inhoud { display: none; }
+
+@media print {
+  body > * { display: none !important; }
+  #druk-inhoud { display: block !important; }
+  #druk-wrapper {
+    display: block !important;
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 11pt;
+    color: #000;
+    max-width: 100%;
+    padding: 1cm;
+  }
+  #druk-wrapper h1 {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 18pt;
+    margin-bottom: 0.3cm;
+    color: #000;
+    border-bottom: 1pt solid #888;
+    padding-bottom: 0.2cm;
+  }
+  #druk-wrapper h2 {
+    font-size: 11pt;
+    font-family: 'Josefin Sans', Arial, sans-serif;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #555;
+    margin: 0.4cm 0 0.15cm;
+  }
+  #druk-wrapper .druk-ry {
+    margin: 0.1cm 0;
+    font-size: 10.5pt;
+  }
+  #druk-wrapper .druk-voetnoot {
+    margin-top: 0.8cm;
+    font-size: 8pt;
+    color: #888;
+    border-top: 0.5pt solid #ccc;
+    padding-top: 0.2cm;
+  }
+  #druk-wrapper .druk-tydlyn { margin-top: 0.3cm; }
+  #druk-wrapper .druk-tl-item { margin: 0.1cm 0; font-size: 10pt; }
+  #druk-wrapper .druk-tl-hist { color: #999; font-size: 9pt; }
+  a { color: #000; text-decoration: none; }
+}
 .filter-hint-badge {
   display: none;
 }
@@ -978,6 +1025,14 @@ main {
   font-style: normal;
   margin-top: 0.15rem;
 }
+.tl-link {
+  color: var(--sepia);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  font-weight: 600;
+}
+.tl-link:hover { color: var(--rust); }
 
 /* Fact cards */
 .fact-grid {
@@ -1174,6 +1229,21 @@ main {
   transition: all 0.15s;
 }
 .btn-edit:hover { background: rgba(196,151,58,0.25); }
+.btn-druk {
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: rgba(45,74,42,0.10);
+  border: 1px solid var(--forest);
+  color: #5a8a55;
+  padding: 0.4rem 0.9rem;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.15s;
+  margin-left: auto;
+}
+.btn-druk:hover { background: rgba(45,74,42,0.22); }
 .btn-edit.active { background: var(--sepia); color: var(--ink); }
 
 /* Correction drawer */
@@ -1804,7 +1874,9 @@ main {
 <!-- Injected into panel, after panel-close div -->
 <div class="panel-actions" id="panel-actions" style="display:none">
   <button class="btn-edit" id="btn-edit">✏️ Stel wysiging voor</button>
+  <button class="btn-druk" id="btn-druk" title="Druk / stoor as PDF">🖨️ Druk / PDF</button>
 </div>
+<div id="druk-inhoud"></div>
 <div id="correction-drawer">
   <div class="drawer-heading" id="corr-person-label">Voorstelle</div>
 
@@ -2330,6 +2402,14 @@ function attachListeners() {
     state.page = 1; applyFilters();
   });
   document.getElementById('reset-btn').addEventListener('click', resetFilters);
+  document.getElementById('btn-druk').addEventListener('click', function() {
+    if (!correctionPersonId) return;
+    const r = indexById[correctionPersonId];
+    if (!r) return;
+    const drukDiv = document.getElementById('druk-inhoud');
+    drukDiv.innerHTML = buildDrukHTML(r);
+    window.print();
+  });
 
   // Panel close
   document.getElementById('panel-close-btn').addEventListener('click', closePanel);
@@ -2499,6 +2579,89 @@ function openPanel(id) {
 function closePanel() {
   document.getElementById('detail-panel').classList.remove('open');
   document.getElementById('overlay').classList.remove('visible');
+}
+
+function buildDrukHTML(r) {
+  const esc = s => (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const dl = s => s ? s.replace(/^(\d{4})-(\d{2})-(\d{2})$/, '$3/$2/$1')
+                       .replace(/^(\d{4})-(\d{2})$/, '$2/$1')
+                       .replace(/^~(\d{4})$/, 'omstreeks $1') : '';
+  function ry(f,y) { return f||y ? dl(f)||(y?String(y):'') : ''; }
+
+  let html = '<div id="druk-wrapper">';
+  // Naam en kode
+  const naam = [r.given, r.surname||r.name].filter(Boolean).join(' ');
+  html += '<h1>' + esc(naam) + '</h1>';
+  html += '<div style="font-size:9pt;color:#888;margin-bottom:0.3cm">' + esc(r.id) + (r.family_code ? ' · ' + esc(r.family_code) : '') + '</div>';
+
+  // Lewensdata
+  html += '<h2>Lewensdata</h2>';
+  if (r.birth_date||r.birth_year) html += '<div class="druk-ry">🌱 Gebore: ' + esc(ry(r.birth_date,r.birth_year)) + (r.birth_place ? ', ' + esc(r.birth_place) : '') + '</div>';
+  if (r.baptism_date) html += '<div class="druk-ry">✦ Gedoop: ' + esc(dl(r.baptism_date)) + (r.baptism_place ? ', ' + esc(r.baptism_place) : '') + '</div>';
+  if (r.death_date||r.death_year) html += '<div class="druk-ry">✝ Oorlede: ' + esc(ry(r.death_date,r.death_year)) + (r.death_place ? ', ' + esc(r.death_place) : '') + '</div>';
+  if (r.burial_date||r.burial_place) html += '<div class="druk-ry">⬦ Begrawe: ' + (r.burial_date ? esc(dl(r.burial_date)) : '') + (r.burial_place ? ', ' + esc(r.burial_place) : '') + '</div>';
+
+  // Ouers
+  if (r.parents && r.parents.length) {
+    html += '<h2>Ouers</h2>';
+    r.parents.forEach(p => {
+      const pr = indexById[p.id];
+      const pn = pr ? ([pr.given,pr.surname||pr.name].filter(Boolean).join(' ')) : (p.name||p.id);
+      html += '<div class="druk-ry">' + esc(p.role==='father'?'Vader':'Moeder') + ': ' + esc(pn) + '</div>';
+    });
+  }
+
+  // Gades
+  if (r.spouses && r.spouses.length) {
+    html += '<h2>Gade' + (r.spouses.length>1?'s':'') + '</h2>';
+    r.spouses.forEach((sp,i) => {
+      const md = r.marr_dates && r.marr_dates[i] ? r.marr_dates[i] : null;
+      const mp = r.marr_places && r.marr_places[i] ? r.marr_places[i] : null;
+      let row = '💍 ' + esc(sp.name);
+      if (md) row += ' — ' + esc(dl(md));
+      if (mp) row += ', ' + esc(mp);
+      html += '<div class="druk-ry">' + row + '</div>';
+    });
+  }
+
+  // Kinders
+  if (r.children_ids && r.children_ids.length) {
+    html += '<h2>Kinders (' + r.children_ids.length + ')</h2>';
+    r.children_ids.forEach(cid => {
+      const ch = indexById[cid];
+      if (!ch) return;
+      const cn = [ch.given,ch.surname||ch.name].filter(Boolean).join(' ');
+      html += '<div class="druk-ry">👶 ' + esc(cn) + (ch.birth_year ? ' *' + ch.birth_year : '') + '</div>';
+    });
+  }
+
+  // Tydlyn
+  const tlHtml = buildTydlyn(r);
+  if (tlHtml) {
+    html += '<h2>Tydlyn</h2><div class="druk-tydlyn">';
+    // Strip HTML tags from tydlyn, render as plain rows
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(tlHtml, 'text/html');
+    doc.querySelectorAll('.tl-entry').forEach(entry => {
+      const isHist = entry.classList.contains('tl-hist');
+      const date = entry.querySelector('.tl-date') ? entry.querySelector('.tl-date').textContent.trim() : '';
+      const detail = entry.querySelector('.tl-detail') ? entry.querySelector('.tl-detail').textContent.trim() : '';
+      const titel = entry.querySelector('.tl-title') ? entry.querySelector('.tl-title').textContent.trim() : '';
+      const tekst = detail || titel;
+      html += '<div class="druk-tl-item' + (isHist?' druk-tl-hist':'') + '">'
+        + esc(date) + (tekst ? '  ' + esc(tekst) : '') + '</div>';
+    });
+    html += '</div>';
+  }
+
+  // Aantekening
+  if (r.narrative) {
+    html += '<h2>Aantekening</h2><div class="druk-ry" style="font-style:italic">' + esc(r.narrative) + '</div>';
+  }
+
+  html += '<div class="druk-voetnoot">Conradie Familiegeskiedenis · bosloper.github.io/conradie-familiegeskiedenis · ' + new Date().toLocaleDateString('af-ZA') + '</div>';
+  html += '</div>';
+  return html;
 }
 
 function buildPanelHTML(r) {
@@ -2915,7 +3078,8 @@ function buildTydlyn(r) {
       if (spBirthYear && (!ry || spBirthYear > ry)) detail += ' (gade * ' + spBirthYear + ')';
       const divorced = sp.divorced && sp.divorce_date
         ? ' [Geskei ' + datumLabel(sp.divorce_date) + ']' : '';
-      gebeure.push({ jaar: my || ry, ikon: '💍', titel: 'Getroud' + (r.spouses.length > 1 ? ' (' + (i+1) + ')' : ''), detail: detail + divorced });
+      const huwJaar = my || null;
+      gebeure.push({ jaar: huwJaar, ikon: '💍', titel: 'Getroud' + (r.spouses.length > 1 ? ' (' + (i+1) + ')' : ''), detail: detail + divorced, linkId: sp.id });
       // Laaste gade se sterfdatum as afsonderlike gebeurtenis
       if (i === r.spouses.length - 1 && spDeathYear) {
         gebeure.push({ jaar: spDeathYear, ikon: '✦', titel: 'Gade oorlede', detail: sp.name + (spDeathDate ? ' — ' + datumLabel(spDeathDate) : '') });
@@ -2976,11 +3140,18 @@ function buildTydlyn(r) {
   const items = gebeure.map(g => {
     const jaarStr = g.jaar ? String(g.jaar) : '?';
     const histKlas = g.hist ? ' tl-hist' : ' tl-personal';
-    const detail = g.detail ? '<div class="tl-detail">' + escHtml(g.detail) + '</div>' : '';
+    let detailHtml = '';
+    if (g.detail) {
+      if (g.linkId) {
+        detailHtml = '<div class="tl-detail"><span class="tl-link" onclick="openPanel(\'' + g.linkId + '\')">' + escHtml(g.detail) + '</span></div>';
+      } else {
+        detailHtml = '<div class="tl-detail">' + escHtml(g.detail) + '</div>';
+      }
+    }
     return '<div class="tl-entry' + histKlas + '">'
       + '<div class="tl-date">' + g.ikon + '  ' + jaarStr + (g.hist ? '' : ' <span class="tl-tipe">' + escHtml(g.titel) + '</span>') + '</div>'
       + (g.hist ? '<div class="tl-title">' + escHtml(g.titel) + '</div>' : '')
-      + detail
+      + detailHtml
       + '</div>';
   }).join('');
 
@@ -3052,10 +3223,12 @@ function escHtml(s) {
 }
 
 function resetFilters() {
-  state = { search:'', branches:new Set(), genMin:1, genMax:11,
-    yearMin:null, yearMax:null, showSpouses:false, onlyNarrative:false, sort:'birth_asc', onlyRef:false, page:1 };
+  state = { search:'', placeSearch:'', branches:new Set(), genMin:1, genMax:11,
+    yearMin:null, yearMax:null, showSpouses:false, onlyNarrative:false, sort:'birth_asc', onlyRef:false, famType:'all', page:1 };
   document.getElementById('search-input').value = '';
   document.getElementById('search-clear').classList.remove('visible');
+  document.getElementById('place-input').value = '';
+  document.getElementById('place-clear').classList.remove('visible');
   document.getElementById('gen-min').value = 1;
   document.getElementById('gen-max').value = 10;
   document.getElementById('gen-display').textContent = 'Alle geslagte';
@@ -3115,9 +3288,13 @@ window.addEventListener('popstate', function(e) {
       switchTabMetGeskiedenis(t);
     });
   });
-  // Wys stamvader as verstek
-  history.replaceState({ tab: 'stamvader' }, '', '#stamvader');
-  switchTab('stamvader');
+  // Wys stamvader as verstek — maar nie as 'n diep-skakel hash teenwoordig is
+  var initHash = window.location.hash.replace('#', '');
+  var isDeepLink = initHash && (initHash.charAt(0) === 'I' || initHash.charAt(0) === 'S');
+  if (!isDeepLink) {
+    history.replaceState({ tab: 'stamvader' }, '', '#stamvader');
+    switchTab('stamvader');
+  }
 
   // Help modal close — click + touchend vir Android
   function addClose(el) {

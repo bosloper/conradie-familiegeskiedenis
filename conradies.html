@@ -712,6 +712,11 @@ main {
 
 /* ── Druk / PDF styl ── */
 #druk-inhoud { display: none; }
+#druk-inhoud #druk-wrapper {
+  color: #000 !important;
+  background: #fff !important;
+  font-family: 'EB Garamond', Georgia, serif;
+}
 
 @media print {
   body > *:not(#druk-inhoud) { display: none !important; }
@@ -2415,7 +2420,7 @@ function attachListeners() {
     if (!r) return;
     const drukDiv = document.getElementById('druk-inhoud');
     drukDiv.innerHTML = buildDrukHTML(r);
-    window.print();
+    setTimeout(function() { window.print(); }, 300);
   });
 
   // Panel close

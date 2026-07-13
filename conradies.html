@@ -709,6 +709,49 @@ main {
   .tab-btn { padding: 0.55rem 0.4rem; font-size: 0.52rem; white-space: nowrap; flex: 1; text-align: center; }
 }
 /* filter-toggle-btn: hidden on desktop (see base rule above) */
+.filter-hint-badge {
+  display: none;
+}
+.place-hint {
+  font-size: 0.72rem;
+  color: var(--muted);
+  font-style: italic;
+  margin-top: 0.25rem;
+  padding-left: 0.1rem;
+}
+.soek-wenk {
+  display: none;
+  background: rgba(196,151,58,0.10);
+  border: 1px solid var(--sepia-light);
+  border-radius: 6px;
+  padding: 0.6rem 0.9rem;
+  font-size: 0.85rem;
+  color: var(--ink);
+  margin-bottom: 0.75rem;
+  line-height: 1.4;
+}
+@media (max-width: 768px) {
+  .filter-hint-badge {
+    display: inline-block;
+    background: var(--sepia);
+    color: #fff;
+    border-radius: 10px;
+    font-size: 0.55rem;
+    padding: 0.15rem 0.5rem;
+    letter-spacing: 0.05em;
+    text-transform: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    margin-left: 0.4rem;
+    animation: pulse-badge 2s ease-in-out 3;
+    opacity: 1;
+  }
+  .filter-toggle-btn.open .filter-hint-badge { display: none; }
+  @keyframes pulse-badge {
+    0%,100% { opacity:1; } 50% { opacity:0.4; }
+  }
+  .soek-wenk { display: block; }
+}
 /* ── TAB SWITCHER ── */
 .tab-bar {
   background: #0e0b04;
@@ -906,6 +949,34 @@ main {
   width: 6px; height: 6px;
   left: -1.45rem; top: 0.4rem;
   box-shadow: none;
+}
+.tl-personal {
+  border: 1px solid var(--sepia-light);
+  border-radius: 6px;
+  padding: 0.45rem 0.6rem;
+  background: rgba(196,151,58,0.06);
+  margin-bottom: 1rem;
+}
+.tl-personal .tl-date {
+  font-size: 0.65rem;
+  color: var(--sepia);
+  font-weight: 700;
+}
+.tl-tipe {
+  display: inline-block;
+  margin-left: 0.4em;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--sepia);
+  opacity: 0.85;
+}
+.tl-personal .tl-detail {
+  font-size: 0.88rem;
+  color: var(--ink);
+  font-style: normal;
+  margin-top: 0.15rem;
 }
 
 /* Fact cards */
@@ -1620,7 +1691,8 @@ main {
 <div class="app-body">
   <!-- SIDEBAR -->
   <button class="filter-toggle-btn" id="filter-toggle-btn" aria-expanded="false">
-    🔍 Filters
+    🔍 Filters &amp; Soek
+    <span class="filter-hint-badge" id="filter-hint-badge">Tik hier om te filtreer</span>
     <span class="toggle-arrow">▼</span>
   </button>
   <aside id="filter-aside">
@@ -1630,6 +1702,15 @@ main {
         <input type="text" id="search-input" placeholder="naam, kode, 4-syfer nr, geboortejaar…" autocomplete="off">
         <button class="search-clear" id="search-clear" title="Verwyder soektog">×</button>
       </div>
+    </div>
+
+    <div class="filter-section">
+      <label class="section-label">Soek plek</label>
+      <div class="search-wrap">
+        <input type="text" id="place-input" placeholder="gebore, getroud, oorlede, begrawe…" autocomplete="off">
+        <button class="search-clear" id="place-clear" title="Verwyder plek-soektog">×</button>
+      </div>
+      <div class="place-hint">Soek oor alle plekname</div>
     </div>
 
     <div class="filter-section">
@@ -1692,6 +1773,9 @@ main {
 
   <!-- MAIN -->
   <main>
+    <div id="soek-wenk" class="soek-wenk">
+      🔍 Gebruik die <strong>Filters &amp; Soek</strong>-balk hierbo om te soek op naam, kode, geboortejaar of plek.
+    </div>
     <div class="result-bar">
       <span id="result-count"><strong>–</strong> persone</span>
       <span id="loading-msg">Laai data…</span>
@@ -2121,6 +2205,7 @@ const GESKIEDENIS = [
 const PAGE_SIZE = 80;
 let state = {
   search: '',
+  placeSearch: '',
   branches: new Set(),
   genMin: 0, genMax: 11,
   yearMin: null, yearMax: null,
@@ -2181,6 +2266,8 @@ function attachListeners() {
   si.addEventListener('input', () => {
     state.search = si.value.trim().toLowerCase();
     document.getElementById('search-clear').classList.toggle('visible', state.search.length > 0);
+    const wenk = document.getElementById('soek-wenk');
+    if (wenk && state.search.length > 0) wenk.style.display = 'none';
     state.page = 1; applyFilters();
   });
   document.getElementById('search-clear').addEventListener('click', () => {
@@ -2230,6 +2317,18 @@ function attachListeners() {
   document.getElementById('sort-select').addEventListener('change', e => {
     state.sort = e.target.value; state.page = 1; applyFilters();
   });
+  // Place search listeners
+  const pi = document.getElementById('place-input');
+  pi.addEventListener('input', () => {
+    state.placeSearch = pi.value.trim().toLowerCase();
+    document.getElementById('place-clear').classList.toggle('visible', state.placeSearch.length > 0);
+    state.page = 1; applyFilters();
+  });
+  document.getElementById('place-clear').addEventListener('click', () => {
+    pi.value = ''; state.placeSearch = '';
+    document.getElementById('place-clear').classList.remove('visible');
+    state.page = 1; applyFilters();
+  });
   document.getElementById('reset-btn').addEventListener('click', resetFilters);
 
   // Panel close
@@ -2252,6 +2351,14 @@ function applyFilters() {
     if (state.yearMin && r.birth_year && r.birth_year < state.yearMin) return false;
     if (state.yearMax && r.birth_year && r.birth_year > state.yearMax) return false;
     if (state.onlyNarrative && !r.narrative) return false;
+    if (state.placeSearch) {
+      const pq = state.placeSearch;
+      const bp = (r.birth_place||'').toLowerCase();
+      const dp = (r.death_place||'').toLowerCase();
+      const bup = (r.burial_place||'').toLowerCase();
+      const mps = (r.marr_places||[]).map(p => (p||'').toLowerCase()).join(' ');
+      if (!bp.includes(pq) && !dp.includes(pq) && !bup.includes(pq) && !mps.includes(pq)) return false;
+    }
     if (q) {
       const ref = (r.ref||'').toLowerCase();
       if (state.onlyRef) {
@@ -2775,7 +2882,7 @@ function buildTydlyn(r) {
       if (!py) return null;
       const diff = ry - py;
       if (diff < 0 || diff > 80) return null;
-      return (p.role === 'father' ? 'Va' : 'Mo') + ' ' + diff + 'j';
+      return (p.role === 'father' ? 'Vader' : 'Moeder') + ' ' + diff + ' jaar oud';
     }).filter(Boolean).join(', ');
     if (ouerNote) {
       gebeure.push({ jaar: ry, ikon: '🌱', titel: 'Gebore', detail: datumLabel(r.birth_date) + (r.birth_place ? ', ' + r.birth_place : '') + (ouerNote ? ' — ' + ouerNote : '') });
@@ -2824,9 +2931,7 @@ function buildTydlyn(r) {
       const cy = ch.birth_year || jaar(ch.birth_date);
       if (!cy) return;
       const chOud = ouderdom(ry, cy);
-      const gadeNaam = ch.spouses && ch.spouses.length ? ch.spouses[0].name : null;
       let detail = ch.name + (chOud ? chOud : '');
-      if (gadeNaam) detail += ' × ' + gadeNaam;
       gebeure.push({ jaar: cy, ikon: '👶', titel: 'Kind gebore', detail: detail });
     });
   }
@@ -2870,11 +2975,11 @@ function buildTydlyn(r) {
 
   const items = gebeure.map(g => {
     const jaarStr = g.jaar ? String(g.jaar) : '?';
-    const histKlas = g.hist ? ' tl-hist' : '';
+    const histKlas = g.hist ? ' tl-hist' : ' tl-personal';
     const detail = g.detail ? '<div class="tl-detail">' + escHtml(g.detail) + '</div>' : '';
     return '<div class="tl-entry' + histKlas + '">'
-      + '<div class="tl-date">' + g.ikon + '  ' + jaarStr + '</div>'
-      + '<div class="tl-title">' + escHtml(g.titel) + '</div>'
+      + '<div class="tl-date">' + g.ikon + '  ' + jaarStr + (g.hist ? '' : ' <span class="tl-tipe">' + escHtml(g.titel) + '</span>') + '</div>'
+      + (g.hist ? '<div class="tl-title">' + escHtml(g.titel) + '</div>' : '')
       + detail
       + '</div>';
   }).join('');

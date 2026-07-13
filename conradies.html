@@ -2418,9 +2418,29 @@ function attachListeners() {
     if (!correctionPersonId) return;
     const r = indexById[correctionPersonId];
     if (!r) return;
-    const drukDiv = document.getElementById('druk-inhoud');
-    drukDiv.innerHTML = buildDrukHTML(r);
-    setTimeout(function() { window.print(); }, 300);
+    const html = buildDrukHTML(r);
+    const win = window.open('', '_blank');
+    win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8">'
+      + '<meta name="viewport" content="width=device-width,initial-scale=1">'
+      + '<title>Druk — ' + (r.given||r.name||r.id) + '</title>'
+      + '<style>'
+      + 'body{font-family:Georgia,serif;font-size:12pt;color:#000;background:#fff;margin:1.5cm;}'
+      + 'h1{font-size:18pt;border-bottom:1pt solid #888;padding-bottom:0.2cm;margin-bottom:0.4cm;}'
+      + 'h2{font-size:11pt;text-transform:uppercase;letter-spacing:0.08em;color:#555;'
+      + '   margin:0.5cm 0 0.15cm;}'
+      + '.ry{margin:0.1cm 0;font-size:11pt;}'
+      + '.voetnoot{margin-top:1cm;font-size:8pt;color:#888;border-top:0.5pt solid #ccc;padding-top:0.2cm;}'
+      + '.tl-item{margin:0.1cm 0;font-size:10pt;}'
+      + '.tl-hist{color:#aaa;font-size:9pt;}'
+      + '@media print{body{margin:1cm;} button{display:none;}}'
+      + '</style>'
+      + '</head><body>'
+      + html
+      + '<br><button onclick="window.print()" '
+      + 'style="font-size:11pt;padding:0.4cm 1cm;cursor:pointer;margin-top:0.5cm">'
+      + '🖨️ Druk / Stoor as PDF</button>'
+      + '</body></html>');
+    win.document.close();
   });
 
   // Panel close
@@ -2647,23 +2667,32 @@ function buildDrukHTML(r) {
     });
   }
 
-  // Tydlyn
-  const tlHtml = buildTydlyn(r);
-  if (tlHtml) {
-    html += '<h2>Tydlyn</h2><div class="druk-tydlyn">';
-    // Strip HTML tags from tydlyn, render as plain rows
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(tlHtml, 'text/html');
-    doc.querySelectorAll('.tl-entry').forEach(entry => {
-      const isHist = entry.classList.contains('tl-hist');
-      const date = entry.querySelector('.tl-date') ? entry.querySelector('.tl-date').textContent.trim() : '';
-      const detail = entry.querySelector('.tl-detail') ? entry.querySelector('.tl-detail').textContent.trim() : '';
-      const titel = entry.querySelector('.tl-title') ? entry.querySelector('.tl-title').textContent.trim() : '';
-      const tekst = detail || titel;
-      html += '<div class="druk-tl-item' + (isHist?' druk-tl-hist':'') + '">'
-        + esc(date) + (tekst ? '  ' + esc(tekst) : '') + '</div>';
+  // Tydlyn — bou direk sonder DOMParser
+  const gebeure2 = [];
+  const ry2 = r.birth_year ? parseInt(r.birth_year) : (jaar(r.birth_date) || null);
+  if (r.birth_date || r.birth_year)
+    gebeure2.push({ j: ry2, t: '🌱 Gebore', d: ry(r.birth_date, r.birth_year) + (r.birth_place ? ', ' + r.birth_place : ''), hist: false });
+  if (r.baptism_date)
+    gebeure2.push({ j: jaar(r.baptism_date), t: '✦ Gedoop', d: dl(r.baptism_date) + (r.baptism_place ? ', ' + r.baptism_place : ''), hist: false });
+  if (r.spouses) r.spouses.forEach((sp, i) => {
+    const md = r.marr_dates && r.marr_dates[i] ? r.marr_dates[i] : null;
+    const mp = r.marr_places && r.marr_places[i] ? r.marr_places[i] : null;
+    gebeure2.push({ j: md ? jaar(md) : null, t: '💍 Getroud', d: sp.name + (md ? ' — ' + dl(md) : '') + (mp ? ', ' + mp : ''), hist: false });
+  });
+  if (r.children_ids) r.children_ids.forEach(cid => {
+    const ch = indexById[cid]; if (!ch) return;
+    const cy = ch.birth_year || jaar(ch.birth_date); if (!cy) return;
+    const cn = [ch.given, ch.surname||ch.name].filter(Boolean).join(' ');
+    gebeure2.push({ j: cy, t: '👶 Kind gebore', d: cn, hist: false });
+  });
+  if (r.death_date || r.death_year)
+    gebeure2.push({ j: r.death_year || jaar(r.death_date), t: '✝ Oorlede', d: ry(r.death_date, r.death_year) + (r.death_place ? ', ' + r.death_place : ''), hist: false });
+  gebeure2.sort((a,b) => { if (!a.j&&!b.j) return 0; if (!a.j) return 1; if (!b.j) return -1; return a.j-b.j; });
+  if (gebeure2.length) {
+    html += '<h2>Tydlyn</h2>';
+    gebeure2.forEach(g => {
+      html += '<div class="ry">' + esc(g.t) + (g.j ? ' ' + g.j : '') + (g.d ? ' — ' + esc(g.d) : '') + '</div>';
     });
-    html += '</div>';
   }
 
   // Aantekening

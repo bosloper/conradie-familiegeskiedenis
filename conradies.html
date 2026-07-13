@@ -1209,10 +1209,11 @@ main {
 
 /* ── CORRECTION FORM ── */
 .panel-actions {
-  padding: 0.6rem 1.4rem;
+  padding: 0.6rem 1rem;
   border-bottom: 1px solid #2d2518;
   display: flex;
-  gap: 0.6rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
   align-items: center;
 }
 .btn-edit {
@@ -1241,7 +1242,6 @@ main {
   border-radius: 2px;
   cursor: pointer;
   transition: all 0.15s;
-  margin-left: auto;
 }
 .btn-druk:hover { background: rgba(45,74,42,0.22); }
 .btn-edit.active { background: var(--sepia); color: var(--ink); }

@@ -213,7 +213,7 @@
 
   <!-- CTA -->
   <div class="cta-wrap">
-    <a class="cta-knoppie" href="conradies.html">📖 &nbsp;Oopmaak: Conradie Stamboom</a>
+    <a class="cta-knoppie" href="conradies.html" id="cta-knoppie">📖 &nbsp;Maak Conradie Stamboom oop</a>
     <div class="cta-beskrywing">
       7 201 Conradie-familielede &nbsp;·&nbsp; 3 932 aangetroudenes &nbsp;·&nbsp; 11 geslagte
     </div>
@@ -254,6 +254,8 @@
       <p>Die eerste weergawe van die volledige Conradie Stamboom is in 1932 saamgestel deur <span class="bydraer-naam">Hendrik Ludolph Neethling Conradie</span> (c2d4e8f13g5), met opdaterings in 1955 en 1978. Dit was 'n reuse taak, met ondersteuning en hulp van familielede en belangstellendes.</p>
       <p>In 2000 het <span class="bydraer-naam">Pieter Jakobus Conradie</span> (c3d5e3f4g13h2i1) die taak oorgeneem om dit by te werk, met 'n hersiene uitgawe in 2007. Daar was ook in-diepte navorsing deur <span class="bydraer-naam">Charl Francois Conradie</span> (c2d5e1f7g3h3i2) betreffende doop-, lidmaat- en grafinskrywings. Verskeie ander persone het self ook baie moeite gedoen en tyd opgeoffer om die geskiedenis te dokumenteer.</p>
       <p>Die laaste gedrukte weergawe was in 2014. Dit sou onregverdig wees om die harde werk van hierdie familielede dormant te laat. Hierdie is 'n poging om 'n meganisme te skep waardeur besonderhede intyds bygewerk en gedeel kan word.</p>
+    <p>Alhoewel daar baie moeite gedoen was om die korrektheid te verseker, is daar geen waarborg dat die inhoud korrek is nie. Dit word aangebied op gesigswaarde alleen.</p>
+
     </div>
 
     <div class="afdeling">
@@ -280,5 +282,24 @@
     <a href="https://www.dieconradies.com" target="_blank">dieconradies.com</a>
   </div>
 
+  <script>
+    // ── Diep-skakel: stuur #I1234 of #S1234 hash deur na conradies.html ──
+    (function() {
+      var hash = window.location.hash;
+      if (hash && (hash.charAt(1) === 'I' || hash.charAt(1) === 'S')) {
+        // Diep-skakel ontvang — gaan direk na conradies.html met hash
+        window.location.replace('conradies.html' + hash);
+      } else {
+        // Gewone besoek — maak seker CTA-knoppie sluit hash in as gebruiker later klik
+        var btn = document.getElementById('cta-knoppie');
+        if (btn) {
+          btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.location.href = 'conradies.html' + window.location.hash;
+          });
+        }
+      }
+    })();
+  </script>
 </body>
 </html>

@@ -2667,25 +2667,26 @@ function buildDrukHTML(r) {
   }
 
   // Tydlyn — bou direk sonder DOMParser
+  function jaarUitDatum(s) { if (!s) return null; const m = String(s).match(/\d{4}/); return m ? +m[0] : null; }
   const gebeure2 = [];
-  const ry2 = r.birth_year ? parseInt(r.birth_year) : (jaar(r.birth_date) || null);
+  const ry2 = r.birth_year ? parseInt(r.birth_year) : (jaarUitDatum(r.birth_date) || null);
   if (r.birth_date || r.birth_year)
     gebeure2.push({ j: ry2, t: '🌱 Gebore', d: ry(r.birth_date, r.birth_year) + (r.birth_place ? ', ' + r.birth_place : ''), hist: false });
   if (r.baptism_date)
-    gebeure2.push({ j: jaar(r.baptism_date), t: '✦ Gedoop', d: dl(r.baptism_date) + (r.baptism_place ? ', ' + r.baptism_place : ''), hist: false });
+    gebeure2.push({ j: jaarUitDatum(r.baptism_date), t: '✦ Gedoop', d: dl(r.baptism_date) + (r.baptism_place ? ', ' + r.baptism_place : ''), hist: false });
   if (r.spouses) r.spouses.forEach((sp, i) => {
     const md = r.marr_dates && r.marr_dates[i] ? r.marr_dates[i] : null;
     const mp = r.marr_places && r.marr_places[i] ? r.marr_places[i] : null;
-    gebeure2.push({ j: md ? jaar(md) : null, t: '💍 Getroud', d: sp.name + (md ? ' — ' + dl(md) : '') + (mp ? ', ' + mp : ''), hist: false });
+    gebeure2.push({ j: md ? jaarUitDatum(md) : null, t: '💍 Getroud', d: sp.name + (md ? ' — ' + dl(md) : '') + (mp ? ', ' + mp : ''), hist: false });
   });
   if (r.children_ids) r.children_ids.forEach(cid => {
     const ch = indexById[cid]; if (!ch) return;
-    const cy = ch.birth_year || jaar(ch.birth_date); if (!cy) return;
+    const cy = ch.birth_year || jaarUitDatum(ch.birth_date); if (!cy) return;
     const cn = [ch.given, ch.surname||ch.name].filter(Boolean).join(' ');
     gebeure2.push({ j: cy, t: '👶 Kind gebore', d: cn, hist: false });
   });
   if (r.death_date || r.death_year)
-    gebeure2.push({ j: r.death_year || jaar(r.death_date), t: '✝ Oorlede', d: ry(r.death_date, r.death_year) + (r.death_place ? ', ' + r.death_place : ''), hist: false });
+    gebeure2.push({ j: r.death_year || jaarUitDatum(r.death_date), t: '✝ Oorlede', d: ry(r.death_date, r.death_year) + (r.death_place ? ', ' + r.death_place : ''), hist: false });
   gebeure2.sort((a,b) => { if (!a.j&&!b.j) return 0; if (!a.j) return 1; if (!b.j) return -1; return a.j-b.j; });
   if (gebeure2.length) {
     html += '<h2>Tydlyn</h2>';

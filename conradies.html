@@ -2828,13 +2828,19 @@ function buildPanelHTML(r) {
     </div>`);
   }
 
-  // Deel-knoppie (altyd sigbaar)
-  parts.push(`<div style="margin-top:1.2rem;text-align:center;padding-bottom:0.5rem">
+  // Deel- en Druk-knoppies
+  parts.push(`<div style="margin-top:1.2rem;text-align:center;padding-bottom:0.5rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap">
     <button onclick="deelPersoon('${r.id}')" style="
       background:var(--sepia);color:var(--parchment);border:none;border-radius:20px;
       padding:0.5rem 1.3rem;font-size:0.9rem;cursor:pointer;font-family:inherit;
       display:inline-flex;align-items:center;gap:0.5rem">
       📤 Deel hierdie persoon
+    </button>
+    <button onclick="oopDrukSkerp(indexById['${r.id}'])" style="
+      background:var(--forest);color:var(--parchment);border:none;border-radius:20px;
+      padding:0.5rem 1.3rem;font-size:0.9rem;cursor:pointer;font-family:inherit;
+      display:inline-flex;align-items:center;gap:0.5rem">
+      🖨️ Druk / PDF
     </button>
   </div>`);
 

@@ -2717,7 +2717,7 @@ function buildDrukHTML(r) {
     html += '<h2>Aantekening</h2><div class="druk-ry" style="font-style:italic">' + esc(r.narrative) + '</div>';
   }
 
-  html += '<div class="druk-voetnoot">Conradie Familiegeskiedenis · bosloper.github.io/conradie-familiegeskiedenis · ' + new Date().toLocaleDateString('af-ZA') + '</div>';
+  html += '<div class="druk-voetnoot">Conradie Familiegeskiedenis · ' + new Date().toLocaleDateString('af-ZA') + '<br>🔗 bosloper.github.io/conradie-familiegeskiedenis#' + esc(r.id) + '</div>';
   html += '</div>';
   return html;
 }

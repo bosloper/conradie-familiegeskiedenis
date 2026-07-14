@@ -2740,7 +2740,7 @@ function buildPanelHTML(r) {
   if (r.baptism_date) dateRows.push(`<div class="panel-row"><span class="label">Gedoop</span><span class="value">${b(r.baptism_date)}</span></div>`);
   if (r.nickname) dateRows.push(`<div class="panel-row"><span class="label">Bynaam</span><span class="value">${r.nickname}</span></div>`);
   if (r.occupation) dateRows.push(`<div class="panel-row"><span class="label">Beroep</span><span class="value">${r.occupation}</span></div>`);
-  if (r.district) dateRows.push(`<div class="panel-row"><span class="label">Distrik</span><span class="value">${r.district}</span></div>`);
+  if (r.events && r.events.length) dateRows.push(`<div class="panel-row"><span class="label">Distrik</span><span class="value">${r.district||''}</span></div>`);
   if (r.marr_dates && r.marr_dates.length) {
     r.marr_dates.forEach((md, i) => {
       const mp = r.marr_places && r.marr_places[i] ? ', '+r.marr_places[i] : '';
@@ -2863,7 +2863,7 @@ function deelPersoon(id) {
   if (r.baptism_date) reëls.push('⛪ Gedoop: ' + r.baptism_date);
   if (r.nickname) reëls.push('🏷️ Bynaam: ' + r.nickname);
   if (r.occupation) reëls.push('💼 Beroep: ' + r.occupation);
-  if (r.district) reëls.push('📍 Distrik: ' + r.district);
+  if (r.events && r.events.length) reëls.push('📋 Gebeurtenisse: ' + r.events.length);
 
   if (r.spouses && r.spouses.length) {
     r.spouses.forEach(function(sp, i) {
@@ -3028,8 +3028,8 @@ function bouStats() {
 
   // ── 5. Top 10 Distrikte ──
   var distrikte = iRekords
-    .filter(function(r) { return r.district; })
-    .map(function(r) { return r.district.trim(); });
+    .filter(function(r) { return r.events && r.events.length; })
+    .map(function(r) { return r.events ? r.events.length : 0; });
   html += bouBalkPaneel('🗺️ Top 10 Distrikte', topN(distrikte, 10));
 
   // ── 6. Grootste gesinne (Top 10) ──
@@ -3158,6 +3158,21 @@ function buildTydlyn(r) {
   // Begrafnis
   if (r.burial_place && !r.death_date) {
     gebeure.push({ jaar: jaar(r.death_date) || r.death_year || null, ikon: '⚰', titel: 'Begrawe', detail: r.burial_place });
+  }
+
+  // Persoonlike gebeurtenisse (events-veld)
+  if (r.events && r.events.length) {
+    const tipeIkon = {
+      'SKOOL': '🏫', 'MATRIEK': '🎓', 'KWALIFIKASIE': '🎓', 'BEURS': '🏅',
+      'WERK': '💼', 'BEVORDERING': '📈', 'AFTREDE': '🏖',
+      'VERHUISING': '🏠', 'MILITÊR': '🪖', 'TOEKENNING': '🏆', 'GESONDHEID': '🏥',
+      'KERK': '⛪', 'ANDER': '📌'
+    };
+    r.events.forEach(function(ev) {
+      const ikon = tipeIkon[ev.type] || '📌';
+      const ey = ev.year ? +ev.year : null;
+      gebeure.push({ jaar: ey, ikon: ikon, titel: ev.type || 'ANDER', detail: ev.text || '' });
+    });
   }
 
   // Voeg geskiedkundige agtergrondgebeure by (slegs binne persoon se lewenspan)
@@ -4609,7 +4624,7 @@ function attachCorrectionListeners() {
       death_place: p.death_place || '',
       burial_place:p.burial_place|| '',
       occupation:  p.occupation  || '',
-      district:    p.district    || '',
+      events:      p.events      || [],
       note:        p.note        || ''
     };
 
@@ -4674,7 +4689,7 @@ function attachCorrectionListeners() {
       nickname: p.nickname || '', birth_date: p.birth_date || '',
       birth_place: p.birth_place || '', death_date: p.death_date || '',
       death_place: p.death_place || '', burial_place: p.burial_place || '',
-      occupation: p.occupation || '', district: p.district || '',
+      occupation: p.occupation || '', events: p.events || [],
       note: p.note || ''
     };
 
@@ -4687,7 +4702,7 @@ function attachCorrectionListeners() {
     p.death_place = _g('adm-death-place', p.death_place);
     p.burial_place= _g('adm-burial',      p.burial_place);
     p.occupation  = _g('adm-occupation',  p.occupation);
-    p.district    = _g('adm-district',    p.district);
+    p.events      = p.events || [];
     p.note        = _g('adm-note',        p.note);
 
     // Herbereken name
@@ -4701,7 +4716,7 @@ function attachCorrectionListeners() {
       nickname: p.nickname || '', birth_date: p.birth_date || '',
       birth_place: p.birth_place || '', death_date: p.death_date || '',
       death_place: p.death_place || '', burial_place: p.burial_place || '',
-      occupation: p.occupation || '', district: p.district || '',
+      occupation: p.occupation || '', events: p.events || [],
       note: p.note || ''
     };
     var wysigings = {};

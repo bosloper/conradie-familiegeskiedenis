@@ -2389,6 +2389,38 @@ function initApp() {
   // Build index
   CONRADIE_DATA.forEach(r => { indexById[r.id] = r; });
 
+  // Vul S-rekords se spouses[] in vanuit I-rekords
+  // (S-rekorde het spouses:[] in die JSON — die skakel leef op die I-rekord)
+  CONRADIE_DATA.forEach(function(r) {
+    if (!r.id || r.id.charAt(0) !== 'I') return;
+    if (!r.spouses || !r.spouses.length) return;
+    r.spouses.forEach(function(sp, i) {
+      var sRek = indexById[sp.id];
+      if (!sRek) return;
+      // Voeg I-rekord by as gade van S-rekord (indien nie reeds daar)
+      if (!sRek.spouses) sRek.spouses = [];
+      var reeds = sRek.spouses.some(function(x) { return x.id === r.id; });
+      if (!reeds) {
+        sRek.spouses.push({
+          id: r.id,
+          name: r.name,
+          birth_date: r.birth_date || '',
+          birth_year: r.birth_year || null,
+          divorce_date: sp.divorce_date || '',
+          divorced: sp.divorced || false
+        });
+        // Kopieer ook huweliksdatum na S-rekord se marr_dates (indien leeg)
+        if (!sRek.marr_dates) sRek.marr_dates = [];
+        if (!sRek.marr_places) sRek.marr_places = [];
+        var spIdx = sRek.spouses.length - 1;
+        if (!sRek.marr_dates[spIdx]) {
+          sRek.marr_dates[spIdx] = (r.marr_dates && r.marr_dates[i]) ? r.marr_dates[i] : '';
+          sRek.marr_places[spIdx] = (r.marr_places && r.marr_places[i]) ? r.marr_places[i] : '';
+        }
+      }
+    });
+  });
+
   buildBranchButtons();
   attachListeners();
   applyFilters();

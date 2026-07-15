@@ -1946,7 +1946,6 @@ main {
     <div class="corr-field"><label>Beroep</label><input id="corr-occupation" type="text" placeholder="bv. Boer, Onderwyser"></div>
   </div>
   <div class="corr-grid single">
-    <div class="corr-field"><label>Distrik</label><input id="corr-district" type="text" placeholder="bv. Montagu, Calvinia"></div>
   </div>
 
   <div class="corr-section-label">Familie</div>
@@ -2071,7 +2070,58 @@ main {
       </div>
     </div>
 
-    <!-- ── 3. NOTA / VERTEL MEER ── -->
+    <!-- ── 3. GEBEURTENISSE ── -->
+    <div class="vm-afdeling" id="vm-events-afdeling">
+      <div class="vm-afdeling-label">📋 Gebeurtenisse</div>
+      <div style="font-size:0.82rem;color:#9a8060;margin-bottom:0.6rem;line-height:1.45;">
+        Voeg 'n gebeurtenis by (skool, werk, verhuising, toekenning, ens.) of stel 'n
+        wysiging voor vir 'n bestaande gebeurtenis.
+      </div>
+      <!-- Bestaande events lys (deur vulVoorstelModal gevul) -->
+      <div id="vm-events-lys" style="margin-bottom:0.7rem;"></div>
+      <!-- Nuwe event byvoeg -->
+      <div style="background:#1a1208;border:1px solid #3a2e1a;border-radius:4px;padding:0.6rem;margin-bottom:0.4rem;">
+        <div style="font-size:0.75rem;color:#c49a3a;margin-bottom:0.5rem;font-weight:bold;">➕ Voeg nuwe gebeurtenis by</div>
+        <div style="display:flex;gap:0.4rem;flex-wrap:wrap;align-items:flex-end;">
+          <div>
+            <label style="font-size:0.72rem;color:#7a6a4a;display:block;margin-bottom:0.2rem;">Jaar</label>
+            <input type="number" id="vm-ev-jaar" placeholder="bv. 1968" min="1600" max="2100"
+              style="width:5.5rem;padding:0.35rem 0.4rem;background:#2a1e0a;color:#e8dfc8;border:1px solid #5a4830;border-radius:3px;font-size:0.85rem;">
+          </div>
+          <div>
+            <label style="font-size:0.72rem;color:#7a6a4a;display:block;margin-bottom:0.2rem;">Tipe</label>
+            <select id="vm-ev-tipe"
+              style="padding:0.35rem 0.4rem;background:#2a1e0a;color:#e8dfc8;border:1px solid #5a4830;border-radius:3px;font-size:0.85rem;">
+              <option value="SKOOL">🏫 Skool</option>
+              <option value="MATRIEK">🎓 Matriek</option>
+              <option value="KWALIFIKASIE">🎓 Kwalifikasie</option>
+              <option value="BEURS">🏅 Beurs</option>
+              <option value="WERK">💼 Werk</option>
+              <option value="BEVORDERING">📈 Bevordering</option>
+              <option value="AFTREDE">🏖 Aftrede</option>
+              <option value="VERHUISING">🏠 Verhuising</option>
+              <option value="MILITÊR">🪖 Militêr</option>
+              <option value="TOEKENNING">🏆 Toekenning</option>
+              <option value="GESONDHEID">🏥 Gesondheid</option>
+              <option value="KERK">⛪ Kerk</option>
+              <option value="ANDER">📌 Ander</option>
+            </select>
+          </div>
+          <div style="flex:1;min-width:8rem;">
+            <label style="font-size:0.72rem;color:#7a6a4a;display:block;margin-bottom:0.2rem;">Beskrywing</label>
+            <input type="text" id="vm-ev-teks" placeholder="bv. Aangestel as skoolhoof in Pretoria"
+              style="width:100%;box-sizing:border-box;padding:0.35rem 0.4rem;background:#2a1e0a;color:#e8dfc8;border:1px solid #5a4830;border-radius:3px;font-size:0.85rem;">
+          </div>
+          <button onclick="vmEvVoegBy()"
+            style="padding:0.35rem 0.75rem;background:#c49a3a;color:#1a1208;border:none;border-radius:3px;cursor:pointer;font-size:0.85rem;font-weight:bold;white-space:nowrap;">
+            + Voeg by
+          </button>
+        </div>
+        <div id="vm-ev-fout" style="display:none;color:#e05050;font-size:0.78rem;margin-top:0.3rem;"></div>
+      </div>
+    </div>
+
+    <!-- ── 4. NOTA / VERTEL MEER ── -->
     <div class="vm-afdeling">
       <div class="vm-afdeling-label">📝 Nota &amp; Verhaal</div>
       <div style="font-size:0.82rem;color:#9a8060;margin-bottom:0.5rem;line-height:1.45;">
@@ -2758,7 +2808,7 @@ function buildPanelHTML(r) {
   if (r.baptism_date) dateRows.push(`<div class="panel-row"><span class="label">Gedoop</span><span class="value">${b(r.baptism_date)}</span></div>`);
   if (r.nickname) dateRows.push(`<div class="panel-row"><span class="label">Bynaam</span><span class="value">${r.nickname}</span></div>`);
   if (r.occupation) dateRows.push(`<div class="panel-row"><span class="label">Beroep</span><span class="value">${r.occupation}</span></div>`);
-  if (r.events && r.events.length) dateRows.push(`<div class="panel-row"><span class="label">Distrik</span><span class="value">${r.district||''}</span></div>`);
+  // (district-veld is leeg; events word in tydlyn vertoon via buildTydlyn)
   if (r.marr_dates && r.marr_dates.length) {
     r.marr_dates.forEach((md, i) => {
       const mp = r.marr_places && r.marr_places[i] ? ', '+r.marr_places[i] : '';
@@ -3497,13 +3547,13 @@ var VM_VELDE = [
   ['Sterfplek',          'death_place',  'Dorp of distrik'],
   ['Begraafplek',        'burial_place', 'Kerkhof / dorp'],
   ['Beroep',             'occupation',   'bv. Boer, Onderwyser'],
-  ['Distrik',            'district',     'bv. Montagu, Calvinia'],
 ];
 
 function vulVoorstelModal(id) {
   correctionPersonId = id;
   var r = indexById[id];
   if (!r) return;
+  vmEvVoorstelle = []; // Reset events-voorstelle vir nuwe persoon
 
   // Opdateer kop
   var naamEl = document.getElementById('vm-persoon-naam');
@@ -3552,6 +3602,42 @@ function vulVoorstelModal(id) {
     }
   }
 
+  // Events-lys vul
+  var evLys = document.getElementById('vm-events-lys');
+  if (evLys) {
+    var bestaandeEvents = (r.events && r.events.length) ? r.events : [];
+    if (bestaandeEvents.length) {
+      var tipeIkon = {
+        'SKOOL':'🏫','MATRIEK':'🎓','KWALIFIKASIE':'🎓','BEURS':'🏅',
+        'WERK':'💼','BEVORDERING':'📈','AFTREDE':'🏖','VERHUISING':'🏠',
+        'MILITÊR':'🪖','TOEKENNING':'🏆','GESONDHEID':'🏥','KERK':'⛪','ANDER':'📌'
+      };
+      evLys.innerHTML = '<div style="font-size:0.75rem;color:#c49a3a;margin-bottom:0.4rem;font-weight:bold;">Bestaande gebeurtenisse — stel wysiging voor:</div>' +
+        bestaandeEvents.map(function(ev, idx) {
+          var ikon = tipeIkon[ev.type] || '📌';
+          return '<div class="vm-ev-item" style="display:flex;gap:0.4rem;align-items:flex-start;margin-bottom:0.4rem;background:#1a1208;border:1px solid #3a2e1a;border-radius:3px;padding:0.45rem 0.5rem;">' +
+            '<span style="flex-shrink:0;color:#c49a3a;font-size:0.85rem;">' + ikon + ' ' + (ev.year || '?') + ' — ' + (ev.type || '') + '</span>' +
+            '<span style="flex:1;font-size:0.82rem;color:#c8b888;">' + (ev.text || '') + '</span>' +
+            '<div style="flex-shrink:0;display:flex;gap:0.3rem;">' +
+              '<button onclick="vmEvWysig(' + idx + ')" title="Wysig" ' +
+                'style="padding:0.2rem 0.45rem;background:#3a5a3a;color:#90d090;border:none;border-radius:3px;cursor:pointer;font-size:0.8rem;">✏️</button>' +
+              '<button onclick="vmEvVerwyder(' + idx + ')" title="Verwyder" ' +
+                'style="padding:0.2rem 0.45rem;background:#5a3030;color:#e09090;border:none;border-radius:3px;cursor:pointer;font-size:0.8rem;">🗑</button>' +
+            '</div>' +
+          '</div>';
+        }).join('');
+    } else {
+      evLys.innerHTML = '<div style="font-size:0.82rem;color:#5a4830;font-style:italic;margin-bottom:0.4rem;">Geen gebeurtenisse in rekord nie.</div>';
+    }
+  }
+  // Reset nuwe event-invoervelde
+  var evJaar = document.getElementById('vm-ev-jaar');
+  var evTeks = document.getElementById('vm-ev-teks');
+  var evFout = document.getElementById('vm-ev-fout');
+  if (evJaar) evJaar.value = '';
+  if (evTeks) evTeks.value = '';
+  if (evFout) { evFout.style.display = 'none'; evFout.textContent = ''; }
+
   // Reset nota, nuwe persoon, en stuur-kassie
   var notaEl = document.getElementById('vm-nota');
   if (notaEl) notaEl.value = '';
@@ -3585,6 +3671,71 @@ function sluitVoorstelModal() {
   document.body.style.overflow = '';
   var btn = document.getElementById('btn-edit');
   if (btn) { btn.textContent = '✏️ Stel wysiging voor'; btn.classList.remove('active'); }
+}
+
+// ── EVENTS VOORSTEL FUNKSIES ──
+// Globale lys van events-voorstelle vir hierdie persoon
+var vmEvVoorstelle = []; // [{aksie:'NUUT'|'WYSIG'|'VVEE', indeks, jaar, tipe, teks}]
+
+function vmEvVoegBy() {
+  var jaar = (document.getElementById('vm-ev-jaar') || {}).value || '';
+  var tipe = (document.getElementById('vm-ev-tipe') || {}).value || 'ANDER';
+  var teks = (document.getElementById('vm-ev-teks') || {}).value.trim() || '';
+  var fout = document.getElementById('vm-ev-fout');
+  if (!teks) {
+    if (fout) { fout.textContent = 'Voer asseblief 'n beskrywing in.'; fout.style.display = 'block'; }
+    return;
+  }
+  if (fout) fout.style.display = 'none';
+  vmEvVoorstelle.push({ aksie: 'NUUT', jaar: jaar || '', tipe: tipe, teks: teks });
+  // Reset invoervelde
+  var evJaar = document.getElementById('vm-ev-jaar');
+  var evTeks = document.getElementById('vm-ev-teks');
+  if (evJaar) evJaar.value = '';
+  if (evTeks) evTeks.value = '';
+  // Wys bevestiging
+  var lys = document.getElementById('vm-events-lys');
+  if (lys) {
+    var nuutDiv = document.createElement('div');
+    nuutDiv.style.cssText = 'padding:0.3rem 0.5rem;background:#1a2a1a;border:1px solid #2d5a2d;border-radius:3px;font-size:0.82rem;color:#80d080;margin-bottom:0.3rem;';
+    nuutDiv.textContent = '✅ Nuut: ' + (jaar || '?') + ' | ' + tipe + ' — ' + teks;
+    lys.appendChild(nuutDiv);
+  }
+}
+
+function vmEvWysig(idx) {
+  var r = indexById[correctionPersonId];
+  if (!r || !r.events || !r.events[idx]) return;
+  var ev = r.events[idx];
+  // Vul invoervelde met bestaande waardes
+  var evJaar = document.getElementById('vm-ev-jaar');
+  var evTipe = document.getElementById('vm-ev-tipe');
+  var evTeks = document.getElementById('vm-ev-teks');
+  if (evJaar) evJaar.value = ev.year || '';
+  if (evTipe) evTipe.value = ev.type || 'ANDER';
+  if (evTeks) evTeks.value = ev.text || '';
+  // Verander + knoppie na "Stoor wysiging"
+  vmEvVoorstelle.push({ aksie: 'WYSIG', indeks: idx, jaar: ev.year || '', tipe: ev.type || '', teks: ev.text || '' });
+  // Wys wysig-merker langs die item
+  var items = document.querySelectorAll('.vm-ev-item');
+  if (items[idx]) {
+    items[idx].style.borderColor = '#c49a3a';
+    items[idx].style.opacity = '0.6';
+  }
+}
+
+function vmEvVerwyder(idx) {
+  var r = indexById[correctionPersonId];
+  if (!r || !r.events || !r.events[idx]) return;
+  var ev = r.events[idx];
+  if (!confirm('Verwyder: ' + (ev.year || '?') + ' — ' + (ev.text || '') + '?')) return;
+  vmEvVoorstelle.push({ aksie: 'VVEE', indeks: idx, jaar: ev.year || '', tipe: ev.type || '', teks: ev.text || '' });
+  var items = document.querySelectorAll('.vm-ev-item');
+  if (items[idx]) {
+    items[idx].style.borderColor = '#e05050';
+    items[idx].style.opacity = '0.4';
+    items[idx].style.textDecoration = 'line-through';
+  }
 }
 
 function vmToggleNuutPers(ja) {
@@ -3636,7 +3787,7 @@ function vmBouBoodskap(nuutPersAppart) {
         given:'VOORNAAM', surname:'VAN', nickname:'BYNAAM',
         birth_date:'GEBOORTEDATUM', birth_place:'GEBOORTEPLEK',
         death_date:'STERFDATUM',    death_place:'STERFPLEK',
-        burial_place:'BEGRAAFPLEK', occupation:'BEROEP', district:'DISTRIK'
+        burial_place:'BEGRAAFPLEK', occupation:'BEROEP'
       };
       lyne.push((sleutelMap[sleutel] || sleutel.toUpperCase()) + ': ' + val);
     }
@@ -3652,6 +3803,17 @@ function vmBouBoodskap(nuutPersAppart) {
       if ((datum || plek) && r.spouses.length > 1) lyne.push('HUWELIK_NR: ' + (i+1));
     });
   }
+
+  // Events-voorstelle
+  vmEvVoorstelle.forEach(function(ev) {
+    if (ev.aksie === 'NUUT') {
+      lyne.push('EVENT_NUUT: ' + (ev.jaar || '') + '|' + (ev.tipe || 'ANDER') + '|' + (ev.teks || ''));
+    } else if (ev.aksie === 'WYSIG') {
+      lyne.push('EVENT_WYSIG: ' + ((ev.indeks + 1) || '?') + '|' + (ev.jaar || '') + '|' + (ev.tipe || '') + '|' + (ev.teks || ''));
+    } else if (ev.aksie === 'VVEE') {
+      lyne.push('EVENT_VVEE: ' + ((ev.indeks + 1) || '?') + '|' + (ev.jaar || '') + '|' + (ev.tipe || '') + '|' + (ev.teks || ''));
+    }
+  });
 
   // Nota
   var nota = get('vm-nota');
@@ -4100,7 +4262,6 @@ function attachCorrectionListeners() {
       html += _veld('adm-death-place', 'Sterfplek',       'text');
       html += _veld('adm-burial',      'Begraafplek',     'text');
       html += _veld('adm-occupation',  'Beroep',          'text');
-      html += _veld('adm-district',    'Distrik',         'text');
       html += _veld('adm-note',        'Nota / Narratief', 'textarea');
 
       html += '<div style="margin-top:0.75rem;">';
@@ -4295,7 +4456,6 @@ function attachCorrectionListeners() {
     'STERFPLEK':     'death_place',
     'BEGRAAFPLEK':   'burial_place',
     'BEROEP':        'occupation',
-    'DISTRIK':       'district',
     'NOTA':          'note',
   };
 
@@ -4356,18 +4516,34 @@ function attachCorrectionListeners() {
     if (isNaN(huwNr) || huwNr < 0) huwNr = 0;
     var huwInfo  = (huwDatum || huwPlek) ? { datum: huwDatum, plek: huwPlek, indeks: huwNr } : null;
 
-    if (!verskille.length && !narrVervang && !narrVoegBy && !huwInfo) {
+    // Hanteer events-voorstelle
+    var evVoorstelle = [];
+    (teks.match(/^EVENT_(NUUT|WYSIG|VVEE):.+$/mg) || []).forEach(function(reel) {
+      var kol = reel.indexOf(':');
+      var sleutel = reel.substring(0, kol).trim().toUpperCase();
+      var dele = reel.substring(kol + 1).trim().split('|');
+      if (sleutel === 'EVENT_NUUT' && dele.length >= 2) {
+        evVoorstelle.push({ aksie:'NUUT', jaar: dele[0].trim(), tipe: dele[1].trim(), teks: (dele[2] || '').trim() });
+      } else if (sleutel === 'EVENT_WYSIG' && dele.length >= 3) {
+        evVoorstelle.push({ aksie:'WYSIG', indeks: (parseInt(dele[0].trim()) - 1), jaar: dele[1].trim(), tipe: dele[2].trim(), teks: (dele[3] || '').trim() });
+      } else if (sleutel === 'EVENT_VVEE') {
+        evVoorstelle.push({ aksie:'VVEE', indeks: (parseInt(dele[0].trim()) - 1), jaar: dele[1].trim(), tipe: dele[2].trim(), teks: (dele[3] || '').trim() });
+      }
+    });
+
+    if (!verskille.length && !narrVervang && !narrVoegBy && !huwInfo && !evVoorstelle.length) {
       statusEl.textContent = '⚠️ Geen bekende veldwysigings gevind nie.';
       return;
     }
 
     // Wys vergelyking
-    admWysVergelyking(persoon, verskille, narrVervang, narrVoegBy, ekstra, indiener, huwInfo);
+    admWysVergelyking(persoon, verskille, narrVervang, narrVoegBy, ekstra, indiener, huwInfo, evVoorstelle);
     statusEl.textContent = '✅ Voorstel verwerk vir: ' + persoon.name + ' (REF ' + ref + ')';
   }
 
   // ── Wys Oud vs Nuut Vergelyking ──
-  function admWysVergelyking(persoon, verskille, narrVervang, narrVoegBy, ekstra, indiener, huwInfo) {
+  function admWysVergelyking(persoon, verskille, narrVervang, narrVoegBy, ekstra, indiener, huwInfo, evVoorstelle) {
+    evVoorstelle = evVoorstelle || [];
     // Laai die persoon in die vorm
     admLaaiPersoon(persoon.id);
 
@@ -4432,6 +4608,35 @@ function attachCorrectionListeners() {
               '<span style="color:#5cb85c;font-size:0.8rem;">Aanvaar</span></label>' +
               '</td></tr>';
     }
+    // Events-voorstelle rye
+    if (evVoorstelle.length) {
+      evVoorstelle.forEach(function(ev, ei) {
+        var aksieLabel = ev.aksie === 'NUUT' ? '➕ Nuut' : ev.aksie === 'WYSIG' ? '✏️ Wysig #' + (ev.indeks + 1) : '🗑 Verwyder #' + (ev.indeks + 1);
+        var aksieKleur = ev.aksie === 'NUUT' ? '#5cb85c' : ev.aksie === 'WYSIG' ? '#c49a3a' : '#e05050';
+        var oudTeks = '';
+        if (ev.aksie !== 'NUUT' && persoon.events && persoon.events[ev.indeks]) {
+          var ou_ev = persoon.events[ev.indeks];
+          oudTeks = (ou_ev.year || '?') + ' | ' + (ou_ev.type || '') + ' — ' + (ou_ev.text || '');
+        }
+        var nuutTeks = ev.aksie === 'VVEE' ? '<em style="color:#e05050;">Verwyder</em>' :
+          (ev.jaar || '?') + ' | ' + (ev.tipe || '') + ' — ' + (ev.teks || '');
+        html += '<tr style="background:#0a0e14;">' +
+          '<td style="padding:0.3rem 0.5rem;color:' + aksieKleur + ';font-size:0.82rem;">' + aksieLabel + '</td>' +
+          '<td style="padding:0.3rem 0.5rem;color:#5c4510;font-size:0.82rem;">' + (oudTeks || '<em>—</em>') + '</td>' +
+          '<td style="padding:0.3rem 0.5rem;color:' + aksieKleur + ';font-size:0.82rem;">' + nuutTeks + '</td>' +
+          '<td style="padding:0.3rem 0.5rem;">' +
+          '<label style="display:flex;align-items:center;gap:0.3rem;cursor:pointer;">' +
+          '<input type="checkbox" class="adm-vgl-event" ' +
+          'data-ev-aksie="' + ev.aksie + '" ' +
+          'data-ev-indeks="' + (ev.indeks !== undefined ? ev.indeks : '') + '" ' +
+          'data-ev-jaar="' + (ev.jaar || '').replace(/"/g,'&quot;') + '" ' +
+          'data-ev-tipe="' + (ev.tipe || '').replace(/"/g,'&quot;') + '" ' +
+          'data-ev-teks="' + (ev.teks || '').replace(/"/g,'&quot;') + '" ' +
+          'checked style="cursor:pointer;width:16px;height:16px;accent-color:' + aksieKleur + ';"> ' +
+          '<span style="color:' + aksieKleur + ';font-size:0.8rem;">Aanvaar</span></label>' +
+          '</td></tr>';
+      });
+    }
     html += '</table>';
 
     if (narrVervang || narrVoegBy) {
@@ -4489,7 +4694,7 @@ function attachCorrectionListeners() {
         birth_date:'adm-birth-date', birth_place:'adm-birth-place',
         death_date:'adm-death-date', death_place:'adm-death-place',
         burial_place:'adm-burial',
-        occupation:'adm-occupation', district:'adm-district',
+        occupation:'adm-occupation',
         note:'adm-note'
       }[veld];
       if (veldId) {
@@ -4527,8 +4732,37 @@ function attachCorrectionListeners() {
       toegepas++;
     }
 
+    // Events toepas
+    var evCbs = document.querySelectorAll('.adm-vgl-event:checked');
+    evCbs.forEach(function(cb) {
+      var aksie  = cb.getAttribute('data-ev-aksie');
+      var indeks = parseInt(cb.getAttribute('data-ev-indeks'));
+      var jaar   = cb.getAttribute('data-ev-jaar');
+      var tipe   = cb.getAttribute('data-ev-tipe');
+      var teks   = cb.getAttribute('data-ev-teks');
+      if (!persoon.events) persoon.events = [];
+      if (aksie === 'NUUT') {
+        persoon.events.push({ year: jaar || null, type: tipe || 'ANDER', text: teks });
+        // Sorteer events op jaar na byvoeging
+        persoon.events.sort(function(a, b) {
+          if (!a.year && !b.year) return 0;
+          if (!a.year) return 1;
+          if (!b.year) return -1;
+          return parseInt(a.year) - parseInt(b.year);
+        });
+        toegepas++;
+      } else if (aksie === 'WYSIG' && !isNaN(indeks) && persoon.events[indeks]) {
+        persoon.events[indeks] = { year: jaar || null, type: tipe || 'ANDER', text: teks };
+        toegepas++;
+      } else if (aksie === 'VVEE' && !isNaN(indeks) && persoon.events[indeks]) {
+        persoon.events.splice(indeks, 1);
+        toegepas++;
+      }
+    });
+
     document.getElementById('adm-status').textContent =
       '✅ ' + toegepas + ' veld(e) toegepas — klik "Stoor Wysigings" dan "Stoor na GitHub".';
+
 
     // Verwyder vergelyking-paneel
     var vglDiv = document.getElementById('adm-vgl-paneel');

@@ -2286,7 +2286,8 @@ async function laaiData() {
     if (statusEl) statusEl.textContent = 'Data word gelaai…';
     const resp = await fetch('data/conradies.json');
     if (!resp.ok) throw new Error('HTTP ' + resp.status);
-    CONRADIE_DATA = await resp.json();
+    const jsonData = await resp.json();
+    CONRADIE_DATA = Array.isArray(jsonData) ? jsonData : (jsonData.people || jsonData);
     window.CONRADIE_DATA = CONRADIE_DATA; // Admin IIFE het window.CONRADIE_DATA nodig
     // Bereken tak-tellings
     BRANCH_COUNTS = {};

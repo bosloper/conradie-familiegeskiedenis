@@ -2839,8 +2839,18 @@ function buildPanelHTML(r) {
         ? `<span class="person-link" data-id="${sp.id}">${sp.name}</span>`
         : sp.name;
       const spDates = sp.birth_date ? ` <em style="color:var(--muted);font-size:0.8rem">* ${sp.birth_date}</em>` : '';
-      const huwDatum = r.marr_dates && r.marr_dates[i] ? r.marr_dates[i] : '';
-      const huwPlek  = r.marr_places && r.marr_places[i] ? r.marr_places[i] : '';
+      // Huweliksdatum: probeer eers op hierdie rekord, dan op die gade se I-rekord
+      let huwDatum = r.marr_dates && r.marr_dates[i] ? r.marr_dates[i] : '';
+      let huwPlek  = r.marr_places && r.marr_places[i] ? r.marr_places[i] : '';
+      if (!huwDatum && sp.id && indexById[sp.id]) {
+        const spRek = indexById[sp.id];
+        // Soek hierdie rekord se id in die gade se spouses-lys
+        const spIdx = spRek.spouses ? spRek.spouses.findIndex(function(s) { return s.id === r.id; }) : -1;
+        if (spIdx >= 0) {
+          huwDatum = spRek.marr_dates && spRek.marr_dates[spIdx] ? spRek.marr_dates[spIdx] : '';
+          huwPlek  = spRek.marr_places && spRek.marr_places[spIdx] ? spRek.marr_places[spIdx] : '';
+        }
+      }
       const huwInfo  = huwDatum
         ? `<div style="font-size:0.78rem;color:var(--sepia);margin-top:2px">&#9901; ${huwDatum}${huwPlek ? ', ' + huwPlek : ''}</div>`
         : `<div style="font-size:0.75rem;color:var(--muted);margin-top:2px;font-style:italic;">Huweliksdatum onbekend</div>`;
@@ -3179,8 +3189,17 @@ function buildTydlyn(r) {
   // Huwelike
   if (r.spouses && r.spouses.length) {
     r.spouses.forEach((sp, i) => {
-      const md = r.marr_dates && r.marr_dates[i] ? r.marr_dates[i] : null;
-      const mp = r.marr_places && r.marr_places[i] ? r.marr_places[i] : null;
+      // Huweliksdatum: probeer eers op hierdie rekord, dan op die gade se I-rekord
+      let md = r.marr_dates && r.marr_dates[i] ? r.marr_dates[i] : null;
+      let mp = r.marr_places && r.marr_places[i] ? r.marr_places[i] : null;
+      if (!md && sp.id && indexById[sp.id]) {
+        const spRek2 = indexById[sp.id];
+        const spIdx2 = spRek2.spouses ? spRek2.spouses.findIndex(function(s) { return s.id === r.id; }) : -1;
+        if (spIdx2 >= 0) {
+          md = spRek2.marr_dates && spRek2.marr_dates[spIdx2] ? spRek2.marr_dates[spIdx2] : null;
+          mp = spRek2.marr_places && spRek2.marr_places[spIdx2] ? spRek2.marr_places[spIdx2] : null;
+        }
+      }
       const my = jaar(md);
       const spBirthYear = sp.birth_year || jaar(sp.birth_date);
       const spRek = indexById[sp.id];

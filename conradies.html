@@ -4236,7 +4236,7 @@ function attachCorrectionListeners() {
     }
 
     var html = '<div style="max-width:720px;margin:0 auto;padding:1.5rem 1rem;">';
-    html += '<h2 style="color:var(--sepia-light);font-size:1.4rem;margin-bottom:1.2rem;">✏️ Admin — Conradie Databasis</h2>';
+    html += '<h2 style="color:var(--sepia-light);font-size:1.4rem;margin-bottom:1.2rem;">✏️ Admin — Conradie Databasis <span style="font-size:0.7rem;color:#6a5a40;font-weight:normal;letter-spacing:0.05em;">v8-1</span></h2>';
 
     // ── 1. Proses-verduideliking (altyd sigbaar) ──
     html += '<div style="background:#1a1208;border:1px solid #8b6914;border-radius:6px;padding:1rem 1.2rem;margin-bottom:1.5rem;">';
@@ -4376,6 +4376,13 @@ function attachCorrectionListeners() {
       html += '</div>';
 
       // ── 7. Stoor & Uitvoer ──
+      // ── Hangende Wysigings (patch-log) ──
+      html += _afd('📋', 'Hangende Wysigings<span id="adm-patch-teller" style="color:#8fc88f;font-size:0.85rem;font-weight:normal;"></span>', '#5a8a6a');
+      html += '<div style="background:#0a1a10;border:1px solid #2d5a3a;border-radius:6px;padding:0.9rem;margin-bottom:0.5rem;">';
+      html += '<div style="color:#7ab08a;font-size:0.82rem;margin-bottom:0.6rem;">Wysigings wat veilig op hierdie toestel gestoor is (bly selfs as blaaier sluit):</div>';
+      html += '<div id="adm-patch-log-inhoud"><div style="color:#7a6a50;font-size:0.85rem;font-style:italic;">Laai...</div></div>';
+      html += '</div>';
+
       html += _afd('☁️', 'Stoor & Uitvoer', '#4a7a4a');
       html += '<div style="display:flex;gap:0.75rem;flex-wrap:wrap;margin-bottom:1rem;">';
       html += '<button id="adm-wa-btn" style="padding:0.5rem 1.1rem;background:#25D366;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:0.9rem;">📱 WhatsApp (App)</button>';
@@ -4400,6 +4407,9 @@ function attachCorrectionListeners() {
 
     html += '</div>'; // end wrapper
     el.innerHTML = html;
+
+    // Vul patch-log afdeling
+    if (typeof patchLogBouAfdeling === 'function') patchLogBouAfdeling();
 
     // Knoppie-luisteraars
     // Plak Voorstel luisteraars
@@ -5029,9 +5039,101 @@ function attachCorrectionListeners() {
     });
     window.admLaastеWysigings = { rekord_id: admCurrentId, naam: p.name, wysigings: wysigings };
 
-    document.getElementById('adm-status').textContent =
-      '✅ Gewysig in geheue: ' + p.name + ' — gebruik "Stoor na GitHub" om te stoor.';
+    // ── Stoor ook in patch-log (localStorage) ──
+    var veranderCount = Object.keys(wysigings).length;
+    if (veranderCount > 0) {
+      patchLogVoegBy({
+        tyd: new Date().toISOString(),
+        rekord_id: admCurrentId,
+        naam: p.name,
+        tipe: 'wysiging',
+        wysigings: wysigings
+      });
+      document.getElementById('adm-status').textContent =
+        '✅ Gewysig: ' + p.name + ' (' + veranderCount + ' veld(e)) — veilig gestoor. Gebruik "Stoor na GitHub" om te voltooi.';
+    } else {
+      document.getElementById('adm-status').textContent =
+        'ℹ️ Geen veranderinge opgespoor vir ' + p.name + '.';
+    }
+    patchLogBouAfdeling();
   }
+
+  // ── Patch-log hulpfunksies (localStorage) ──
+  var PATCH_SLEUTEL = 'conradie_patch_log';
+
+  function patchLogLees() {
+    try {
+      var data = localStorage.getItem(PATCH_SLEUTEL);
+      return data ? JSON.parse(data) : [];
+    } catch(e) { return []; }
+  }
+
+  function patchLogSkryf(log) {
+    try {
+      localStorage.setItem(PATCH_SLEUTEL, JSON.stringify(log));
+    } catch(e) {
+      console.warn('localStorage skryf misluk:', e);
+    }
+  }
+
+  function patchLogVoegBy(inskrywing) {
+    var log = patchLogLees();
+    log.push(inskrywing);
+    patchLogSkryf(log);
+  }
+
+  function patchLogWis() {
+    localStorage.removeItem(PATCH_SLEUTEL);
+  }
+
+  function patchLogBouAfdeling() {
+    var el = document.getElementById('adm-patch-log-inhoud');
+    if (!el) return;
+    var log = patchLogLees();
+    if (log.length === 0) {
+      el.innerHTML = '<div style="color:#7a6a50;font-size:0.85rem;font-style:italic;">Geen hangende wysigings nie.</div>';
+      var teller = document.getElementById('adm-patch-teller');
+      if (teller) teller.textContent = '';
+      return;
+    }
+    var teller = document.getElementById('adm-patch-teller');
+    if (teller) teller.textContent = ' (' + log.length + ' hangend)';
+
+    var html = '<table style="width:100%;border-collapse:collapse;font-size:0.82rem;">';
+    html += '<tr style="color:#c49a3a;border-bottom:1px solid #3d3020;">';
+    html += '<th style="text-align:left;padding:0.3rem 0.4rem;">Tyd</th>';
+    html += '<th style="text-align:left;padding:0.3rem 0.4rem;">Rekord</th>';
+    html += '<th style="text-align:left;padding:0.3rem 0.4rem;">Velde</th></tr>';
+    log.forEach(function(item, i) {
+      var tyd = item.tyd ? item.tyd.slice(0,16).replace('T',' ') : '?';
+      var velde = Object.keys(item.wysigings || {}).join(', ') || item.tipe || '?';
+      html += '<tr style="border-bottom:1px solid #2a2010;color:#c8b890;">';
+      html += '<td style="padding:0.3rem 0.4rem;">' + tyd + '</td>';
+      html += '<td style="padding:0.3rem 0.4rem;">' + (item.naam || item.rekord_id) + '</td>';
+      html += '<td style="padding:0.3rem 0.4rem;">' + velde + '</td>';
+      html += '</tr>';
+    });
+    html += '</table>';
+    html += '<div style="margin-top:0.6rem;display:flex;gap:0.5rem;">';
+    html += '<button onclick="patchLogAflaai()" style="padding:0.35rem 0.8rem;background:#3d3020;color:#e8dfc8;border:none;border-radius:4px;cursor:pointer;font-size:0.82rem;">⬇️ Laai log af</button>';
+    html += '<button onclick="if(confirm(\'Alle hangende wysigings uitvee?\')) { patchLogWis(); patchLogBouAfdeling(); }" style="padding:0.35rem 0.8rem;background:#5a1a1a;color:#e8c8c8;border:none;border-radius:4px;cursor:pointer;font-size:0.82rem;">🗑️ Maak log skoon</button>';
+    html += '</div>';
+    el.innerHTML = html;
+  }
+
+  window.patchLogAflaai = function() {
+    var log = patchLogLees();
+    var blob = new Blob([JSON.stringify(log, null, 2)], {type: 'application/json'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'conradie_patches_' + new Date().toISOString().slice(0,10) + '.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  window.patchLogBouAfdeling = patchLogBouAfdeling;
+  window.patchLogWis = patchLogWis;
 
   // ── Voeg nuwe huwelik by ──
   function admHuwVoeg() {
@@ -5161,9 +5263,19 @@ function attachCorrectionListeners() {
       var nuweVan   = naamDele[naamDele.length - 1];
       var nuweGegee = naamDele.slice(0, -1).join(' ');
 
-      // Bereken family_code vir nuwe Conradie-gade
-      // Gade is nie \'n kind van p nie — kry eie code gebaseer op p se kode
-      var nuweKode = p.family_code || '';
+      // Bereken family_code vir nuwe Conradie-gade (as kind van p)
+      var ouerKode2 = p.family_code || '';
+      var gebruikteLetters2 = (p.children_ids || []).map(function(kid) {
+        var kr = window.indexById[kid];
+        var kk = kr ? (kr.family_code || '') : '';
+        return kk.length > ouerKode2.length ? kk[ouerKode2.length] : '';
+      }).filter(Boolean);
+      var volgendeLetter2 = 'a';
+      for (var c2 = 97; c2 <= 122; c2++) {
+        var l2 = String.fromCharCode(c2);
+        if (gebruikteLetters2.indexOf(l2) === -1) { volgendeLetter2 = l2; break; }
+      }
+      var nuweKode = ouerKode2 + volgendeLetter2;
 
       var nuweRek = {
         id: d.gadId, ref: d.nuweNr,
@@ -5236,6 +5348,21 @@ function attachCorrectionListeners() {
 
     statusLyne.push('Gebruik "Stoor na GitHub" om te stoor.');
     document.getElementById('adm-status').textContent = statusLyne.join(' ');
+
+    // Voeg by patch-log
+    var patchTipe = (d.isConr === 'ja') ? 'nuwe_huwelik_conradie' : 'nuwe_huwelik_gade';
+    patchLogVoegBy({
+      tyd: new Date().toISOString(),
+      rekord_id: p.id,
+      naam: p.name,
+      tipe: patchTipe,
+      gade_id: d.gadId,
+      gade_naam: d.gadNaam,
+      wysigings: {
+        huwelik: { nuut: d.gadNaam + (d.huwDatum ? ' (' + d.huwDatum + ')' : '') }
+      }
+    });
+    patchLogBouAfdeling();
   }
 
   // ── Voeg nuwe Kind by ──
@@ -5360,6 +5487,25 @@ function attachCorrectionListeners() {
 
     var status = '👶 Kind bygevoeg: ' + d.naam + ' (' + nuweId + ', kode: ' + nuweKode + '). Gebruik "Stoor na GitHub" om te stoor.';
     document.getElementById('adm-status').textContent = status;
+
+    // Voeg by patch-log
+    patchLogVoegBy({
+      tyd: new Date().toISOString(),
+      rekord_id: nuweId,
+      naam: d.naam,
+      tipe: 'nuwe_kind',
+      ouer_id: p.id,
+      ouer_naam: p.name,
+      family_code: nuweKode,
+      generation: (p.generation || 0) + 1,
+      wysigings: {
+        naam:      { nuut: d.naam },
+        geboorte:  { nuut: d.gebDat || '' },
+        plek:      { nuut: d.gebPlek || '' },
+        geslag:    { nuut: d.geslag }
+      }
+    });
+    patchLogBouAfdeling();
   }
 
   // ── Stuur gewysigde velde via WhatsApp ──
@@ -5599,7 +5745,11 @@ function attachCorrectionListeners() {
 
       await skryfTransaksie(pat, BASE, nou);
 
-      ghStatus('✅ Suksesvol gestoor via Contents API (' + tydsStempel + ')! Laai die bladsy oor om te bevestig.', '#5cb85c');
+      // Wis patch-log na suksesvolle stoor
+      patchLogWis();
+      if (typeof patchLogBouAfdeling === 'function') patchLogBouAfdeling();
+
+      ghStatus('✅ Suksesvol gestoor via Contents API (' + tydsStempel + ')! Patch-log gewis. Laai die bladsy oor om te bevestig.', '#5cb85c');
 
     } catch(err) {
       ghStatus('❌ GitHub-fout: ' + err.message + ' — Kontroleer die PAT en probeer weer.', '#e07050');

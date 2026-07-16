@@ -4227,186 +4227,205 @@ function attachCorrectionListeners() {
     var el = document.getElementById('tab-admin');
     if (!el) return;
 
-    // ── Hulpfunksie: afdeling-opskrif ──
     function _afd(ikoon, titel, kleur) {
       kleur = kleur || '#8b6914';
-      return '<div style="color:' + kleur + ';font-size:0.95rem;font-weight:bold;' +
-             'margin:1.4rem 0 0.7rem;padding-bottom:0.4rem;border-bottom:1px solid ' + kleur + '33;">' +
+      return '<div style="color:' + kleur + ';font-size:0.9rem;font-weight:bold;' +
+             'margin:1rem 0 0.6rem;padding-bottom:0.3rem;border-bottom:1px solid ' + kleur + '33;">' +
              ikoon + ' ' + titel + '</div>';
     }
 
-    var html = '<div style="max-width:720px;margin:0 auto;padding:1.5rem 1rem;">';
-    html += '<h2 style="color:var(--sepia-light);font-size:1.4rem;margin-bottom:1.2rem;">✏️ Admin — Conradie Databasis <span style="font-size:0.7rem;color:#6a5a40;font-weight:normal;letter-spacing:0.05em;">v8-1</span></h2>';
+    var html = '<div style="max-width:720px;margin:0 auto;padding:1rem;">';
+    html += '<div style="display:flex;align-items:baseline;gap:0.7rem;margin-bottom:0.9rem;">';
+    html += '<h2 style="color:var(--sepia-light);font-size:1.2rem;margin:0;">✏️ Admin</h2>';
+    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v8-1</span>';
+    html += '</div>';
 
-    // ── 1. Proses-verduideliking (altyd sigbaar) ──
-    html += '<div style="background:#1a1208;border:1px solid #8b6914;border-radius:6px;padding:1rem 1.2rem;margin-bottom:1.5rem;">';
-    html += '<div style="color:#c49a3a;font-weight:bold;font-size:1rem;margin-bottom:0.75rem;">📋 Hoe werk die wysigingsproses?</div>';
-    html += '<ol style="color:#e8dfc8;font-size:0.88rem;line-height:1.9;padding-left:1.4rem;margin:0 0 0.75rem 0;">';
-    html += '<li>Enige familielid kan <strong style="color:#c49a3a">✏️ Stel voor</strong> klik op enige persoon se kaart (Soek-tab).</li>';
-    html += '<li>Hulle vul die inligting in en stuur dit via <strong style="color:#25D366">WhatsApp</strong> of e-pos.</li>';
-    html += '<li>Admin plak die boodskap onder "Verwerk Voorstel" en keur oud-vs-nuut goed of verwerp dit.</li>';
-    html += '<li>Vir nuwe rekords (kinders, huwelike) gebruik die "Voeg by"-afdelings hieronder.</li>';
-    html += '<li>Alle wysigings is <em>tydelik in geheue</em> — gebruik <strong>Stoor na GitHub</strong> om permanent te stoor.</li>';
-    html += '</ol>';
-    html += '<div style="border-top:1px solid #3d3020;padding-top:0.6rem;color:#9a8060;font-size:0.82rem;">';
-    html += '💡 Besoekers wat veranderinge wil voorstel: klik op enige naam in die <strong>Soek-tab</strong> en gebruik ✏️ <strong>Stel voor</strong>.';
-    html += '</div></div>';
+    // ── Proses-verduideliking (inklapbaar) ──
+    html += '<details style="background:#1a1208;border:1px solid #8b691433;border-radius:6px;padding:0.6rem 0.9rem;margin-bottom:0.9rem;">';
+    html += '<summary style="color:#8b6914;font-size:0.85rem;cursor:pointer;list-style:none;">📋 Hoe werk die proses? <span style="font-size:0.75rem;color:#6a5a40;">(tik om te wys)</span></summary>';
+    html += '<ol style="color:#e8dfc8;font-size:0.83rem;line-height:1.8;padding-left:1.3rem;margin:0.5rem 0 0.3rem 0;">';
+    html += '<li>Familielid klik <strong style="color:#c49a3a">✏️ Stel voor</strong> op enige persoon (Soek-tab).</li>';
+    html += '<li>Stuur via <strong style="color:#25D366">WhatsApp</strong> of e-pos.</li>';
+    html += '<li>Admin plak hier onder "Verwerk Voorstel" en keur goed.</li>';
+    html += '<li>Vir nuwe rekords gebruik "Nuwe Kind" of "Nuwe Huwelik".</li>';
+    html += '<li>Wysigings word veilig gestoor totdat jy "Stoor na GitHub" gebruik.</li>';
+    html += '</ol></details>';
 
-    // ── 2. Admin Aanmelding (altyd sigbaar, met waarskuwing) ──
+    // ── Aanmelding ──
     if (!adminOntsluit) {
-      html += '<div style="background:#0e0b04;border:2px solid #8b3a1a;border-radius:8px;padding:1.2rem 1.4rem;margin-bottom:1.5rem;text-align:center;">';
-      html += '<div style="color:#e07050;font-weight:bold;font-size:0.95rem;margin-bottom:0.5rem;">🔐 Gemagtigde Toegang Slegs</div>';
-      html += '<div style="color:#a08060;font-size:0.83rem;line-height:1.6;margin-bottom:1rem;">';
-      html += 'Hierdie afdeling is uitsluitlik vir die <strong style="color:#e8dfc8">gemagtigde registerhouer</strong>.<br>';
-      html += 'Ongemagtigde toegang of wysigings is nie toegelaat nie.<br>';
-      html += 'Besoekers: gebruik <strong style="color:#c49a3a">✏️ Stel voor</strong> op die Soek-tab.';
-      html += '</div>';
-      html += '<button onclick="admOntsluit()" style="padding:0.6rem 1.8rem;background:#3d2010;color:#c49a3a;';
-      html += 'border:2px solid #8b6914;border-radius:20px;font-size:0.9rem;cursor:pointer;';
-      html += 'font-family:\'Josefin Sans\',sans-serif;letter-spacing:0.1em;">🔐 Meld aan as Admin</button>';
+      html += '<div style="background:#0e0b04;border:2px solid #8b3a1a;border-radius:8px;padding:1rem 1.2rem;text-align:center;">';
+      html += '<div style="color:#e07050;font-weight:bold;font-size:0.9rem;margin-bottom:0.4rem;">🔐 Gemagtigde Toegang Slegs</div>';
+      html += '<div style="color:#a08060;font-size:0.8rem;margin-bottom:0.8rem;">Besoekers: gebruik <strong style="color:#c49a3a">✏️ Stel voor</strong> op die Soek-tab.</div>';
+      html += '<button onclick="admOntsluit()" style="padding:0.5rem 1.6rem;background:#3d2010;color:#c49a3a;border:2px solid #8b6914;border-radius:20px;font-size:0.88rem;cursor:pointer;">🔐 Meld aan as Admin</button>';
       html += '</div>';
     } else {
-      html += '<div style="background:#0a1a0a;border:1px solid #2d6a2d;border-radius:6px;padding:0.6rem 1rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:0.6rem;">';
-      html += '<span style="color:#5cb85c;font-size:1rem;">✅</span>';
-      html += '<span style="color:#8fc88f;font-size:0.88rem;">Admin aangemeld — alle wysigingsfunksies beskikbaar.</span>';
+      html += '<div style="background:#0a1a0a;border:1px solid #2d6a2d;border-radius:6px;padding:0.4rem 0.8rem;margin-bottom:0.9rem;display:flex;align-items:center;gap:0.5rem;">';
+      html += '<span style="color:#5cb85c;">✅</span><span style="color:#8fc88f;font-size:0.85rem;">Admin aangemeld</span>';
       html += '</div>';
     }
 
-    // ── Alles hieronder slegs as ontsluit ──
     if (adminOntsluit) {
+      // ── Taak-kiesknoppies ──
+      var take = [
+        { id:'taak-voorstel', ikoon:'📋', naam:'Verwerk Voorstel', kleur:'#c49a3a' },
+        { id:'taak-wysig',    ikoon:'🔍', naam:'Soek & Wysig',     kleur:'#8b6914' },
+        { id:'taak-nuut',     ikoon:'➕', naam:'Nuwe Rekord',      kleur:'#3a5a6a' },
+        { id:'taak-stoor',    ikoon:'☁️', naam:'Stoor',            kleur:'#4a7a4a' }
+      ];
+      html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-bottom:1rem;">';
+      take.forEach(function(t) {
+        html += '<button onclick="admTaakKies(\'' + t.id + '\')" id="btn-' + t.id + '" ' +
+          'style="padding:0.6rem 0.5rem;background:#1a1208;color:' + t.kleur + ';' +
+          'border:1px solid ' + t.kleur + '44;border-radius:6px;cursor:pointer;font-size:0.88rem;text-align:left;">' +
+          t.ikoon + ' ' + t.naam + '</button>';
+      });
+      html += '</div>';
 
-      // ── 3. Verwerk Inkomende Voorstel ──
+      // ── Status & Hangende teller ──
+      html += '<div id="adm-status" style="color:var(--sepia-light);font-size:0.85rem;min-height:1.1rem;margin-bottom:0.6rem;"></div>';
+
+      // ── PANEEL: Verwerk Voorstel ──
+      html += '<div id="taak-voorstel" class="adm-taak" style="display:none;">';
       html += _afd('📋', 'Verwerk Inkomende Voorstel', '#c49a3a');
-      html += '<div style="background:#1e1608;border:1px solid #c49a3a;border-radius:6px;padding:1rem;margin-bottom:0.5rem;">';
-      html += '<div style="color:#9a8060;font-size:0.82rem;margin-bottom:0.5rem;">Plak die WhatsApp- of e-posboodskap wat \'n familielid gestuur het:</div>';
-      html += '<textarea id="adm-plak" rows="7" placeholder="Plak boodskap hier…" ';
-      html += 'style="width:100%;box-sizing:border-box;padding:0.5rem;background:#0d0a05;color:#e8dfc8;';
-      html += 'border:1px solid #3d3020;border-radius:4px;font-size:0.85rem;resize:vertical;"></textarea>';
-      html += '<div style="display:flex;gap:0.5rem;margin-top:0.5rem;">';
-      html += '<button id="adm-plak-btn" style="padding:0.4rem 1rem;background:#c49a3a;color:#1a1208;border:none;border-radius:4px;cursor:pointer;font-size:0.9rem;font-weight:bold;">🔍 Verwerk Voorstel</button>';
-      html += '<button id="adm-plak-reset" style="padding:0.4rem 0.8rem;background:#3d3020;color:#e8dfc8;border:none;border-radius:4px;cursor:pointer;font-size:0.85rem;">✖ Maak skoon</button>';
+      html += '<div style="color:#9a8060;font-size:0.8rem;margin-bottom:0.4rem;">Plak die WhatsApp- of e-posboodskap:</div>';
+      html += '<textarea id="adm-plak" rows="6" placeholder="Plak boodskap hier…" ' +
+        'style="width:100%;box-sizing:border-box;padding:0.5rem;background:#0d0a05;color:#e8dfc8;' +
+        'border:1px solid #3d3020;border-radius:4px;font-size:0.83rem;resize:vertical;"></textarea>';
+      html += '<div style="display:flex;gap:0.5rem;margin-top:0.4rem;">';
+      html += '<button id="adm-plak-btn" style="padding:0.4rem 1rem;background:#c49a3a;color:#1a1208;border:none;border-radius:4px;cursor:pointer;font-size:0.88rem;font-weight:bold;">🔍 Verwerk</button>';
+      html += '<button id="adm-plak-reset" style="padding:0.4rem 0.8rem;background:#3d3020;color:#e8dfc8;border:none;border-radius:4px;cursor:pointer;font-size:0.83rem;">✖ Skoon</button>';
       html += '</div>';
-      html += '<div id="adm-plak-status" style="margin-top:0.4rem;color:#c49a3a;font-size:0.85rem;min-height:1rem;"></div>';
+      html += '<div id="adm-plak-status" style="margin-top:0.4rem;color:#c49a3a;font-size:0.83rem;min-height:1rem;"></div>';
+      // Resultaat-paneel (word deur admVerwerk gevul)
+      html += '<div id="adm-verwerk-resultaat" style="margin-top:0.6rem;"></div>';
       html += '</div>';
 
-      // ── 4. Soek & Wysig Bestaande Persoon ──
+      // ── PANEEL: Soek & Wysig ──
+      html += '<div id="taak-wysig" class="adm-taak" style="display:none;">';
       html += _afd('🔍', 'Soek & Wysig Bestaande Persoon');
-      html += '<div style="display:flex;gap:0.5rem;margin-bottom:1rem;">';
-      html += '<input id="adm-soek" type="text" placeholder="Naam, van of ref (bv. 1234)" ';
-      html += 'style="flex:1;padding:0.5rem 0.75rem;background:#2a2010;color:#f8f2e0;';
-      html += 'border:1px solid #8b6914;border-radius:4px;font-size:0.9rem;">';
-      html += '<button id="adm-soek-btn" style="padding:0.5rem 1rem;background:#8b6914;color:#fff;';
-      html += 'border:none;border-radius:4px;cursor:pointer;font-size:0.9rem;">Soek</button>';
+      html += '<div style="display:flex;gap:0.5rem;margin-bottom:0.8rem;">';
+      html += '<input id="adm-soek" type="text" placeholder="Naam, van of ref (bv. 1234)" ' +
+        'style="flex:1;padding:0.45rem 0.7rem;background:#2a2010;color:#f8f2e0;' +
+        'border:1px solid #8b6914;border-radius:4px;font-size:0.88rem;">';
+      html += '<button id="adm-soek-btn" style="padding:0.45rem 0.9rem;background:#8b6914;color:#fff;' +
+        'border:none;border-radius:4px;cursor:pointer;font-size:0.88rem;">Soek</button>';
       html += '</div>';
-      html += '<div id="adm-resultate" style="margin-bottom:1rem;"></div>';
+      html += '<div id="adm-resultate" style="margin-bottom:0.8rem;"></div>';
 
-      // Bewerkingsvorm (versteek totdat persoon gekies)
       html += '<div id="adm-vorm" style="display:none;">';
-      html += '<div id="adm-naam-opskrif" style="color:#c49a3a;font-size:1.05rem;font-weight:bold;margin-bottom:1rem;padding:0.5rem 0.75rem;background:#1a1208;border-radius:4px;border-left:3px solid #c49a3a;"></div>';
-
+      html += '<div id="adm-naam-opskrif" style="color:#c49a3a;font-size:0.95rem;font-weight:bold;margin-bottom:0.8rem;padding:0.4rem 0.6rem;background:#1a1208;border-radius:4px;border-left:3px solid #c49a3a;"></div>';
       html += _afd('👤', 'Persoonlike Besonderhede', '#6a8a5a');
-      html += _veld('adm-given',       'Voornaam',       'text');
-      html += _veld('adm-surname',     'Van',             'text');
-      html += _veld('adm-nickname',    'Bynaam / Noemnaam', 'text', 'bv. Boetie, Koos, Jan Groot');
-      html += _veld('adm-birth-date',  'Geboortedatum',   'text', 'bv. 1845-03-12 of 12 MAR 1845');
-      html += _veld('adm-birth-place', 'Geboorteplek',    'text');
-      html += _veld('adm-death-date',  'Sterfdatum',      'text', 'bv. 1912-07-04');
-      html += _veld('adm-death-place', 'Sterfplek',       'text');
-      html += _veld('adm-burial',      'Begraafplek',     'text');
-      html += _veld('adm-occupation',  'Beroep',          'text');
-      html += _veld('adm-note',        'Nota / Narratief', 'textarea');
-
-      html += '<div style="margin-top:0.75rem;">';
-      html += '<button id="adm-stoor-btn" style="padding:0.5rem 1.2rem;background:#2d6a2d;color:#e8f5e8;border:none;border-radius:4px;cursor:pointer;font-size:0.95rem;">💾 Stoor Wysigings in Geheue</button>';
+      html += _veld('adm-given',       'Voornaam',          'text');
+      html += _veld('adm-surname',     'Van',               'text');
+      html += _veld('adm-nickname',    'Bynaam',            'text', 'bv. Boetie, Koos');
+      html += _veld('adm-birth-date',  'Geboortedatum',     'text', 'bv. 1845-03-12');
+      html += _veld('adm-birth-place', 'Geboorteplek',      'text');
+      html += _veld('adm-death-date',  'Sterfdatum',        'text', 'bv. 1912-07-04');
+      html += _veld('adm-death-place', 'Sterfplek',         'text');
+      html += _veld('adm-burial',      'Begraafplek',       'text');
+      html += _veld('adm-occupation',  'Beroep',            'text');
+      html += _veld('adm-note',        'Nota / Narratief',  'textarea');
+      html += '<div style="margin-top:0.6rem;">';
+      html += '<button id="adm-stoor-btn" style="padding:0.45rem 1.1rem;background:#2d6a2d;color:#e8f5e8;border:none;border-radius:4px;cursor:pointer;font-size:0.9rem;">💾 Stoor Wysigings</button>';
       html += '</div>';
 
-      // ── 5. Huwelik Afdeling ──
+      // Huwelike
       html += _afd('💍', 'Huwelike — Wysig of Voeg by');
       html += '<div id="adm-huw-bestaande"></div>';
-      html += _veld('adm-huw-naam',  'Gade se volle naam',  'text', 'bv. Maria JOUBERT');
-      html += _veld('adm-huw-datum', 'Huweliksdatum',        'text', 'bv. 1867-04-14 of 14 APR 1867');
-      html += _veld('adm-huw-plek',  'Huweliksplek',         'text', 'bv. Robertson');
-      html += _veld('adm-huw-egsk',  'Egskeidingsdatum',     'text', '(indien van toepassing)');
-
-      html += '<div id="adm-huw-dateer-wrap" style="display:none;margin-bottom:0.8rem;">';
-      html += '<button id="adm-huw-dateer-btn" onclick="admDateerHuw()" style="padding:0.5rem 1.1rem;background:#c49a3a;color:#1a1208;border:none;border-radius:4px;cursor:pointer;font-size:0.9rem;font-weight:bold;">💾 Dateer Huweliksdatum/Plek op</button>';
-      html += '<button onclick="admHuwRedigeerKanselleer()" style="padding:0.5rem 1.1rem;background:#5c4510;color:#e8dfc8;border:none;border-radius:4px;cursor:pointer;font-size:0.9rem;margin-left:0.5rem;">✖ Kanselleer</button>';
+      html += _veld('adm-huw-naam',  'Gade se volle naam', 'text', 'bv. Maria JOUBERT');
+      html += _veld('adm-huw-datum', 'Huweliksdatum',      'text', 'bv. 1867-04-14');
+      html += _veld('adm-huw-plek',  'Huweliksplek',       'text', 'bv. Robertson');
+      html += _veld('adm-huw-egsk',  'Egskeidingsdatum',   'text', '(indien van toepassing)');
+      html += '<div id="adm-huw-dateer-wrap" style="display:none;margin-bottom:0.7rem;">';
+      html += '<button id="adm-huw-dateer-btn" onclick="admDateerHuw()" style="padding:0.4rem 1rem;background:#c49a3a;color:#1a1208;border:none;border-radius:4px;cursor:pointer;font-size:0.88rem;font-weight:bold;">💾 Dateer Huwelik op</button>';
+      html += '<button onclick="admHuwRedigeerKanselleer()" style="padding:0.4rem 0.9rem;background:#5c4510;color:#e8dfc8;border:none;border-radius:4px;cursor:pointer;font-size:0.88rem;margin-left:0.4rem;">✖</button>';
       html += '</div>';
-
-      html += '<div style="margin-bottom:0.6rem;">';
-      html += '<label style="display:block;color:#c8a870;font-size:0.82rem;margin-bottom:0.4rem;">Is die gade \'n Conradie?</label>';
-      html += '<div style="display:flex;gap:0.5rem;">';
-      html += '<button id="adm-huw-ja"      style="padding:0.35rem 0.9rem;background:#eee;color:#1a1208;border:1px solid #ccc;border-radius:4px;cursor:pointer;font-size:0.85rem;">✅ Ja</button>';
-      html += '<button id="adm-huw-nee"     style="padding:0.35rem 0.9rem;background:#eee;color:#1a1208;border:1px solid #ccc;border-radius:4px;cursor:pointer;font-size:0.85rem;">❌ Nee</button>';
-      html += '<button id="adm-huw-onseker" style="padding:0.35rem 0.9rem;background:#eee;color:#1a1208;border:1px solid #ccc;border-radius:4px;cursor:pointer;font-size:0.85rem;">❓ Onseker</button>';
+      html += '<div style="margin-bottom:0.5rem;">';
+      html += '<label style="display:block;color:#c8a870;font-size:0.8rem;margin-bottom:0.35rem;">Is die gade \'n Conradie?</label>';
+      html += '<div style="display:flex;gap:0.4rem;">';
+      html += '<button id="adm-huw-ja"      style="padding:0.3rem 0.8rem;background:#eee;color:#1a1208;border:1px solid #ccc;border-radius:4px;cursor:pointer;font-size:0.83rem;">✅ Ja</button>';
+      html += '<button id="adm-huw-nee"     style="padding:0.3rem 0.8rem;background:#eee;color:#1a1208;border:1px solid #ccc;border-radius:4px;cursor:pointer;font-size:0.83rem;">❌ Nee</button>';
+      html += '<button id="adm-huw-onseker" style="padding:0.3rem 0.8rem;background:#eee;color:#1a1208;border:1px solid #ccc;border-radius:4px;cursor:pointer;font-size:0.83rem;">❓ Onseker</button>';
       html += '</div>';
-      html += '<div id="adm-huw-conradie-veld" style="display:none;margin-top:0.6rem;">';
+      html += '<div id="adm-huw-conradie-veld" style="display:none;margin-top:0.5rem;">';
       html += _veld('adm-huw-geslag', 'Geslag van Conradie-gade', 'text', 'M of F');
       html += '</div></div>';
-
-      html += '<div id="adm-huw-kind-bevestig" style="display:none;background:#f5f0e8;border:1px solid #c49a3a;border-radius:6px;padding:0.75rem;margin-bottom:0.75rem;">';
-      html += '<div id="adm-huw-kind-tekst" style="color:#1a1208;font-size:0.9rem;margin-bottom:0.6rem;"></div>';
-      html += '<div style="display:flex;gap:0.5rem;">';
-      html += '<button id="adm-huw-kind-ok" style="padding:0.35rem 0.9rem;background:#1a5c2a;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:0.85rem;">✅ Bevestig</button>';
-      html += '<button id="adm-huw-kind-kanselleer" style="padding:0.35rem 0.9rem;background:#8b3a1a;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:0.85rem;">✖ Kanselleer</button>';
+      html += '<div id="adm-huw-kind-bevestig" style="display:none;background:#f5f0e8;border:1px solid #c49a3a;border-radius:6px;padding:0.6rem;margin-bottom:0.6rem;">';
+      html += '<div id="adm-huw-kind-tekst" style="color:#1a1208;font-size:0.85rem;margin-bottom:0.5rem;"></div>';
+      html += '<div style="display:flex;gap:0.4rem;">';
+      html += '<button id="adm-huw-kind-ok" style="padding:0.3rem 0.8rem;background:#1a5c2a;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:0.83rem;">✅ Bevestig</button>';
+      html += '<button id="adm-huw-kind-kanselleer" style="padding:0.3rem 0.8rem;background:#8b3a1a;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:0.83rem;">✖ Kanselleer</button>';
       html += '</div></div>';
-
-      html += '<button id="adm-huw-voeg-btn" style="padding:0.5rem 1.2rem;background:#5c4510;color:#e8dfc8;border:none;border-radius:4px;cursor:pointer;font-size:0.95rem;margin-bottom:0.5rem;">💍 Voeg Nuwe Huwelik by</button>';
-
-      // ── 6. Nuwe Kind byvoeg ──
-      html += _afd('👶', 'Voeg Nuwe Kind by', '#5a7a8a');
-      html += '<div style="background:#0e1418;border:1px solid #3a5a6a;border-radius:6px;padding:0.9rem;margin-bottom:0.5rem;">';
-      html += '<div style="color:#8ab0c0;font-size:0.82rem;margin-bottom:0.7rem;">Die kind word as nuwe I-rekord bygevoeg en as kind van die huidige persoon gekoppel.</div>';
-      html += _veld('adm-kind-naam',    'Kind se volle naam',   'text', 'bv. Pieter Johannes CONRADIE');
-      html += _veld('adm-kind-geboort', 'Geboortedatum',        'text', 'bv. 1892-05-23 of 23 MEI 1892');
-      html += _veld('adm-kind-plek',    'Geboorteplek',         'text');
-      html += '<div style="margin-bottom:0.6rem;">';
-      html += '<label style="display:block;color:#8ab0c0;font-size:0.82rem;margin-bottom:0.4rem;">Geslag</label>';
-      html += '<div style="display:flex;gap:0.5rem;">';
-      html += '<button id="adm-kind-m" style="padding:0.35rem 0.9rem;background:#eee;color:#1a1208;border:1px solid #ccc;border-radius:4px;cursor:pointer;font-size:0.85rem;">♂ Seun</button>';
-      html += '<button id="adm-kind-f" style="padding:0.35rem 0.9rem;background:#eee;color:#1a1208;border:1px solid #ccc;border-radius:4px;cursor:pointer;font-size:0.85rem;">♀ Dogter</button>';
-      html += '</div></div>';
-      html += '<div id="adm-kind-bevestig" style="display:none;background:#e8f0e8;border:1px solid #2d6a2d;border-radius:6px;padding:0.75rem;margin-bottom:0.75rem;">';
-      html += '<div id="adm-kind-bevestig-tekst" style="color:#1a1208;font-size:0.9rem;margin-bottom:0.6rem;"></div>';
-      html += '<div style="display:flex;gap:0.5rem;">';
-      html += '<button id="adm-kind-ok" style="padding:0.35rem 0.9rem;background:#1a5c2a;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:0.85rem;">✅ Bevestig</button>';
-      html += '<button id="adm-kind-kanselleer" style="padding:0.35rem 0.9rem;background:#8b3a1a;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:0.85rem;">✖ Kanselleer</button>';
-      html += '</div></div>';
-      html += '<button id="adm-kind-voeg-btn" style="padding:0.5rem 1.2rem;background:#3a5a6a;color:#e8f4f8;border:none;border-radius:4px;cursor:pointer;font-size:0.95rem;">👶 Voeg Kind by</button>';
-      html += '</div>';
-
-      // ── 7. Stoor & Uitvoer ──
-      // ── Hangende Wysigings (patch-log) ──
-      html += _afd('📋', 'Hangende Wysigings<span id="adm-patch-teller" style="color:#8fc88f;font-size:0.85rem;font-weight:normal;"></span>', '#5a8a6a');
-      html += '<div style="background:#0a1a10;border:1px solid #2d5a3a;border-radius:6px;padding:0.9rem;margin-bottom:0.5rem;">';
-      html += '<div style="color:#7ab08a;font-size:0.82rem;margin-bottom:0.6rem;">Wysigings wat veilig op hierdie toestel gestoor is (bly selfs as blaaier sluit):</div>';
-      html += '<div id="adm-patch-log-inhoud"><div style="color:#7a6a50;font-size:0.85rem;font-style:italic;">Laai...</div></div>';
-      html += '</div>';
-
-      html += _afd('☁️', 'Stoor & Uitvoer', '#4a7a4a');
-      html += '<div style="display:flex;gap:0.75rem;flex-wrap:wrap;margin-bottom:1rem;">';
-      html += '<button id="adm-wa-btn" style="padding:0.5rem 1.1rem;background:#25D366;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:0.9rem;">📱 WhatsApp (App)</button>';
-      html += '<button id="adm-wa-web-btn" style="padding:0.5rem 1.1rem;background:#128C7E;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:0.9rem;">🌐 WhatsApp Web</button>';
-      html += '<button id="adm-email-btn" style="padding:0.5rem 1.1rem;background:#c49a3a;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:0.9rem;">✉️ E-pos</button>';
-      html += '<button id="adm-laai-btn" style="padding:0.5rem 1.1rem;background:#3d3020;color:#e8dfc8;border:none;border-radius:4px;cursor:pointer;font-size:0.9rem;">⬇️ Laai JSON af</button>';
-      html += '</div>';
-      html += '<div id="adm-github-boks" style="padding:0.9rem;background:#0e1208;border:1px solid #3a5a2a;border-radius:6px;">';
-      html += '<div style="color:#8ab08a;font-size:0.85rem;margin-bottom:0.6rem;">🔒 GitHub Direkte Stoor (PAT vereiste)</div>';
-      html += '<input id="adm-pat" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" ';
-      html += 'style="width:100%;padding:0.4rem;background:#0d0a05;color:#d4b896;border:1px solid #3a5a2a;border-radius:4px;font-size:0.85rem;box-sizing:border-box;margin-bottom:0.6rem;"/>';
-      html += '<div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.6rem;">';
-      html += '<button id="adm-pat-toets-btn" onclick="admToetsPAT()" style="padding:0.45rem 1rem;background:#1a3a4a;color:#8ab8d8;border:1px solid #3a6a8a;border-radius:4px;cursor:pointer;font-size:0.88rem;">🔍 Toets PAT</button>';
-      html += '<button id="adm-github-btn" onclick="admStoorGitHub()" style="padding:0.45rem 1.2rem;background:#2d6a2d;color:#e8f5e8;border:none;border-radius:4px;cursor:pointer;font-size:0.88rem;" disabled>☁️ Stoor na GitHub</button>';
-      html += '</div>';
-      html += '<div id="adm-github-status" style="font-size:0.85rem;min-height:1.1rem;line-height:1.5;"></div>';
-      html += '</div>';
-
-      html += '<div id="adm-status" style="margin-top:0.75rem;color:var(--sepia-light);font-size:0.9rem;min-height:1.2rem;"></div>';
+      html += '<button id="adm-huw-voeg-btn" style="padding:0.45rem 1.1rem;background:#5c4510;color:#e8dfc8;border:none;border-radius:4px;cursor:pointer;font-size:0.88rem;margin-bottom:0.4rem;">💍 Voeg Nuwe Huwelik by</button>';
       html += '</div>'; // end adm-vorm
+      html += '</div>'; // end taak-wysig
+
+      // ── PANEEL: Nuwe Rekord ──
+      html += '<div id="taak-nuut" class="adm-taak" style="display:none;">';
+      html += _afd('👶', 'Voeg Nuwe Kind by', '#5a7a8a');
+      html += '<div style="color:#8ab0c0;font-size:0.8rem;margin-bottom:0.6rem;">Kies eers die ouer via "Soek & Wysig", dan kom terug hierheen.</div>';
+      html += _veld('adm-kind-naam',    'Kind se volle naam', 'text', 'bv. Pieter Johannes CONRADIE');
+      html += _veld('adm-kind-geboort', 'Geboortedatum',     'text', 'bv. 1892-05-23');
+      html += _veld('adm-kind-plek',    'Geboorteplek',      'text');
+      html += '<div style="margin-bottom:0.5rem;">';
+      html += '<label style="display:block;color:#8ab0c0;font-size:0.8rem;margin-bottom:0.35rem;">Geslag</label>';
+      html += '<div style="display:flex;gap:0.4rem;">';
+      html += '<button id="adm-kind-m" style="padding:0.3rem 0.8rem;background:#eee;color:#1a1208;border:1px solid #ccc;border-radius:4px;cursor:pointer;font-size:0.83rem;">♂ Seun</button>';
+      html += '<button id="adm-kind-f" style="padding:0.3rem 0.8rem;background:#eee;color:#1a1208;border:1px solid #ccc;border-radius:4px;cursor:pointer;font-size:0.83rem;">♀ Dogter</button>';
+      html += '</div></div>';
+      html += '<div id="adm-kind-bevestig" style="display:none;background:#e8f0e8;border:1px solid #2d6a2d;border-radius:6px;padding:0.6rem;margin-bottom:0.6rem;">';
+      html += '<div id="adm-kind-bevestig-tekst" style="color:#1a1208;font-size:0.85rem;margin-bottom:0.5rem;"></div>';
+      html += '<div style="display:flex;gap:0.4rem;">';
+      html += '<button id="adm-kind-ok" style="padding:0.3rem 0.8rem;background:#1a5c2a;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:0.83rem;">✅ Bevestig</button>';
+      html += '<button id="adm-kind-kanselleer" style="padding:0.3rem 0.8rem;background:#8b3a1a;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:0.83rem;">✖ Kanselleer</button>';
+      html += '</div></div>';
+      html += '<button id="adm-kind-voeg-btn" style="padding:0.45rem 1.1rem;background:#3a5a6a;color:#e8f4f8;border:none;border-radius:4px;cursor:pointer;font-size:0.88rem;">👶 Voeg Kind by</button>';
+      html += '</div>'; // end taak-nuut
+
+      // ── PANEEL: Stoor ──
+      html += '<div id="taak-stoor" class="adm-taak" style="display:none;">';
+      // Hangende wysigings
+      html += _afd('📋', 'Hangende Wysigings<span id="adm-patch-teller" style="color:#8fc88f;font-size:0.82rem;font-weight:normal;"></span>', '#5a8a6a');
+      html += '<div style="background:#0a1a10;border:1px solid #2d5a3a;border-radius:6px;padding:0.7rem;margin-bottom:0.8rem;">';
+      html += '<div id="adm-patch-log-inhoud"><div style="color:#7a6a50;font-size:0.83rem;font-style:italic;">Laai...</div></div>';
+      html += '</div>';
+      html += _afd('☁️', 'Stoor na GitHub', '#4a7a4a');
+      html += '<div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.8rem;">';
+      html += '<button id="adm-wa-btn" style="padding:0.4rem 0.9rem;background:#25D366;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:0.85rem;">📱 WhatsApp</button>';
+      html += '<button id="adm-wa-web-btn" style="padding:0.4rem 0.9rem;background:#128C7E;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:0.85rem;">🌐 WA Web</button>';
+      html += '<button id="adm-email-btn" style="padding:0.4rem 0.9rem;background:#c49a3a;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:0.85rem;">✉️ E-pos</button>';
+      html += '<button id="adm-laai-btn" style="padding:0.4rem 0.9rem;background:#3d3020;color:#e8dfc8;border:none;border-radius:4px;cursor:pointer;font-size:0.85rem;">⬇️ JSON af</button>';
+      html += '</div>';
+      html += '<div style="padding:0.8rem;background:#0e1208;border:1px solid #3a5a2a;border-radius:6px;">';
+      html += '<div style="color:#8ab08a;font-size:0.82rem;margin-bottom:0.5rem;">🔒 GitHub PAT (Personal Access Token)</div>';
+      html += '<input id="adm-pat" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" ' +
+        'style="width:100%;padding:0.4rem;background:#0d0a05;color:#d4b896;border:1px solid #3a5a2a;border-radius:4px;font-size:0.83rem;box-sizing:border-box;margin-bottom:0.5rem;"/>';
+      html += '<div style="display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:0.5rem;">';
+      html += '<button id="adm-pat-toets-btn" onclick="admToetsPAT()" style="padding:0.4rem 0.9rem;background:#1a3a4a;color:#8ab8d8;border:1px solid #3a6a8a;border-radius:4px;cursor:pointer;font-size:0.83rem;">🔍 Toets PAT</button>';
+      html += '<button id="adm-github-btn" onclick="admStoorGitHub()" style="padding:0.4rem 1.1rem;background:#2d6a2d;color:#e8f5e8;border:none;border-radius:4px;cursor:pointer;font-size:0.83rem;" disabled>☁️ Stoor na GitHub</button>';
+      html += '</div>';
+      html += '<div id="adm-github-status" style="font-size:0.83rem;min-height:1rem;line-height:1.5;"></div>';
+      html += '</div>';
+      html += '</div>'; // end taak-stoor
+
     }
 
     html += '</div>'; // end wrapper
     el.innerHTML = html;
+
+    // ── Taak-kies funksie ──
+    window.admTaakKies = function(taakId) {
+      document.querySelectorAll('.adm-taak').forEach(function(p) { p.style.display = 'none'; });
+      document.querySelectorAll('[id^="btn-taak-"]').forEach(function(b) {
+        b.style.background = '#1a1208';
+        b.style.borderWidth = '1px';
+      });
+      var paneel = document.getElementById(taakId);
+      if (paneel) paneel.style.display = 'block';
+      var knop = document.getElementById('btn-' + taakId);
+      if (knop) { knop.style.background = '#2a1e08'; knop.style.borderWidth = '2px'; }
+      if (taakId === 'taak-stoor') patchLogBouAfdeling();
+    };
 
     // Vul patch-log afdeling
     if (typeof patchLogBouAfdeling === 'function') patchLogBouAfdeling();

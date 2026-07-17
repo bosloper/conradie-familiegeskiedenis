@@ -4237,7 +4237,7 @@ function attachCorrectionListeners() {
     var html = '<div style="max-width:720px;margin:0 auto;padding:1rem;">';
     html += '<div style="display:flex;align-items:baseline;gap:0.7rem;margin-bottom:0.9rem;">';
     html += '<h2 style="color:var(--sepia-light);font-size:1.2rem;margin:0;">✏️ Admin</h2>';
-    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v8-1</span>';
+    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v8-2</span>';
     html += '</div>';
 
     // ── Proses-verduideliking (inklapbaar) ──
@@ -4540,6 +4540,22 @@ function attachCorrectionListeners() {
     'NOTA':          'note',
   };
 
+  // NP-velde wat 'n nuwe persoon (kind/gade) beskryf
+  var NP_VELD_ETIKETTE = {
+    'NP_NAAM':          'Naam',
+    'NP_VERHOUDING':    'Verhouding',
+    'NP_GEBOORTEDATUM': 'Geboortedatum',
+    'NP_GEBOORTEPLEK':  'Geboorteplek',
+    'NP_GESLAG':        'Geslag',
+    'NP_STERFDATUM':    'Sterfdatum',
+    'NP_STERFPLEK':     'Sterfplek',
+    'NP_BEGRAAFPLEK':   'Begraafplek',
+    'NP_HUWELIKSDATUM': 'Huweliksdatum',
+    'NP_HUWELIKSPLEK':  'Huweliksplek',
+    'NP_BEROEP':        'Beroep',
+    'NP_NOTA':          'Nota',
+  };
+
   function admVerwerk() {
     var teks = (document.getElementById('adm-plak').value || '').trim();
     var statusEl = document.getElementById('adm-plak-status');
@@ -4612,19 +4628,33 @@ function attachCorrectionListeners() {
       }
     });
 
-    if (!verskille.length && !narrVervang && !narrVoegBy && !huwInfo && !evVoorstelle.length) {
+    // Hanteer NP (nuwe persoon: kind of gade) velde
+    var npData = null;
+    var npVelde = Object.keys(NP_VELD_ETIKETTE);
+    var heeftNP = npVelde.some(function(k) { return !!parsed[k]; });
+    if (heeftNP) {
+      npData = {};
+      npVelde.forEach(function(k) {
+        if (parsed[k]) npData[k] = parsed[k];
+      });
+      // Bepaal verhouding as nie verskaf nie
+      if (!npData['NP_VERHOUDING']) npData['NP_VERHOUDING'] = 'Onbekend';
+    }
+
+    if (!verskille.length && !narrVervang && !narrVoegBy && !huwInfo && !evVoorstelle.length && !npData) {
       statusEl.textContent = '⚠️ Geen bekende veldwysigings gevind nie.';
       return;
     }
 
     // Wys vergelyking
-    admWysVergelyking(persoon, verskille, narrVervang, narrVoegBy, ekstra, indiener, huwInfo, evVoorstelle);
+    admWysVergelyking(persoon, verskille, narrVervang, narrVoegBy, ekstra, indiener, huwInfo, evVoorstelle, npData);
     statusEl.textContent = '✅ Voorstel verwerk vir: ' + persoon.name + ' (REF ' + ref + ')';
   }
 
   // ── Wys Oud vs Nuut Vergelyking ──
-  function admWysVergelyking(persoon, verskille, narrVervang, narrVoegBy, ekstra, indiener, huwInfo, evVoorstelle) {
+  function admWysVergelyking(persoon, verskille, narrVervang, narrVoegBy, ekstra, indiener, huwInfo, evVoorstelle, npData) {
     evVoorstelle = evVoorstelle || [];
+    npData = npData || null;
     // Laai die persoon in die vorm
     admLaaiPersoon(persoon.id);
 
@@ -4740,6 +4770,30 @@ function attachCorrectionListeners() {
       html += '<span style="color:#e8dfc8;font-size:0.85rem;">' + ekstra + '</span></div>';
     }
 
+    // Nuwe persoon (kind of gade)
+    if (npData) {
+      var npVerhouding = npData['NP_VERHOUDING'] || 'Onbekend';
+      var npKleur = npVerhouding.toLowerCase().indexOf('gade') !== -1 ? '#8ab0c0' : '#80d080';
+      var npIkoon = npVerhouding.toLowerCase().indexOf('gade') !== -1 ? '💍' : '👶';
+      html += '<div style="margin-top:0.75rem;padding:0.6rem 0.7rem;background:#0a140a;border:1px solid ' + npKleur + ';border-radius:5px;">';
+      html += '<div style="color:' + npKleur + ';font-weight:bold;font-size:0.88rem;margin-bottom:0.4rem;">' +
+              npIkoon + ' Nuwe Persoon: ' + npVerhouding + '</div>';
+      html += '<table style="width:100%;border-collapse:collapse;font-size:0.85rem;">';
+      Object.keys(NP_VELD_ETIKETTE).forEach(function(k) {
+        if (!npData[k] || k === 'NP_VERHOUDING') return;
+        html += '<tr><td style="padding:0.2rem 0.5rem;color:#7a9a7a;width:40%;">' +
+                NP_VELD_ETIKETTE[k] + '</td>' +
+                '<td style="padding:0.2rem 0.5rem;color:#e8f4e8;">' + npData[k] + '</td></tr>';
+      });
+      html += '</table>';
+      html += '<label style="display:flex;align-items:center;gap:0.3rem;margin-top:0.5rem;cursor:pointer;">' +
+              '<input type="checkbox" id="adm-vgl-np" ' +
+              'data-np="' + JSON.stringify(npData).replace(/"/g,'&quot;') + '" ' +
+              'checked style="cursor:pointer;width:16px;height:16px;accent-color:' + npKleur + ';"> ' +
+              '<span style="color:' + npKleur + ';font-size:0.8rem;">Aanvaar nuwe persoon (sal Admin-paneel oopmaak)</span></label>';
+      html += '</div>';
+    }
+
     html += '<div style="display:flex;gap:0.5rem;margin-top:0.75rem;">';
     html += '<button id="adm-vgl-aanvaar" style="padding:0.4rem 1rem;background:#1a5c2a;color:#fff;' +
             'border:none;border-radius:4px;cursor:pointer;font-size:0.9rem;">✅ Aanvaar Gekose</button>';
@@ -4841,13 +4895,75 @@ function attachCorrectionListeners() {
       }
     });
 
-    document.getElementById('adm-status').textContent =
-      '✅ ' + toegepas + ' veld(e) toegepas — klik "Stoor Wysigings" dan "Stoor na GitHub".';
+    // Nuwe persoon (kind of gade) verwerk
+    var npCb = document.getElementById('adm-vgl-np');
+    if (npCb && npCb.checked) {
+      try {
+        var np = JSON.parse(npCb.getAttribute('data-np').replace(/&quot;/g, '"'));
+        var verhouding = (np['NP_VERHOUDING'] || '').toLowerCase();
+        var isGade = verhouding.indexOf('gade') !== -1 || verhouding.indexOf('vrou') !== -1 ||
+                     verhouding.indexOf('man') !== -1 || verhouding.indexOf('eggen') !== -1;
 
+        // Skakel na korrekte Admin-paneel en vul velde in
+        if (typeof admTaakKies === 'function') admTaakKies('taak-nuut');
+
+        if (isGade) {
+          // Vul huwelik-velde in Soek & Wysig
+          if (typeof admTaakKies === 'function') admTaakKies('taak-wysig');
+          var hNaam  = document.getElementById('adm-huw-naam');
+          var hDatum = document.getElementById('adm-huw-datum');
+          var hPlek  = document.getElementById('adm-huw-plek');
+          if (hNaam)  hNaam.value  = np['NP_NAAM'] || '';
+          if (hDatum) hDatum.value = np['NP_HUWELIKSDATUM'] || '';
+          if (hPlek)  hPlek.value  = np['NP_HUWELIKSPLEK']  || '';
+          document.getElementById('adm-status').textContent =
+            '💍 Nuwe gade vooraf ingevul — kontroleer en klik "Voeg Nuwe Huwelik by".';
+        } else {
+          // Vul kind-velde in Nuwe Rekord
+          var kNaam    = document.getElementById('adm-kind-naam');
+          var kGebort  = document.getElementById('adm-kind-geboort');
+          var kPlek    = document.getElementById('adm-kind-plek');
+          if (kNaam)   kNaam.value   = np['NP_NAAM'] || '';
+          if (kGebort) kGebort.value = np['NP_GEBOORTEDATUM'] || '';
+          if (kPlek)   kPlek.value   = np['NP_GEBOORTEPLEK']  || '';
+          // Geslag-knoppie aktiveer
+          var geslag = (np['NP_GESLAG'] || '').toUpperCase();
+          if (geslag === 'M' || geslag === 'SEUN') {
+            var mBtn = document.getElementById('adm-kind-m');
+            if (mBtn) mBtn.click();
+          } else if (geslag === 'F' || geslag === 'DOGTER' || geslag === 'V') {
+            var fBtn = document.getElementById('adm-kind-f');
+            if (fBtn) fBtn.click();
+          }
+          document.getElementById('adm-status').textContent =
+            '👶 Nuwe kind vooraf ingevul — kontroleer en klik "Voeg Kind by".';
+        }
+        toegepas++;
+      } catch(e) {
+        console.warn('NP parse fout:', e);
+      }
+    }
 
     // Verwyder vergelyking-paneel
     var vglDiv = document.getElementById('adm-vgl-paneel');
     if (vglDiv) vglDiv.innerHTML = '';
+
+    // Outomaties stoor in patch-log (slegs vir veld-/events-wysigings, nie nuwe kind/gade nie)
+    var npAanvaar = npCb && npCb.checked;
+    var veldWysigings = toegepas - (npAanvaar ? 1 : 0); // trek NP af as dit aanvaar is
+    if (veldWysigings > 0) {
+      admStoor();
+      // admStoor skryf sy eie status — oorskryf met meer beskrywende boodskap as geen NP was
+      if (!npAanvaar) {
+        var bestaandeStatus = document.getElementById('adm-status').textContent;
+        if (bestaandeStatus.indexOf('✅') !== -1) {
+          document.getElementById('adm-status').textContent =
+            '✅ Voorstel aanvaar: ' + veldWysigings + ' wysiging(s) — outomaties in patch-log gestoor.';
+        }
+      }
+    } else if (!npAanvaar) {
+      document.getElementById('adm-status').textContent = 'ℹ️ Geen wysigings aanvaar nie.';
+    }
   }
 
   // ── Soek persone ──
@@ -5054,7 +5170,11 @@ function attachCorrectionListeners() {
     };
     var wysigings = {};
     Object.keys(voor).forEach(function(k) {
-      if (voor[k] !== na[k]) wysigings[k] = { oud: voor[k], nuut: na[k] };
+      var v = voor[k], n = na[k];
+      var verskil = (Array.isArray(v) || Array.isArray(n))
+        ? JSON.stringify(v) !== JSON.stringify(n)
+        : v !== n;
+      if (verskil) wysigings[k] = { oud: v, nuut: n };
     });
     window.admLaastеWysigings = { rekord_id: admCurrentId, naam: p.name, wysigings: wysigings };
 
@@ -5780,14 +5900,27 @@ function attachCorrectionListeners() {
   // ── Skryf transaksie-inskrywing na logs/transaksies.json ──
   // Gebruik Contents API (lêer is klein genoeg)
   async function skryfTransaksie(pat, BASE, tydstempel) {
-    var laaste = window.admLaastеWysigings || {};
+    // Gebruik patch-log as volledige bron van alle wysigings, kinders en huwelike
+    var patchLog = patchLogLees();
     var nuweInskrywing = {
       tyd: tydstempel,
       gebruiker: 'admin',
-      rekord_id: laaste.rekord_id || '',
-      naam: laaste.naam || '',
-      wysigings: laaste.wysigings || {}
+      rekord_telling: patchLog.length,
+      items: patchLog.map(function(item) {
+        return {
+          rekord_id: item.rekord_id || '',
+          naam: item.naam || '',
+          tipe: item.tipe || 'wysiging',
+          wysigings: item.wysigings || {}
+        };
+      })
     };
+    // Opsomming vir enkelvoudige wysiging (agterwaarts-versoenbaar)
+    if (patchLog.length === 1) {
+      nuweInskrywing.rekord_id = patchLog[0].rekord_id || '';
+      nuweInskrywing.naam = patchLog[0].naam || '';
+      nuweInskrywing.wysigings = patchLog[0].wysigings || {};
+    }
     window.admLaastеWysigings = null;
     var CONTENTS = BASE + '/contents/logs/transaksies.json';
     var headers = {
@@ -5811,7 +5944,8 @@ function attachCorrectionListeners() {
       logData.push(nuweInskrywing);
 
       var b64 = btoa(unescape(encodeURIComponent(JSON.stringify(logData, null, 2))));
-      var body = { message: 'Transaksie: ' + tydstempel, content: b64 };
+      var telling = patchLog.length;
+      var body = { message: 'Transaksie: ' + tydstempel + ' (' + telling + ' item' + (telling !== 1 ? 'e' : '') + ')', content: b64 };
       if (sha) body.sha = sha;
 
       await fetch(CONTENTS, {

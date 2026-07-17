@@ -83,5 +83,47 @@
     "rekord_id": "",
     "naam": "",
     "wysigings": {}
+  },
+  {
+    "tyd": "2026-07-17T09:25:31.045Z",
+    "gebruiker": "admin",
+    "rekord_telling": 1,
+    "items": [
+      {
+        "rekord_id": "I7285",
+        "naam": "Johandre Conradie",
+        "tipe": "nuwe_kind",
+        "wysigings": {
+          "naam": {
+            "nuut": "Johandre Conradie"
+          },
+          "geboorte": {
+            "nuut": "2014-09-29"
+          },
+          "plek": {
+            "nuut": "Stellenbosch"
+          },
+          "geslag": {
+            "nuut": "M"
+          }
+        }
+      }
+    ],
+    "rekord_id": "I7285",
+    "naam": "Johandre Conradie",
+    "wysigings": {
+      "naam": {
+        "nuut": "Johandre Conradie"
+      },
+      "geboorte": {
+        "nuut": "2014-09-29"
+      },
+      "plek": {
+        "nuut": "Stellenbosch"
+      },
+      "geslag": {
+        "nuut": "M"
+      }
+    }
   }
 ]

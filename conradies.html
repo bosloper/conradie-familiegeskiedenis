@@ -5017,6 +5017,7 @@ function attachCorrectionListeners() {
 
     // Huweliksdatum direk in databasis-rekord toepas (nie via adm-vorm nie)
     var huwCb = document.getElementById('adm-vgl-huw');
+    var huwGestoor = false;
     if (huwCb && huwCb.checked) {
       var hIndeks = parseInt(huwCb.getAttribute('data-indeks')) || 0;
       var hDatum  = huwCb.getAttribute('data-datum') || '';
@@ -5025,9 +5026,25 @@ function attachCorrectionListeners() {
       if (!persoon.marr_places) persoon.marr_places = [];
       while (persoon.marr_dates.length  <= hIndeks) persoon.marr_dates.push('');
       while (persoon.marr_places.length <= hIndeks) persoon.marr_places.push('');
+      var oudDatum = persoon.marr_dates[hIndeks]  || '';
+      var oudPlek  = persoon.marr_places[hIndeks] || '';
       if (hDatum) persoon.marr_dates[hIndeks]  = hDatum;
       if (hPlek)  persoon.marr_places[hIndeks] = hPlek;
       toegepas++;
+      // Stoor huwelikswysigings direk in patch-log (admStoor kan dit nie doen nie)
+      var huwWysigings = {};
+      if (hDatum && hDatum !== oudDatum) huwWysigings['marr_dates[' + hIndeks + ']'] = { oud: oudDatum, nuut: hDatum };
+      if (hPlek  && hPlek  !== oudPlek)  huwWysigings['marr_places[' + hIndeks + ']'] = { oud: oudPlek,  nuut: hPlek  };
+      if (Object.keys(huwWysigings).length > 0) {
+        patchLogVoegBy({
+          tyd: new Date().toISOString(),
+          rekord_id: persoon.id,
+          naam: persoon.name,
+          tipe: 'huwelik-wysiging',
+          wysigings: huwWysigings
+        });
+        huwGestoor = true;
+      }
     }
 
     // Events toepas
@@ -5126,19 +5143,18 @@ function attachCorrectionListeners() {
 
     // Outomaties stoor in patch-log (slegs veld-/events-wysigings, nie nuwe kind/gade nie)
     var npAanvaar = npAanvaardLys.length > 0;
-    var veldWysigings = toegepas - npAanvaardLys.length;
+    var veldWysigings = toegepas - npAanvaardLys.length - (huwGestoor ? 1 : 0);
     if (veldWysigings > 0) {
       admStoor();
-      if (!npAanvaar) {
-        var bestaandeStatus = document.getElementById('adm-status').textContent;
-        if (bestaandeStatus.indexOf('✅') !== -1) {
-          document.getElementById('adm-status').textContent =
-            '✅ Voorstel aanvaar: ' + veldWysigings + ' wysiging(s) — outomaties in patch-log gestoor.';
-        }
-      }
+    }
+    if ((veldWysigings > 0 || huwGestoor) && !npAanvaar) {
+      var totaalGestoor = veldWysigings + (huwGestoor ? 1 : 0);
+      document.getElementById('adm-status').textContent =
+        '✅ Voorstel aanvaar: ' + totaalGestoor + ' wysiging(s) — in patch-log gestoor. Gebruik \"Stoor na GitHub\" om te voltooi.';
     } else if (!npAanvaar) {
       document.getElementById('adm-status').textContent = 'ℹ️ Geen wysigings aanvaar nie.';
     }
+    patchLogBouAfdeling();
   }
 
   // ── Soek persone ──

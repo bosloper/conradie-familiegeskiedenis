@@ -1927,19 +1927,7 @@ body.druk-aktief #druk-skerp {
   <button class="btn-edit" id="btn-edit">✏️ Stel wysiging voor</button>
   <button class="btn-druk" id="btn-druk" onclick="if(correctionPersonId){var r=indexById[correctionPersonId];if(r)oopDrukSkerp(r);}" title="Druk / stoor as PDF">🖨️ Druk / PDF</button>
 </div>
-<div id="druk-inhoud"></div>
-<div id="druk-skerp">
-  <div style="display:flex;justify-content:space-between;align-items:center;
-    border-bottom:1px solid #ccc;padding-bottom:0.7rem;margin-bottom:1rem;
-    position:sticky;top:0;background:#fff;z-index:1;padding-top:0.5rem;">
-    <button onclick="sluitDrukSkerp()" style="font-size:1rem;background:#c0392b;color:#fff;border:none;
-      padding:0.4rem 1rem;cursor:pointer;border-radius:3px;font-weight:bold;">✕ Sluit</button>
-    <button onclick="drukNou()" style="font-size:0.85rem;background:#2d4a2a;color:#fff;
-      border:none;padding:0.4rem 1rem;cursor:pointer;border-radius:3px;">🖨️ Druk / PDF</button>
-  </div>
-  <div id="druk-skerp-inhoud" style="font-family:Georgia,serif;font-size:12pt;color:#000;
-    max-width:680px;margin:0 auto;line-height:1.6;"></div>
-</div>
+
 <div id="correction-drawer">
   <div class="drawer-heading" id="corr-person-label">Voorstelle</div>
 
@@ -6683,6 +6671,20 @@ function attachCorrectionListeners() {
 </div>
 
 <div id="tab-admin" class="tab-page" style="display:none"></div>
+
+<!-- DRUK-SKERP: direkte kind van body sodat druk-aktief CSS korrek werk -->
+<div id="druk-skerp">
+  <div style="display:flex;justify-content:space-between;align-items:center;
+    border-bottom:1px solid #ccc;padding-bottom:0.7rem;margin-bottom:1rem;
+    position:sticky;top:0;background:#fff;z-index:1;padding-top:0.5rem;">
+    <button onclick="sluitDrukSkerp()" style="font-size:1rem;background:#c0392b;color:#fff;border:none;
+      padding:0.4rem 1rem;cursor:pointer;border-radius:3px;font-weight:bold;">✕ Sluit</button>
+    <button onclick="drukNou()" style="font-size:0.85rem;background:#2d4a2a;color:#fff;
+      border:none;padding:0.4rem 1rem;cursor:pointer;border-radius:3px;">🖨️ Druk / PDF</button>
+  </div>
+  <div id="druk-skerp-inhoud" style="font-family:Georgia,serif;font-size:12pt;color:#000;
+    max-width:680px;margin:0 auto;line-height:1.6;"></div>
+</div>
 
 </body>
 </html>

@@ -5367,20 +5367,27 @@ function attachCorrectionListeners() {
       return el ? el.value.trim() : '';
     }
 
+    // Gebruik admOrig as voor-snapshot (gesit tydens admLaaiPersoon)
+    // Terugval na p-waardes as admOrig nie beskikbaar is
+    var orig = window.admOrig || {};
+    var voor = {
+      given:       orig.given        !== undefined ? orig.given        : (p.given        || ''),
+      surname:     orig.surname      !== undefined ? orig.surname      : (p.surname      || ''),
+      nickname:    orig.nickname     !== undefined ? orig.nickname     : (p.nickname     || ''),
+      birth_date:  orig.birth_date   !== undefined ? orig.birth_date   : (p.birth_date   || ''),
+      birth_place: orig.birth_place  !== undefined ? orig.birth_place  : (p.birth_place  || ''),
+      death_date:  orig.death_date   !== undefined ? orig.death_date   : (p.death_date   || ''),
+      death_place: orig.death_place  !== undefined ? orig.death_place  : (p.death_place  || ''),
+      burial_place:orig.burial_place !== undefined ? orig.burial_place : (p.burial_place || ''),
+      occupation:  orig.occupation   !== undefined ? orig.occupation   : (p.occupation   || ''),
+      events:      orig.events       !== undefined ? orig.events       : (p.events       || []),
+      note:        orig.note         !== undefined ? orig.note         : (p.note         || '')
+    };
+
     // Behou bestaande waarde as invoerveld leeg is
     var _g = function(fId, bestaande) {
       var v = get(fId);
       return v !== '' ? v : (bestaande || '');
-    };
-
-    // Vang voor-waardes vir ouditspoor
-    var voor = {
-      given: p.given || '', surname: p.surname || '',
-      nickname: p.nickname || '', birth_date: p.birth_date || '',
-      birth_place: p.birth_place || '', death_date: p.death_date || '',
-      death_place: p.death_place || '', burial_place: p.burial_place || '',
-      occupation: p.occupation || '', events: p.events || [],
-      note: p.note || ''
     };
 
     p.given       = get('adm-given')       || p.given;
@@ -5400,7 +5407,7 @@ function attachCorrectionListeners() {
       p.name = ((p.given || '') + ' ' + (p.surname || '')).trim();
     }
 
-    // Bou wysigings-objek (slegs velde wat werklik verander het)
+    // Bou wysigings-objek (slegs velde wat werklik verander het tov orig)
     var na = {
       given: p.given || '', surname: p.surname || '',
       nickname: p.nickname || '', birth_date: p.birth_date || '',
@@ -5429,8 +5436,10 @@ function attachCorrectionListeners() {
         tipe: 'wysiging',
         wysigings: wysigings
       });
+      // Dateer admOrig op sodat dubbel-stoor nie duplikate skep nie
+      window.admOrig = JSON.parse(JSON.stringify(na));
       document.getElementById('adm-status').textContent =
-        '✅ Gewysig: ' + p.name + ' (' + veranderCount + ' veld(e)) — veilig gestoor. Gebruik "Stoor na GitHub" om te voltooi.';
+        '✅ Gewysig: ' + p.name + ' (' + veranderCount + ' veld(e)) — veilig gestoor. Gebruik \"Stoor na GitHub\" om te voltooi.';
     } else {
       document.getElementById('adm-status').textContent =
         'ℹ️ Geen veranderinge opgespoor vir ' + p.name + '.';

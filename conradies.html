@@ -1755,6 +1755,7 @@ main {
 .stats-klikbaar:hover .stats-naam { color: var(--sepia); text-decoration: underline; }
 .stats-grafiek { width: 100%; overflow-x: auto; }
 .stats-grafiek svg { width: 100%; height: auto; display: block; }
+.stats-nota { font-size: 0.78em; color: var(--muted); margin-top: 8px; font-style: italic; }
 </style>
 </head>
 <body>
@@ -3151,7 +3152,7 @@ function bouStats() {
       var x = linksMargin + Math.round(i * grafBreed / dekLys.length);
       var balkHoog = Math.round((d[1] / maksimumDek) * grafHoog);
       var y = boMargin + grafHoog - balkHoog;
-      var etiket = (d[0] % 50 === 0) ? String(d[0]) : '';
+      var etiket = (d[0] % 25 === 0) ? String(d[0]) : '';
       return '<rect x="' + x + '" y="' + y + '" width="' + balkBreed + '" height="' + balkHoog +
         '" fill="var(--sepia)" opacity="0.85" rx="1"/>' +
         (etiket ? '<text x="' + (x + balkBreed/2) + '" y="' + (svgHoog - 6) +
@@ -3181,13 +3182,7 @@ function bouStats() {
     .map(function(r) { return r.burial_place.trim(); });
   html += bouBalkPaneel('⛪ Top 10 Begraafplekke', topN(begraafplekke, 10));
 
-  // ── 5. Top 10 Distrikte ──
-  var distrikte = iRekords
-    .filter(function(r) { return r.events && r.events.length; })
-    .map(function(r) { return r.events ? r.events.length : 0; });
-  html += bouBalkPaneel('🗺️ Top 10 Distrikte', topN(distrikte, 10));
-
-  // ── 6. Grootste gesinne (Top 10) ──
+  // ── 5. Grootste gesinne (Top 10) ──
   var gesinne = iRekords
     .filter(function(r) { return r.children_ids && r.children_ids.length >= 5; })
     .map(function(r) { return [r.name || r.id, r.children_ids.length, r.id]; })
@@ -3206,6 +3201,63 @@ function bouStats() {
     }).join('');
     html += '<div class="stats-paneel"><h3>👨‍👩‍👧‍👦 Grootste Gesinne (kinders)</h3>' + gesinRye + '</div>';
   }
+
+  // ── 6. Tak-verdeling ──
+  var takData = [
+    ['Tak C1 — Oudste', 2702],
+    ['Tak C2', 1827],
+    ['Tak C3', 1548],
+    ['Tak C5', 530]
+  ];
+  var takMaks = takData[0][1];
+  var takRye = takData.map(function(t) {
+    var prs = Math.round((t[1] / takMaks) * 100);
+    return '<div class="stats-ry">' +
+      '<div class="stats-naam">' + t[0] + '</div>' +
+      '<div class="stats-balk-wrap"><div class="stats-balk" style="width:' + prs + '%"></div></div>' +
+      '<div class="stats-telling">' + t[1] + '</div>' +
+      '</div>';
+  }).join('');
+  html += '<div class="stats-paneel"><h3>🌳 Tak-verdeling</h3>' + takRye +
+    '<p class="stats-nota">* 1 179 rekords uitgesluit: 588 onseker stamlyn (c?) en 591 nageslag van dogters van stamvader (c4/c6/c7).</p></div>';
+
+  // ── 7. Generasie-verspreiding (SVG) ──
+  var genData = [323, 213, 75, 129, 423, 910, 1551, 1615, 1340, 546, 76];
+  var genLabels = ['0','1','2','3','4','5','6','7','8','9','10'];
+  (function() {
+    var svgB = 560, svgH = 180;
+    var lM = 40, rM = 8, bM = 10, oM = 38;
+    var gB = svgB - lM - rM;
+    var gH = svgH - bM - oM;
+    var maks = Math.max.apply(null, genData);
+    var bw = Math.max(4, Math.floor(gB / genData.length) - 3);
+    var stafke = genData.map(function(v, i) {
+      var x = lM + Math.round(i * gB / genData.length);
+      var bh = Math.round((v / maks) * gH);
+      var y = bM + gH - bh;
+      return '<rect x="' + x + '" y="' + y + '" width="' + bw + '" height="' + bh +
+        '" fill="var(--sepia)" opacity="0.85" rx="1"/>' +
+        '<text x="' + (x + bw / 2) + '" y="' + (svgH - 6) +
+        '" text-anchor="middle" font-size="9" fill="var(--muted)">G' + genLabels[i] + '</text>';
+    }).join('');
+    var yAs = [0, 0.25, 0.5, 0.75, 1].map(function(f) {
+      var w = Math.round(maks * f);
+      var y = bM + gH - Math.round(f * gH);
+      return '<text x="' + (lM - 4) + '" y="' + (y + 3) +
+        '" text-anchor="end" font-size="9" fill="var(--muted)">' + w + '</text>' +
+        '<line x1="' + lM + '" y1="' + y + '" x2="' + (svgB - rM) + '" y2="' + y +
+        '" stroke="var(--line)" stroke-width="0.5"/>';
+    }).join('');
+    var svg = '<svg viewBox="0 0 ' + svgB + ' ' + svgH + '" xmlns="http://www.w3.org/2000/svg">' + yAs + stafke + '</svg>';
+    html += '<div class="stats-paneel"><h3>📊 Generasie-verspreiding</h3>' +
+      '<div class="stats-grafiek">' + svg + '</div></div>';
+  })();
+
+  // ── 8. Top 10 Sterfteplekke ──
+  var sterfteplekke = iRekords
+    .filter(function(r) { return r.death_place && r.death_place.trim(); })
+    .map(function(r) { return r.death_place.trim(); });
+  html += bouBalkPaneel('✝️ Top 10 Sterfteplekke', topN(sterfteplekke, 10));
 
   panele.innerHTML = html;
 }

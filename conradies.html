@@ -723,6 +723,7 @@ main {
 /* ── Druk / PDF styl ── */
 #druk-inhoud { display: none; }
 #druk-skerp {
+  display: none;
   position: fixed;
   top: 0; left: 0;
   width: 100%; height: 100%;
@@ -731,15 +732,12 @@ main {
   overflow-y: auto;
   padding: 1.2rem 1rem 2rem;
   box-sizing: border-box;
-  visibility: hidden;
-  display: none;
 }
 body.druk-aktief > *:not(#druk-skerp) {
   display: none !important;
 }
 body.druk-aktief #druk-skerp {
   display: block !important;
-  visibility: visible !important;
 }
 #druk-inhoud #druk-wrapper {
   color: #000 !important;
@@ -1930,7 +1928,7 @@ body.druk-aktief #druk-skerp {
   <button class="btn-druk" id="btn-druk" onclick="if(correctionPersonId){var r=indexById[correctionPersonId];if(r)oopDrukSkerp(r);}" title="Druk / stoor as PDF">🖨️ Druk / PDF</button>
 </div>
 <div id="druk-inhoud"></div>
-<div id="druk-skerp" style="display:none;">
+<div id="druk-skerp">
   <div style="display:flex;justify-content:space-between;align-items:center;
     border-bottom:1px solid #ccc;padding-bottom:0.7rem;margin-bottom:1rem;
     position:sticky;top:0;background:#fff;z-index:1;padding-top:0.5rem;">
@@ -2768,19 +2766,16 @@ function closePanel() {
 }
 
 function oopDrukSkerp(r) {
-  const html = buildDrukHTML(r);
+  var html = buildDrukHTML(r);
   document.getElementById('druk-skerp-inhoud').innerHTML = html;
-  var el = document.getElementById('druk-skerp');
-  el.style.display = 'block';
-  el.style.visibility = 'visible';
+  document.getElementById('druk-skerp').style.display = 'block';
   document.body.classList.add('druk-aktief');
   document.body.style.overflow = 'hidden';
+  window.scrollTo(0, 0);
 }
 
 function sluitDrukSkerp() {
-  var el = document.getElementById('druk-skerp');
-  el.style.display = 'none';
-  el.style.visibility = 'hidden';
+  document.getElementById('druk-skerp').style.display = 'none';
   document.body.classList.remove('druk-aktief');
   document.body.style.overflow = '';
 }

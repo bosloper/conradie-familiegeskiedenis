@@ -1932,9 +1932,10 @@ body.druk-aktief #druk-skerp {
 <div id="druk-inhoud"></div>
 <div id="druk-skerp" style="display:none;">
   <div style="display:flex;justify-content:space-between;align-items:center;
-    border-bottom:1px solid #ccc;padding-bottom:0.7rem;margin-bottom:1rem;">
-    <button onclick="sluitDrukSkerp()" style="font-size:1.1rem;background:none;border:1px solid #888;
-      padding:0.3rem 0.8rem;cursor:pointer;border-radius:3px;">✕ Sluit</button>
+    border-bottom:1px solid #ccc;padding-bottom:0.7rem;margin-bottom:1rem;
+    position:sticky;top:0;background:#fff;z-index:1;padding-top:0.5rem;">
+    <button onclick="sluitDrukSkerp()" style="font-size:1rem;background:#c0392b;color:#fff;border:none;
+      padding:0.4rem 1rem;cursor:pointer;border-radius:3px;font-weight:bold;">✕ Sluit</button>
     <button onclick="drukNou()" style="font-size:0.85rem;background:#2d4a2a;color:#fff;
       border:none;padding:0.4rem 1rem;cursor:pointer;border-radius:3px;">🖨️ Druk / PDF</button>
   </div>
@@ -2784,14 +2785,49 @@ function sluitDrukSkerp() {
   document.body.style.overflow = '';
 }
 
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    var el = document.getElementById('druk-skerp');
+    if (el && el.style.display !== 'none') sluitDrukSkerp();
+  }
+});
+
 function drukNou() {
-  var el = document.getElementById('druk-skerp');
-  // Ensure element is fully visible before printing
-  el.style.display = 'block';
-  el.style.visibility = 'visible';
-  el.style.position = 'relative';
-  el.style.zIndex = 'auto';
-  setTimeout(function() { window.print(); }, 100);
+  var inhoud = document.getElementById('druk-skerp-inhoud');
+  if (!inhoud) return;
+  var html = inhoud.innerHTML;
+  var drukVenster = window.open('', '_blank', 'width=800,height=600');
+  if (!drukVenster) {
+    // Fallback as pop-up geblokkeer word
+    window.print();
+    return;
+  }
+  drukVenster.document.write(
+    '<!DOCTYPE html><html><head><meta charset="utf-8">' +
+    '<meta name="viewport" content="width=device-width,initial-scale=1">' +
+    '<title>Conradie Familie – Druk</title>' +
+    '<style>' +
+    'body{margin:0;padding:1cm;background:#fff;color:#000;font-family:Georgia,serif;font-size:11pt;line-height:1.6;}' +
+    'h1{font-size:18pt;border-bottom:1pt solid #888;padding-bottom:0.2cm;margin-bottom:0.3cm;}' +
+    'h2{font-size:11pt;font-family:Arial,sans-serif;letter-spacing:0.08em;text-transform:uppercase;color:#555;margin:0.4cm 0 0.15cm;}' +
+    '.druk-ry{margin:0.1cm 0;font-size:10.5pt;}' +
+    '.druk-voetnoot{margin-top:0.8cm;font-size:8pt;color:#888;border-top:0.5pt solid #ccc;padding-top:0.2cm;}' +
+    '.druk-tl-item{margin:0.1cm 0;font-size:10pt;}' +
+    '.druk-tl-hist{color:#999;font-size:9pt;}' +
+    'a{color:#000;text-decoration:none;}' +
+    '.druk-knoppie{display:none;}' +
+    '@media print{.druk-drukbtn{display:none!important;}}' +
+    '</style></head><body>' +
+    '<div style="text-align:right;margin-bottom:0.5cm;" class="druk-drukbtn">' +
+    '<button onclick="window.print()" style="padding:0.4rem 1rem;background:#2d4a2a;color:#fff;border:none;border-radius:3px;font-size:0.9rem;cursor:pointer;">🖨️ Druk / PDF</button>' +
+    '&nbsp;' +
+    '<button onclick="window.close()" style="padding:0.4rem 0.8rem;background:#555;color:#fff;border:none;border-radius:3px;font-size:0.9rem;cursor:pointer;">✕ Sluit</button>' +
+    '</div>' +
+    html +
+    '</body></html>'
+  );
+  drukVenster.document.close();
+  drukVenster.focus();
 }
 
 function buildDrukHTML(r) {
@@ -3259,8 +3295,22 @@ function bouStats() {
     '<p class="stats-nota">* 1 179 rekords uitgesluit: 588 onseker stamlyn (c?) en 591 nageslag van dogters van stamvader (c4/c6/c7).</p></div>';
 
   // ── 7. Generasie-verspreiding (SVG) ──
-  var genData = [323, 213, 75, 129, 423, 910, 1551, 1615, 1340, 546, 76];
-  var genLabels = ['0','1','2','3','4','5','6','7','8','9','10'];
+  // Bereken dinamies uit werklike data (slegs nie-eggenotes, generasie 0–12)
+  var genTelling = {};
+  iRekords.filter(function(r) { return !r.is_spouse; }).forEach(function(r) {
+    var g = r.generation;
+    if (typeof g === 'number' && g >= 0 && g <= 12) {
+      genTelling[g] = (genTelling[g] || 0) + 1;
+    }
+  });
+  var genMaks = 0;
+  Object.keys(genTelling).forEach(function(k) { if (+k > genMaks) genMaks = +k; });
+  var genData = [];
+  var genLabels = [];
+  for (var gi = 0; gi <= genMaks; gi++) {
+    genData.push(genTelling[gi] || 0);
+    genLabels.push(String(gi));
+  }
   (function() {
     var svgB = 560, svgH = 180;
     var lM = 40, rM = 8, bM = 10, oM = 38;

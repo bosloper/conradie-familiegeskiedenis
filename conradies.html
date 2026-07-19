@@ -6251,7 +6251,16 @@ function attachCorrectionListeners() {
       clearTimeout(blobTimer);
       if (!blobResp.ok) {
         var be = await blobResp.json().catch(function(){ return {}; });
-        throw new Error('Blob-skepping misluk: ' + (be.message || blobResp.status));
+        var beMsg = be.message || String(blobResp.status);
+        var beHulp = '';
+        if (blobResp.status === 401 || beMsg.toLowerCase().includes('bad cred')) {
+          beHulp = ' \u2014 PAT het nie genoeg toestemmings vir Git Data API nie. Skep \u2019n nuwe klassieke PAT met volle "repo"-skop (nie fine-grained nie).';
+        } else if (blobResp.status === 403) {
+          beHulp = ' \u2014 Toegang geweier. Benodig volle "repo"-skop op klassieke PAT.';
+        } else if (blobResp.status === 422) {
+          beHulp = ' \u2014 Lêer te groot of ongeldige data.';
+        }
+        throw new Error('Blob-skepping misluk (HTTP ' + blobResp.status + '): ' + beMsg + beHulp);
       }
       var blobData = await blobResp.json();
       var nuweBlob = blobData.sha;

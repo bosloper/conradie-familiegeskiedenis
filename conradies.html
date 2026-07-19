@@ -2880,12 +2880,25 @@ function buildDrukHTML(r) {
     const mp = r.marr_places && r.marr_places[i] ? r.marr_places[i] : null;
     gebeure2.push({ j: md ? jaarUitDatum(md) : null, t: '💍 Getroud', d: sp.name + (md ? ' — ' + dl(md) : '') + (mp ? ', ' + mp : ''), hist: false });
   });
-  if (r.children_ids) r.children_ids.forEach(cid => {
-    const ch = indexById[cid]; if (!ch) return;
-    const cy = ch.birth_year || jaarUitDatum(ch.birth_date); if (!cy) return;
-    const cn = [ch.given, ch.surname||ch.name].filter(Boolean).join(' ');
-    gebeure2.push({ j: cy, t: '👶 Kind gebore', d: cn, hist: false });
-  });
+  if (r.children_ids) {
+    const dsp0 = r.spouses && r.spouses.length ? r.spouses[0] : null;
+    const dspRek0 = dsp0 && indexById[dsp0.id] ? indexById[dsp0.id] : null;
+    const dspBy = dsp0 ? (dsp0.birth_year || jaarUitDatum(dsp0.birth_date) || (dspRek0 ? (jaarUitDatum(dspRek0.birth_date) || dspRek0.birth_year) : null)) : null;
+    const disMale = r.sex === 'M';
+    const disFemale = r.sex === 'F';
+    const dSelfRol = disMale ? 'Vader' : disFemale ? 'Moeder' : null;
+    const dGadeRol = disMale ? 'Moeder' : disFemale ? 'Vader' : null;
+    r.children_ids.forEach(cid => {
+      const ch = indexById[cid]; if (!ch) return;
+      const cy = ch.birth_year || jaarUitDatum(ch.birth_date); if (!cy) return;
+      const cn = [ch.given, ch.surname||ch.name].filter(Boolean).join(' ');
+      const dOuParts = [];
+      if (ry2 && dSelfRol) { const d = cy - ry2; if (d >= 0 && d <= 80) dOuParts.push(dSelfRol + ' ' + d); }
+      if (dspBy && dGadeRol) { const d = cy - dspBy; if (d >= 0 && d <= 80) dOuParts.push(dGadeRol + ' ' + d); }
+      const dOuStr = dOuParts.length ? ' (' + dOuParts.join(', ') + ')' : '';
+      gebeure2.push({ j: cy, t: '👶 Kind gebore', d: cn + dOuStr, hist: false });
+    });
+  }
   if (r.death_date || r.death_year)
     gebeure2.push({ j: r.death_year || jaarUitDatum(r.death_date), t: '✝ Oorlede', d: ry(r.death_date, r.death_year) + (r.death_place ? ', ' + r.death_place : ''), hist: false });
   gebeure2.sort((a,b) => { if (!a.j&&!b.j) return 0; if (!a.j) return 1; if (!b.j) return -1; return a.j-b.j; });
@@ -3421,13 +3434,26 @@ function buildTydlyn(r) {
 
   // Kinders
   if (r.children_ids && r.children_ids.length) {
+    // Gade se geboortejaar (slegs eerste gade, by veelhuwelike)
+    const sp0 = r.spouses && r.spouses.length ? r.spouses[0] : null;
+    const spRek0 = sp0 && indexById[sp0.id] ? indexById[sp0.id] : null;
+    const spBy = sp0 ? (sp0.birth_year || jaar(sp0.birth_date) || (spRek0 ? (jaar(spRek0.birth_date) || spRek0.birth_year) : null)) : null;
+    // Bepaal rolle op grond van geslag
+    const isMale = r.sex === 'M';
+    const isFemale = r.sex === 'F';
+    const selfRol = isMale ? 'Vader' : isFemale ? 'Moeder' : null;
+    const gadeRol = isMale ? 'Moeder' : isFemale ? 'Vader' : null;
     r.children_ids.forEach(cid => {
       const ch = indexById[cid];
       if (!ch) return;
       const cy = ch.birth_year || jaar(ch.birth_date);
       if (!cy) return;
-      const chOud = ouderdom(ry, cy);
-      let detail = ch.name + (chOud ? chOud : '');
+      // Bou ouderdomsdeel
+      const ouParts = [];
+      if (ry && selfRol) { const d = cy - ry; if (d >= 0 && d <= 80) ouParts.push(selfRol + ' ' + d); }
+      if (spBy && gadeRol) { const d = cy - spBy; if (d >= 0 && d <= 80) ouParts.push(gadeRol + ' ' + d); }
+      const ouStr = ouParts.length ? ' (' + ouParts.join(', ') + ')' : '';
+      const detail = ch.name + ouStr;
       gebeure.push({ jaar: cy, ikon: '👶', titel: 'Kind gebore', detail: detail });
     });
   }
@@ -5927,8 +5953,35 @@ function attachCorrectionListeners() {
     });
     window.admKindGeslag = null;
 
-    var status = '👶 Kind bygevoeg: ' + d.naam + ' (' + nuweId + ', kode: ' + nuweKode + '). Gebruik "Stoor na GitHub" om te stoor.';
-    document.getElementById('adm-status').textContent = status;
+    // Laai volgende kind uit wagLys (as beskikbaar)
+    var wagLys = window.admNPWagLys;
+    var wagOorblyf = wagLys && wagLys.length > 0;
+    if (wagOorblyf) {
+      var volgNP = wagLys.shift(); // verwyder en kry eerste
+      var kNaam2   = document.getElementById('adm-kind-naam');
+      var kGebDat2 = document.getElementById('adm-kind-geboort');
+      var kGebPlek2= document.getElementById('adm-kind-plek');
+      if (kNaam2)   kNaam2.value   = volgNP['NP_NAAM'] || '';
+      if (kGebDat2) kGebDat2.value = volgNP['NP_GEBOORTEDATUM'] || '';
+      if (kGebPlek2)kGebPlek2.value= volgNP['NP_GEBOORTEPLEK']  || '';
+      var geslag2 = (volgNP['NP_GESLAG'] || '').toUpperCase();
+      if (geslag2 === 'M' || geslag2 === 'SEUN') {
+        var mBtn2 = document.getElementById('adm-kind-m');
+        if (mBtn2) mBtn2.click();
+      } else if (geslag2 === 'F' || geslag2 === 'DOGTER' || geslag2 === 'V') {
+        var fBtn2 = document.getElementById('adm-kind-f');
+        if (fBtn2) fBtn2.click();
+      }
+      var oorblyf = wagLys.length;
+      var status = '👶 Kind bygevoeg: ' + d.naam + ' (' + nuweId + '). ' +
+        'Volgende: ' + (volgNP['NP_NAAM'] || '?') +
+        (oorblyf > 0 ? ' (' + oorblyf + ' nog ná dit)' : ' (laaste)') +
+        ' — klik "Voeg Kind by".';
+      document.getElementById('adm-status').textContent = status;
+    } else {
+      var status = '👶 Kind bygevoeg: ' + d.naam + ' (' + nuweId + ', kode: ' + nuweKode + '). Gebruik "Stoor na GitHub" om te stoor.';
+      document.getElementById('adm-status').textContent = status;
+    }
 
     // Voeg by patch-log
     patchLogVoegBy({

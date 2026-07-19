@@ -6206,36 +6206,104 @@ function attachCorrectionListeners() {
       var nou = new Date().toISOString();
       var tydsStempel = nou.slice(0,19).replace('T',' ');
 
-      // ── Opsie C: Contents API (een stap, geen blob/tree/commit nodig) ──
-      ghStatus('⏳ Stap 1/2: Kry huidige lêer-SHA van GitHub...');
-      var bestaandeResp = await fetch(CONTENTS_URL, { headers: headers });
-      if (!bestaandeResp.ok) {
-        var e = await bestaandeResp.json().catch(function(){ return {}; });
-        throw new Error('Kon nie lêer-SHA kry nie: ' + (e.message || bestaandeResp.status));
-      }
-      var bestaande = await bestaandeResp.json();
-      var huidigeShа = bestaande.sha;
-
-      ghStatus('⏳ Stap 2/2: Laai databasis op via Contents API (kan 30-90 sek neem)...');
+      // ── Git Data API: blob → tree → commit → ref (geen lêergrootte-limiet) ──
       var jsonStr = JSON.stringify(CONRADIE_DATA);
-      // Kodeer UTF-8 korrek na base64
       var utf8Bytes = new TextEncoder().encode(jsonStr);
       var binStr = Array.from(utf8Bytes).map(function(b) { return String.fromCharCode(b); }).join('');
       var b64Str = btoa(binStr);
 
-      var putResp = await fetch(CONTENTS_URL, {
-        method: 'PUT',
+      // Stap 1/4: Kry huidige commit SHA van main-tak
+      ghStatus('\u23F3 Stap 1/4: Kry huidige commit van main-tak...');
+      var refCtrl = new AbortController();
+      var refTimer = setTimeout(function() { refCtrl.abort(); }, 60000);
+      var refResp = await fetch(BASE + '/git/refs/heads/main', { headers: headers, signal: refCtrl.signal });
+      clearTimeout(refTimer);
+      if (!refResp.ok) {
+        var re = await refResp.json().catch(function(){ return {}; });
+        throw new Error('Kon nie tak-verwysing kry nie: ' + (re.message || refResp.status));
+      }
+      var refData = await refResp.json();
+      var huidigeCommitSha = refData.object.sha;
+
+      // Stap 2/4: Kry boom-SHA van huidige commit
+      ghStatus('\u23F3 Stap 2/4: Kry huidige lêerboom...');
+      var commitCtrl = new AbortController();
+      var commitTimer = setTimeout(function() { commitCtrl.abort(); }, 60000);
+      var commitResp = await fetch(BASE + '/git/commits/' + huidigeCommitSha, { headers: headers, signal: commitCtrl.signal });
+      clearTimeout(commitTimer);
+      if (!commitResp.ok) {
+        var ce = await commitResp.json().catch(function(){ return {}; });
+        throw new Error('Kon nie commit-inligting kry nie: ' + (ce.message || commitResp.status));
+      }
+      var commitData = await commitResp.json();
+      var huidigeTreeSha = commitData.tree.sha;
+
+      // Stap 3/4: Skep blob (die lêerinhoud) — stadigste stap
+      ghStatus('\u23F3 Stap 3/4: Laai lêerinhoud op (kan 60-120 sek neem op stadige verbinding)...');
+      var blobCtrl = new AbortController();
+      var blobTimer = setTimeout(function() { blobCtrl.abort(); }, 180000);
+      var blobResp = await fetch(BASE + '/git/blobs', {
+        method: 'POST',
         headers: headers,
+        signal: blobCtrl.signal,
+        body: JSON.stringify({ content: b64Str, encoding: 'base64' })
+      });
+      clearTimeout(blobTimer);
+      if (!blobResp.ok) {
+        var be = await blobResp.json().catch(function(){ return {}; });
+        throw new Error('Blob-skepping misluk: ' + (be.message || blobResp.status));
+      }
+      var blobData = await blobResp.json();
+      var nuweBlob = blobData.sha;
+
+      // Stap 4/4: Boom, commit en tak-verwysing
+      ghStatus('\u23F3 Stap 4/4: Skep commit en stoor...');
+      var treeCtrl = new AbortController();
+      var treeTimer = setTimeout(function() { treeCtrl.abort(); }, 60000);
+      var treeResp = await fetch(BASE + '/git/trees', {
+        method: 'POST',
+        headers: headers,
+        signal: treeCtrl.signal,
         body: JSON.stringify({
-          message: 'Admin-wysiging (Contents API): ' + nou,
-          content: b64Str,
-          sha: huidigeShа
+          base_tree: huidigeTreeSha,
+          tree: [{ path: LEER_PAD, mode: '100644', type: 'blob', sha: nuweBlob }]
         })
       });
+      clearTimeout(treeTimer);
+      if (!treeResp.ok) {
+        var te = await treeResp.json().catch(function(){ return {}; });
+        throw new Error('Boom-skepping misluk: ' + (te.message || treeResp.status));
+      }
+      var treeData = await treeResp.json();
+      var nuweTreeSha = treeData.sha;
 
-      if (!putResp.ok) {
-        var pe = await putResp.json().catch(function(){ return {}; });
-        throw new Error('Contents API PUT misluk: ' + (pe.message || putResp.status));
+      var newCommitCtrl = new AbortController();
+      var newCommitTimer = setTimeout(function() { newCommitCtrl.abort(); }, 60000);
+      var newCommitResp = await fetch(BASE + '/git/commits', {
+        method: 'POST',
+        headers: headers,
+        signal: newCommitCtrl.signal,
+        body: JSON.stringify({ message: 'Admin-wysiging: ' + nou, tree: nuweTreeSha, parents: [huidigeCommitSha] })
+      });
+      clearTimeout(newCommitTimer);
+      if (!newCommitResp.ok) {
+        var nce = await newCommitResp.json().catch(function(){ return {}; });
+        throw new Error('Commit-skepping misluk: ' + (nce.message || newCommitResp.status));
+      }
+      var nuweCommitSha = (await newCommitResp.json()).sha;
+
+      var patchCtrl = new AbortController();
+      var patchTimer = setTimeout(function() { patchCtrl.abort(); }, 60000);
+      var patchResp = await fetch(BASE + '/git/refs/heads/main', {
+        method: 'PATCH',
+        headers: headers,
+        signal: patchCtrl.signal,
+        body: JSON.stringify({ sha: nuweCommitSha })
+      });
+      clearTimeout(patchTimer);
+      if (!patchResp.ok) {
+        var pre2 = await patchResp.json().catch(function(){ return {}; });
+        throw new Error('Tak-verwysing kon nie gevorder word nie: ' + (pre2.message || patchResp.status));
       }
 
       await skryfTransaksie(pat, BASE, nou);

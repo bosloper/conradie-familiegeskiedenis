@@ -5409,7 +5409,7 @@ function attachCorrectionListeners() {
     p.burial_place= _g('adm-burial',      p.burial_place);
     p.occupation  = _g('adm-occupation',  p.occupation);
     p.events      = p.events || [];
-    p.note        = _g('adm-note',        p.note);
+    p.note        = get('adm-note');       // Leë waarde toegelaat (nota mag verwyder word)
 
     // Herbereken name
     if (p.given || p.surname) {

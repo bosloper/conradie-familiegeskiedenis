@@ -4588,15 +4588,23 @@ function attachCorrectionListeners() {
       html += '<button id="adm-email-btn" style="padding:0.4rem 0.9rem;background:#c49a3a;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:0.85rem;">✉️ E-pos</button>';
       html += '<button id="adm-laai-btn" style="padding:0.4rem 0.9rem;background:#3d3020;color:#e8dfc8;border:none;border-radius:4px;cursor:pointer;font-size:0.85rem;">⬇️ JSON af</button>';
       html += '</div>';
-      html += '<div style="padding:0.8rem;background:#0e1208;border:1px solid #3a5a2a;border-radius:6px;">';
-      html += '<div style="color:#8ab08a;font-size:0.82rem;margin-bottom:0.5rem;">🔒 GitHub PAT (Personal Access Token)</div>';
-      html += '<input id="adm-pat" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" ' +
-        'style="width:100%;padding:0.4rem;background:#0d0a05;color:#d4b896;border:1px solid #3a5a2a;border-radius:4px;font-size:0.83rem;box-sizing:border-box;margin-bottom:0.5rem;"/>';
-      html += '<div style="display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:0.5rem;">';
-      html += '<button id="adm-pat-toets-btn" onclick="admToetsPAT()" style="padding:0.4rem 0.9rem;background:#1a3a4a;color:#8ab8d8;border:1px solid #3a6a8a;border-radius:4px;cursor:pointer;font-size:0.83rem;">🔍 Toets PAT</button>';
-      html += '<button id="adm-github-btn" onclick="admStoorGitHub()" style="padding:0.4rem 1.1rem;background:#2d6a2d;color:#e8f5e8;border:none;border-radius:4px;cursor:pointer;font-size:0.83rem;" disabled>☁️ Stoor na GitHub</button>';
+      html += '<div style="padding:0.8rem;background:#0e1208;border:1px solid #5a7a3a;border-radius:6px;margin-bottom:0.6rem;">';
+      html += '<div style="color:#8ab08a;font-size:0.85rem;font-weight:bold;margin-bottom:0.4rem;">\u2193 Handmatige Merge-werkstroom</div>';
+      html += '<div style="color:#8a9a7a;font-size:0.80rem;margin-bottom:0.6rem;line-height:1.5;">';
+      html += 'Stap 1: Klik <b style="color:#c8d8a8;">Pas Patches Toe &amp; Laai Af</b> \u2014 dit pas alle hangende wysigings toe en laai die nuwe <code>conradies.json</code> af.<br>';
+      html += 'Stap 2: Gaan na <a href="https://github.com/bosloper/conradie-familiegeskiedenis/blob/main/data/conradies.json" target="_blank" style="color:#8ab8d8;">GitHub \u2192 data/conradies.json</a>, klik die potlood-ikoon, klik "Upload file" en laai die afgelaaide lêer op.</div>';
+      html += '<button onclick="admPasToeEnLaaiAf()" style="padding:0.5rem 1.2rem;background:#3a6a2a;color:#e8f5e8;border:none;border-radius:4px;cursor:pointer;font-size:0.85rem;font-weight:bold;">\u2B07\uFE0F Pas Patches Toe &amp; Laai Af</button>';
+      html += '<div id="adm-merge-status" style="font-size:0.83rem;min-height:1rem;margin-top:0.5rem;color:#8ab08a;"></div>';
       html += '</div>';
-      html += '<div id="adm-github-status" style="font-size:0.83rem;min-height:1rem;line-height:1.5;"></div>';
+      html += '<div style="padding:0.6rem 0.8rem;background:#0a0a0a;border:1px solid #2a3a2a;border-radius:6px;opacity:0.5;">';
+      html += '<div style="color:#5a7a5a;font-size:0.80rem;margin-bottom:0.4rem;">\u2601\uFE0F Direkte GitHub-oplaai (tydelik gedeaktiveer \u2014 stadige verbinding)</div>';
+      html += '<div style="display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:0.4rem;">';
+      html += '<input id="adm-pat" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" ' +
+        'style="width:100%;padding:0.4rem;background:#0d0a05;color:#6a7a6a;border:1px solid #2a3a2a;border-radius:4px;font-size:0.83rem;box-sizing:border-box;margin-bottom:0.4rem;" disabled/>';
+      html += '<button id="adm-pat-toets-btn" style="padding:0.4rem 0.9rem;background:#1a2a1a;color:#4a6a4a;border:1px solid #2a3a2a;border-radius:4px;cursor:not-allowed;font-size:0.83rem;" disabled>\uD83D\uDD0D Toets PAT</button>';
+      html += '<button id="adm-github-btn" style="padding:0.4rem 1.1rem;background:#1a2a1a;color:#4a6a4a;border:none;border-radius:4px;cursor:not-allowed;font-size:0.83rem;" disabled>\u2601\uFE0F Stoor na GitHub</button>';
+      html += '</div>';
+      html += '<div id="adm-github-status" style="font-size:0.83rem;min-height:1rem;color:#4a5a4a;"></div>';
       html += '</div>';
       html += '</div>'; // end taak-stoor
 
@@ -6115,6 +6123,62 @@ function attachCorrectionListeners() {
     URL.revokeObjectURL(url);
     document.getElementById('adm-status').textContent = '⬇️ JSON afgelaai.';
   }
+
+  // ── Pas patch-log toe op data en laai af (handmatige merge-werkstroom) ──
+  window.admPasToeEnLaaiAf = function admPasToeEnLaaiAf() {
+    var statusEl = document.getElementById('adm-merge-status');
+    function mStatus(msg, kleur) {
+      if (statusEl) { statusEl.textContent = msg; statusEl.style.color = kleur || '#8ab08a'; }
+    }
+    var log = patchLogLees();
+    if (!log || log.length === 0) {
+      mStatus('\u26A0\uFE0F Geen hangende wysigings nie — niks om toe te pas nie.', '#c49a3a');
+      return;
+    }
+    if (!window.CONRADIE_DATA || !window.CONRADIE_DATA.length) {
+      mStatus('\u274C Databasis nie gelaai nie. Herlaai bladsy en probeer weer.', '#e05050');
+      return;
+    }
+    // Bou indeks
+    var indeks = {};
+    CONRADIE_DATA.forEach(function(p) { if (p.id) indeks[p.id] = p; });
+    var toegepas = 0, oorgeslaan = 0;
+    log.forEach(function(item) {
+      if (!item.rekord_id || !item.wysigings) { oorgeslaan++; return; }
+      var p = indeks[item.rekord_id];
+      if (!p) { oorgeslaan++; return; }
+      Object.keys(item.wysigings).forEach(function(veld) {
+        var nuutWaarde = item.wysigings[veld].nuut;
+        // Hanteer array-indeks velde soos marr_dates[0]
+        var arrMatch = veld.match(/^(.+)\[(\d+)\]$/);
+        if (arrMatch) {
+          var arrVeld = arrMatch[1], arrIdx = parseInt(arrMatch[2]);
+          if (!Array.isArray(p[arrVeld])) p[arrVeld] = [];
+          p[arrVeld][arrIdx] = nuutWaarde;
+        } else {
+          p[veld] = nuutWaarde;
+        }
+      });
+      toegepas++;
+    });
+    // Laai af
+    var uitvoerData = { people: CONRADIE_DATA };
+    if (window.CONRADIE_STATS) uitvoerData.stats = CONRADIE_STATS;
+    var blob = new Blob([JSON.stringify(uitvoerData)], { type: 'application/json' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'conradies.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    mStatus('\u2705 ' + toegepas + ' wysiging(s) toegepas' + (oorgeslaan ? ', ' + oorgeslaan + ' oorgeslaan' : '') +
+      ' \u2014 conradies.json afgelaai. Laai dit nou handmatig op na GitHub.', '#8ab08a');
+    // Wis patch-log na suksesvolle aflaai
+    patchLogWis();
+    patchLogBouAfdeling();
+  };
 
   // ── Hulpfunksie: haal status element ──
   function ghStatus(msg, kleur, logook) {

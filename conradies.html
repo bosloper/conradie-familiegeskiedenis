@@ -6125,10 +6125,10 @@ function attachCorrectionListeners() {
     var data = (typeof CONRADIE_DATA !== 'undefined') ? CONRADIE_DATA : window.CONRADIE_DATA;
     if (!data) { alert('Databasis nog nie gelaai nie.'); return; }
 
-    var gesoek = {}; // sleutel: "gegee|van|jaar|tipe"
-    var groepe = []; // [{sleutel, rekords:[]}]
+    var groepe = [];
     var indeks  = {};
 
+    // Bou indeks van alle I- en S-rekords met naam + jaar
     data.forEach(function(r) {
       if (!r || !r.id) return;
       var tipe = r.id.charAt(0);
@@ -6137,76 +6137,149 @@ function attachCorrectionListeners() {
       var nVan   = dupNormNaam(r.surname || '');
       if (!nGegee || !nVan) return;
       var jaar = dupJaar(r);
-      if (jaar === null) return; // ignoreer sonder geboortejaar
+      if (jaar === null) return;
       var sleutel = nGegee + '|' + nVan + '|' + jaar + '|' + tipe;
-      if (!indeks[sleutel]) {
-        indeks[sleutel] = [];
-        groepe.push(sleutel);
-      }
+      if (!indeks[sleutel]) { indeks[sleutel] = []; groepe.push(sleutel); }
       indeks[sleutel].push(r);
     });
 
-    // Filtreer: slegs groepe met 2+ rekords = werklike duplikate
+    // Filtreer: slegs groepe met 2+ rekords
     var dupGroepe = groepe.filter(function(s) { return indeks[s].length > 1; });
 
-    // Bou HTML-tabel
-    var iDup = dupGroepe.filter(function(s) { return s.endsWith('|I'); });
-    var sDup = dupGroepe.filter(function(s) { return s.endsWith('|S'); });
+    // Trek ouer-kode uit family_code (alles behalwe laaste segment)
+    function ouerKode(kode) {
+      if (!kode || kode.startsWith('c?')) return null;
+      var segs = kode.match(/[a-z]\d+/g) || [];
+      if (segs.length <= 1) return null;
+      return segs.slice(0, -1).join('');
+    }
 
-    function bouTabel(lys) {
-      if (lys.length === 0) return '<p style="color:green;margin:0.5rem 0;">✅ Geen duplikate gevind nie.</p>';
-      var html = '<table style="width:100%;border-collapse:collapse;font-size:0.82rem;margin-bottom:1rem;">';
-      html += '<tr style="background:#2d4a2a;color:#fff;">' +
-        '<th style="padding:4px 6px;text-align:left;">ID</th>' +
-        '<th style="padding:4px 6px;text-align:left;">Naam</th>' +
-        '<th style="padding:4px 6px;text-align:left;">Geboortejaar</th>' +
-        '<th style="padding:4px 6px;text-align:left;">Geslag. / Gen.</th></tr>';
+    // Klassifiseer groep: 'werklik' | 'neef' | 'onseker'
+    function klassifiseer(reks) {
+      var ouers = {};
+      var hetOnseker = false;
+      reks.forEach(function(r) {
+        var kode = r.family_code || '';
+        if (!kode || kode.startsWith('c?')) { hetOnseker = true; return; }
+        var o = ouerKode(kode);
+        if (o) ouers[o] = true;
+      });
+      var aantalOuers = Object.keys(ouers).length;
+      if (hetOnseker) return 'onseker';
+      if (aantalOuers <= 1) return 'werklik';
+      return 'neef';
+    }
+
+    // Volledige geboortedatum-string (verkies birth_date bo birth_year)
+    function gebDatum(r) {
+      if (r.birth_date) return String(r.birth_date);
+      if (r.birth_year) return String(r.birth_year);
+      return '—';
+    }
+
+    // Bou tabel vir een kategorie
+    function bouTabel(lys, koppe) {
+      if (lys.length === 0) return '<p style="color:green;margin:0.3rem 0 0.8rem;">✅ Geen in hierdie kategorie nie.</p>';
+      var h = '<table style="width:100%;border-collapse:collapse;font-size:0.80rem;margin-bottom:0.8rem;">';
+      h += '<tr style="background:#2d4a2a;color:#fff;">';
+      koppe.forEach(function(k) { h += '<th style="padding:4px 6px;text-align:left;white-space:nowrap;">' + k + '</th>'; });
+      h += '</tr>';
       lys.forEach(function(s, gi) {
         var reks = indeks[s];
         var bg = gi % 2 === 0 ? '#fff8ee' : '#f0e8d8';
         reks.forEach(function(r, ri) {
-          html += '<tr style="background:' + (ri === 0 ? '#ffe0b2' : bg) + ';">' +
-            '<td style="padding:3px 6px;font-family:monospace;">' + r.id + '</td>' +
+          var ouer = ouerKode(r.family_code || '') || '—';
+          var kodeKlas = (r.family_code || '').startsWith('c?') ? 'color:#888;' : '';
+          h += '<tr style="background:' + (ri === 0 ? '#ffe0b2' : bg) + ';">' +
+            '<td style="padding:3px 6px;font-family:monospace;white-space:nowrap;">' + r.id + '</td>' +
             '<td style="padding:3px 6px;">' + (r.name || '') + '</td>' +
-            '<td style="padding:3px 6px;">' + (dupJaar(r) || '') + '</td>' +
-            '<td style="padding:3px 6px;">' + (r.family_code || '') + ' / Gen ' + (r.generation || '') + '</td></tr>';
+            '<td style="padding:3px 6px;white-space:nowrap;">' + gebDatum(r) + '</td>' +
+            '<td style="padding:3px 6px;font-family:monospace;font-size:0.75rem;' + kodeKlas + '">' + (r.family_code || '—') + '</td>' +
+            '<td style="padding:3px 6px;font-family:monospace;font-size:0.75rem;color:#555;">' + ouer + '</td>' +
+            '<td style="padding:3px 6px;text-align:center;">' + (r.generation || '') + '</td></tr>';
         });
-        // Skeidingsry tussen groepe
-        html += '<tr><td colspan="4" style="padding:2px;background:#ddd;"></td></tr>';
+        h += '<tr><td colspan="6" style="padding:1px;background:#ccc;"></td></tr>';
       });
-      html += '</table>';
-      return html;
+      h += '</table>';
+      return h;
     }
 
+    var koppe = ['ID','Naam','Geboortedatum','Familiekode','Ouer-kode','Gen'];
+
+    // Verdeel in drie kategorieë per tipe
+    function verdeel(tipeFilter) {
+      var werklik=[], neef=[], onseker=[];
+      dupGroepe.filter(function(s){ return s.endsWith('|'+tipeFilter); })
+        .forEach(function(s) {
+          var kat = klassifiseer(indeks[s]);
+          if (kat==='werklik') werklik.push(s);
+          else if (kat==='neef') neef.push(s);
+          else onseker.push(s);
+        });
+      return {werklik:werklik, neef:neef, onseker:onseker};
+    }
+
+    var iKat = verdeel('I');
+    var sKat = verdeel('S');
+    var totaal = dupGroepe.length;
+
+    // Bou HTML
     var html = '<div style="padding:0.5rem;">';
-    html += '<h3 style="color:var(--forest);margin-bottom:0.5rem;">🔍 Duplikaatverslag</h3>';
-    html += '<p style="font-size:0.8rem;color:var(--muted);margin-bottom:1rem;">Kriteria: selfde voornaam + van + geboortejaar. I- en S-rekords afsonderlik.</p>';
-    html += '<b>I-rekords (bloedverwante) — ' + iDup.length + ' groep(e):</b>';
-    html += bouTabel(iDup);
-    html += '<b>S-rekords (aangetroudes) — ' + sDup.length + ' groep(e):</b>';
-    html += bouTabel(sDup);
+    html += '<h3 style="color:var(--forest);margin:0 0 0.3rem;">🔍 Duplikaatverslag</h3>';
+    html += '<p style="font-size:0.78rem;color:var(--muted);margin-bottom:0.8rem;">' +
+      'Kriteria: selfde voornaam + van + geboortejaar. ' + totaal + ' groep(e) gevind.</p>';
 
-    // CSV-data bou
-    var csvRye = ['Tipe,ID,Naam,Voornaam,Van,Geboortejaar,FamilieKode,Generasie'];
-    dupGroepe.forEach(function(s) {
-      indeks[s].forEach(function(r) {
-        var tipe = r.id.charAt(0);
-        csvRye.push([tipe, r.id, '"'+(r.name||'')+'"', '"'+(r.given||'')+'"',
-          '"'+(r.surname||'')+'"', dupJaar(r)||'',
-          '"'+(r.family_code||'')+'"', r.generation||''].join(','));
+    // Opsomming-blokke
+    html += '<div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1rem;font-size:0.82rem;">';
+    html += '<span style="background:#c62828;color:#fff;padding:3px 8px;border-radius:3px;">🔴 Werklik: ' + (iKat.werklik.length+sKat.werklik.length) + '</span>';
+    html += '<span style="background:#e65100;color:#fff;padding:3px 8px;border-radius:3px;">⚠️ Onseker: ' + (iKat.onseker.length+sKat.onseker.length) + '</span>';
+    html += '<span style="background:#2d4a2a;color:#fff;padding:3px 8px;border-radius:3px;">✅ Neefs/Niggies: ' + (iKat.neef.length+sKat.neef.length) + '</span>';
+    html += '</div>';
+
+    // I-rekorde
+    html += '<div style="font-weight:bold;margin:0.6rem 0 0.2rem;color:#c62828;">🔴 I-rekords — Werklike duplikate (' + iKat.werklik.length + ')</div>';
+    html += bouTabel(iKat.werklik, koppe);
+    html += '<div style="font-weight:bold;margin:0.6rem 0 0.2rem;color:#e65100;">⚠️ I-rekords — Onseker / c?-kodes (' + iKat.onseker.length + ')</div>';
+    html += bouTabel(iKat.onseker, koppe);
+    html += '<div style="font-weight:bold;margin:0.6rem 0 0.2rem;color:#2d4a2a;">✅ I-rekords — Verskillende ouers / neefs & niggies (' + iKat.neef.length + ')</div>';
+    html += bouTabel(iKat.neef, koppe);
+
+    // S-rekorde
+    html += '<div style="font-weight:bold;margin:0.6rem 0 0.2rem;color:#c62828;">🔴 S-rekords — Werklike duplikate (' + sKat.werklik.length + ')</div>';
+    html += bouTabel(sKat.werklik, koppe);
+    html += '<div style="font-weight:bold;margin:0.6rem 0 0.2rem;color:#e65100;">⚠️ S-rekords — Onseker (' + sKat.onseker.length + ')</div>';
+    html += bouTabel(sKat.onseker, koppe);
+    html += '<div style="font-weight:bold;margin:0.6rem 0 0.2rem;color:#2d4a2a;">✅ S-rekords — Verskillende ouers (' + sKat.neef.length + ')</div>';
+    html += bouTabel(sKat.neef, koppe);
+
+    // CSV (uitgebrei met Geboortedatum en Ouer-kode)
+    var csvRye = ['Kategorie,Tipe,ID,Naam,Voornaam,Van,Geboortedatum,Geboortejaar,FamilieKode,OuerKode,Generasie'];
+    function csvGroep(lys, kat) {
+      lys.forEach(function(s) {
+        indeks[s].forEach(function(r) {
+          var tipe = r.id.charAt(0);
+          var ouer = ouerKode(r.family_code||'')||'';
+          csvRye.push([kat, tipe, r.id,
+            '"'+(r.name||'')+'"', '"'+(r.given||'')+'"', '"'+(r.surname||'')+'"',
+            '"'+gebDatum(r)+'"', dupJaar(r)||'',
+            '"'+(r.family_code||'')+'"', '"'+ouer+'"', r.generation||''].join(','));
+        });
+        csvRye.push('');
       });
-      csvRye.push(',,,,,,,' ); // leë skeiding tussen groepe
-    });
+    }
+    csvGroep(iKat.werklik, 'Werklik');
+    csvGroep(iKat.onseker, 'Onseker');
+    csvGroep(iKat.neef, 'Neef/Niggie');
+    csvGroep(sKat.werklik, 'Werklik');
+    csvGroep(sKat.onseker, 'Onseker');
+    csvGroep(sKat.neef, 'Neef/Niggie');
     var csvData = csvRye.join('\n');
+    window._dupCsvData = csvData;
 
-    html += '<button onclick="admDupLaaiAf()" style="margin-top:0.5rem;padding:0.4rem 1rem;' +
+    html += '<button onclick="admDupLaaiAf()" style="margin-top:0.6rem;padding:0.4rem 1rem;' +
       'background:#2d4a2a;color:#fff;border:none;border-radius:3px;cursor:pointer;font-size:0.85rem;">' +
       '⬇️ Laai CSV af</button></div>';
 
-    // Stoor CSV globaal vir aflaai
-    window._dupCsvData = csvData;
-
-    // Wys in Admin-tab
     var statusEl = document.getElementById('adm-status');
     if (statusEl) {
       statusEl.innerHTML = html;

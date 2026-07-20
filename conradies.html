@@ -4429,7 +4429,7 @@ function attachCorrectionListeners() {
     var html = '<div style="max-width:720px;margin:0 auto;padding:1rem;">';
     html += '<div style="display:flex;align-items:baseline;gap:0.7rem;margin-bottom:0.9rem;">';
     html += '<h2 style="color:var(--sepia-light);font-size:1.2rem;margin:0;">✏️ Admin</h2>';
-    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v8-2</span>';
+    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-1-1</span>';
     html += '</div>';
 
     // ── Proses-verduideliking (inklapbaar) ──
@@ -4462,7 +4462,9 @@ function attachCorrectionListeners() {
         { id:'taak-voorstel', ikoon:'📋', naam:'Verwerk Voorstel', kleur:'#c49a3a' },
         { id:'taak-wysig',    ikoon:'🔍', naam:'Soek & Wysig',     kleur:'#8b6914' },
         { id:'taak-nuut',     ikoon:'➕', naam:'Nuwe Rekord',      kleur:'#3a5a6a' },
-        { id:'taak-stoor',    ikoon:'☁️', naam:'Stoor',            kleur:'#4a7a4a' }
+        { id:'taak-stoor',    ikoon:'☁️', naam:'Stoor',            kleur:'#4a7a4a' },
+        { id:'taak-duptoets',  ikoon:'🔍', naam:'Duplikaattoets',   kleur:'#7a4a8a' },
+        { id:'taak-merge',     ikoon:'🔀', naam:'Samesmelting',      kleur:'#8a4a2a' }
       ];
       html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-bottom:1rem;">';
       take.forEach(function(t) {
@@ -4613,6 +4615,32 @@ function attachCorrectionListeners() {
       html += '</div>';
       html += '</div>'; // end taak-stoor
 
+      // ── PANEEL: Duplikaattoets ──
+      html += '<div id="taak-duptoets" class="adm-taak" style="display:none;">';
+      html += '<div style="padding:0.7rem 0.9rem;background:#1a1208;border:1px solid #7a4a8a44;border-radius:6px;">';
+      html += '<div style="color:#b07ac8;font-size:0.85rem;font-weight:bold;margin-bottom:0.4rem;">🔍 Duplikaattoets</div>';
+      html += '<div style="color:#8a7a9a;font-size:0.80rem;margin-bottom:0.7rem;">Skandeer alle rekords vir moontlike duplikate (selfde naam + geboortejaar). Resultate word hieronder gewys.</div>';
+      html += '<button onclick="admDupVerslag()" style="padding:0.5rem 1.2rem;background:#5a2a6a;color:#f0e8f8;border:none;border-radius:4px;cursor:pointer;font-size:0.85rem;font-weight:bold;">🔍 Begin Duplikaattoets</button>';
+      html += '</div>';
+      html += '<div id="adm-dup-uitset" style="margin-top:0.7rem;"></div>';
+      html += '</div>'; // end taak-duptoets
+
+      // ── PANEEL: Samesmelting ──
+      html += '<div id="taak-merge" class="adm-taak" style="display:none;">';
+      html += '<div style="padding:0.7rem 0.9rem;background:#1a0a04;border:1px solid #8a4a2a44;border-radius:6px;margin-bottom:0.7rem;">';
+      html += '<div style="color:#d07040;font-size:0.85rem;font-weight:bold;margin-bottom:0.4rem;">🔀 Samesmelting van rekords</div>';
+      html += '<div style="color:#9a7a6a;font-size:0.80rem;margin-bottom:0.7rem;">Voer twee rekord-ID\'s in. Die <b>bron</b>-rekord se data word saamgesmelt in die <b>doel</b>-rekord. Die bron word daarna gemerk as <code>merged_into</code> en behou in die databasis.</div>';
+      html += '<div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:flex-end;">';
+      html += '<div><label style="color:#9a7a6a;font-size:0.78rem;display:block;margin-bottom:2px;">Bron-ID (sal gemerk word)</label>';
+      html += '<input id="merge-bron-id" type="text" placeholder="bv. I5449" style="padding:0.4rem 0.6rem;background:#0d0804;color:#e0c090;border:1px solid #8a4a2a66;border-radius:4px;font-family:monospace;font-size:0.9rem;width:110px;"/></div>';
+      html += '<div><label style="color:#9a7a6a;font-size:0.78rem;display:block;margin-bottom:2px;">Doel-ID (behou)</label>';
+      html += '<input id="merge-doel-id" type="text" placeholder="bv. I5551" style="padding:0.4rem 0.6rem;background:#0d0804;color:#e0c090;border:1px solid #8a4a2a66;border-radius:4px;font-family:monospace;font-size:0.9rem;width:110px;"/></div>';
+      html += '<button onclick="admMergelaai()" style="padding:0.4rem 1rem;background:#8a4a2a;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:0.85rem;font-weight:bold;">🔍 Laai Rekords</button>';
+      html += '</div>';
+      html += '</div>';
+      html += '<div id="adm-merge-uitset" style="margin-top:0.5rem;"></div>';
+      html += '</div>'; // end taak-merge
+
     }
 
     html += '</div>'; // end wrapper
@@ -4630,6 +4658,10 @@ function attachCorrectionListeners() {
       var knop = document.getElementById('btn-' + taakId);
       if (knop) { knop.style.background = '#2a1e08'; knop.style.borderWidth = '2px'; }
       if (taakId === 'taak-stoor') patchLogBouAfdeling();
+      if (taakId === 'taak-duptoets') {
+        // Herlei dupverslag-uitset na taak-duptoets paneel
+        window._dupUitsetId = 'adm-dup-uitset';
+      }
     };
 
     // Vul patch-log afdeling
@@ -6178,27 +6210,40 @@ function attachCorrectionListeners() {
     }
 
     // Bou tabel vir een kategorie
-    function bouTabel(lys, koppe) {
+    function bouTabel(lys, koppe, metMerge) {
       if (lys.length === 0) return '<p style="color:green;margin:0.3rem 0 0.8rem;">✅ Geen in hierdie kategorie nie.</p>';
+      var kolomme = metMerge ? koppe.concat(['']) : koppe;
+      var colspan = kolomme.length;
       var h = '<table style="width:100%;border-collapse:collapse;font-size:0.80rem;margin-bottom:0.8rem;">';
       h += '<tr style="background:#2d4a2a;color:#fff;">';
-      koppe.forEach(function(k) { h += '<th style="padding:4px 6px;text-align:left;white-space:nowrap;">' + k + '</th>'; });
+      kolomme.forEach(function(k) { h += '<th style="padding:4px 6px;text-align:left;white-space:nowrap;">' + k + '</th>'; });
       h += '</tr>';
       lys.forEach(function(s, gi) {
         var reks = indeks[s];
         var bg = gi % 2 === 0 ? '#fff8ee' : '#f0e8d8';
+        // Merge-knoppie: gebruik eerste twee rekord-ID's in die groep
+        var mergeKnop = '';
+        if (metMerge && reks.length >= 2) {
+          var idA = reks[0].id;
+          var idB = reks[1].id;
+          mergeKnop = '<button onclick="admMergeVanDup(\'' + idA + '\',\'' + idB + '\')" ' +
+            'style="padding:2px 7px;background:#8a4a2a;color:#fff;border:none;border-radius:3px;cursor:pointer;font-size:0.78rem;" ' +
+            'title="Open Samesmelting-paneel met hierdie twee rekords">🔀</button>';
+        }
         reks.forEach(function(r, ri) {
           var ouer = ouerKode(r.family_code || '') || '—';
           var kodeKlas = (r.family_code || '').startsWith('c?') ? 'color:#888;' : '';
+          var mergeSelTd = metMerge ? ('<td style="padding:3px 6px;white-space:nowrap;">' + (ri === 0 ? mergeKnop : '') + '</td>') : '';
           h += '<tr style="background:' + (ri === 0 ? '#ffe0b2' : bg) + ';">' +
             '<td style="padding:3px 6px;font-family:monospace;white-space:nowrap;">' + r.id + '</td>' +
             '<td style="padding:3px 6px;">' + (r.name || '') + '</td>' +
             '<td style="padding:3px 6px;white-space:nowrap;">' + gebDatum(r) + '</td>' +
             '<td style="padding:3px 6px;font-family:monospace;font-size:0.75rem;' + kodeKlas + '">' + (r.family_code || '—') + '</td>' +
             '<td style="padding:3px 6px;font-family:monospace;font-size:0.75rem;color:#555;">' + ouer + '</td>' +
-            '<td style="padding:3px 6px;text-align:center;">' + (r.generation || '') + '</td></tr>';
+            '<td style="padding:3px 6px;text-align:center;">' + (r.generation || '') + '</td>' +
+            mergeSelTd + '</tr>';
         });
-        h += '<tr><td colspan="6" style="padding:1px;background:#ccc;"></td></tr>';
+        h += '<tr><td colspan="' + colspan + '" style="padding:1px;background:#ccc;"></td></tr>';
       });
       h += '</table>';
       return h;
@@ -6238,7 +6283,7 @@ function attachCorrectionListeners() {
 
     // I-rekorde
     html += '<div style="font-weight:bold;margin:0.6rem 0 0.2rem;color:#c62828;">🔴 I-rekords — Werklike duplikate (' + iKat.werklik.length + ')</div>';
-    html += bouTabel(iKat.werklik, koppe);
+    html += bouTabel(iKat.werklik, koppe, true);
     html += '<div style="font-weight:bold;margin:0.6rem 0 0.2rem;color:#e65100;">⚠️ I-rekords — Onseker / c?-kodes (' + iKat.onseker.length + ')</div>';
     html += bouTabel(iKat.onseker, koppe);
     html += '<div style="font-weight:bold;margin:0.6rem 0 0.2rem;color:#2d4a2a;">✅ I-rekords — Verskillende ouers / neefs & niggies (' + iKat.neef.length + ')</div>';
@@ -6280,10 +6325,13 @@ function attachCorrectionListeners() {
       'background:#2d4a2a;color:#fff;border:none;border-radius:3px;cursor:pointer;font-size:0.85rem;">' +
       '⬇️ Laai CSV af</button></div>';
 
-    var statusEl = document.getElementById('adm-status');
-    if (statusEl) {
-      statusEl.innerHTML = html;
-      statusEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // Skryf na taak-duptoets paneel as dit oop is, anders na adm-status
+    var teiken = (window._dupUitsetId && document.getElementById(window._dupUitsetId))
+      ? document.getElementById(window._dupUitsetId)
+      : document.getElementById('adm-status');
+    if (teiken) {
+      teiken.innerHTML = html;
+      teiken.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   };
 
@@ -6298,6 +6346,206 @@ function attachCorrectionListeners() {
     document.body.appendChild(a); a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+  };
+
+  // ── Samesmelting: oopmaak vanuit duplikaat-verslag ──
+  window.admMergeVanDup = function(idA, idB) {
+    admTaakKies('taak-merge');
+    document.getElementById('merge-bron-id').value = idA;
+    document.getElementById('merge-doel-id').value = idB;
+    admMergelaai();
+  };
+
+  // ── Samesmelting: laai en wys veld-vergelyking ──
+  window.admMergelaai = function() {
+    var bronId = (document.getElementById('merge-bron-id').value || '').trim().toUpperCase();
+    var doelId = (document.getElementById('merge-doel-id').value || '').trim().toUpperCase();
+    var uitset = document.getElementById('adm-merge-uitset');
+    if (!uitset) return;
+    if (!bronId || !doelId) { uitset.innerHTML = '<p style="color:#c44;">Voer beide ID\'s in.</p>'; return; }
+    if (bronId === doelId) { uitset.innerHTML = '<p style="color:#c44;">Bron en doel mag nie dieselfde wees nie.</p>'; return; }
+    var idx = window.indexById;
+    if (!idx) { uitset.innerHTML = '<p style="color:#c44;">Databasis nie gelaai nie.</p>'; return; }
+    var bron = idx[bronId];
+    var doel = idx[doelId];
+    if (!bron) { uitset.innerHTML = '<p style="color:#c44;">Bron-ID nie gevind: ' + bronId + '</p>'; return; }
+    if (!doel) { uitset.innerHTML = '<p style="color:#c44;">Doel-ID nie gevind: ' + doelId + '</p>'; return; }
+    // Slegs I-rekords in hierdie fase
+    if (bronId.charAt(0) !== 'I' || doelId.charAt(0) !== 'I') {
+      uitset.innerHTML = '<p style="color:#c44;">Samesmelting ondersteun tans slegs I-rekords (bloedverwante).</p>'; return;
+    }
+
+    // Velde om te vergelyk
+    var velde = [
+      { k: 'name',        l: 'Volle naam' },
+      { k: 'given',       l: 'Voornaam(e)' },
+      { k: 'surname',     l: 'Van' },
+      { k: 'sex',         l: 'Geslag' },
+      { k: 'birth_date',  l: 'Geboortedatum' },
+      { k: 'birth_year',  l: 'Geboortejaar' },
+      { k: 'birth_place', l: 'Geboorteplek' },
+      { k: 'death_date',  l: 'Sterfdatum' },
+      { k: 'death_place', l: 'Sterfplek' },
+      { k: 'burial_place',l: 'Begraafplek' },
+      { k: 'family_code', l: 'Familiekode' },
+      { k: 'branch',      l: 'Tak' },
+      { k: 'generation',  l: 'Generasie' },
+      { k: 'narrative',   l: 'Narratief' },
+      { k: 'note',        l: 'Nota' }
+    ];
+
+    // Familiekode-verskil-waarskuwing
+    var kodeWaarsk = '';
+    if (bron.family_code && doel.family_code && bron.family_code !== doel.family_code) {
+      kodeWaarsk = '<div style="background:#5a1a00;border:1px solid #c44;border-radius:4px;padding:0.5rem 0.7rem;margin-bottom:0.7rem;font-size:0.82rem;color:#ffb080;">' +
+        '⚠️ <b>Familiekode-verskil</b>: Die twee rekords het verskillende kodes (' +
+        '<code>' + bron.family_code + '</code> vs <code>' + doel.family_code + '</code>). ' +
+        'Verifieer die korrekte posisie in die gesin voordat jy die samesmelting uitvoer. ' +
+        'Merk die <b>korrekte familiekode</b> hieronder.</div>';
+    }
+
+    // Kinders-waarskuwing (slegs relevant vir manlike Conradies)
+    var kindWaarsk = '';
+    var bronKinders = (bron.children_ids || []).length;
+    if (bronKinders > 0 && bron.sex === 'M') {
+      kindWaarsk = '<div style="background:#1a3a1a;border:1px solid #4a8a4a;border-radius:4px;padding:0.5rem 0.7rem;margin-bottom:0.7rem;font-size:0.82rem;color:#a0e0a0;">' +
+        'ℹ️ Bron-rekord het <b>' + bronKinders + ' kind(ers)</b>. ' +
+        'Aangesien dit \'n manlike rekord is, sal kinders se <code>parents[]</code>-verwysings na die doel-rekord bygewerk word.</div>';
+    } else if (bronKinders > 0 && bron.sex === 'F') {
+      kindWaarsk = '<div style="background:#1a1a3a;border:1px solid #4a4a8a;border-radius:4px;padding:0.5rem 0.7rem;margin-bottom:0.7rem;font-size:0.82rem;color:#a0a0e0;">' +
+        'ℹ️ Bron-rekord het <b>' + bronKinders + ' kind(ers)</b>. ' +
+        'Aangesien dit \'n vroulike rekord is, word kinders se verwysings <b>nie</b> outomaties bygeskuif nie (vroulike Conradie-kinders verskyn tipies nie in die brondokument nie).</div>';
+    }
+
+    // Bou vergelykingstabel
+    var h = '<div style="padding:0.6rem 0.8rem;background:#0d0804;border:1px solid #8a4a2a55;border-radius:6px;">';
+    h += kodeWaarsk + kindWaarsk;
+    h += '<p style="font-size:0.80rem;color:#9a7a6a;margin-bottom:0.5rem;">Kies vir elke veld watter rekord se waarde behou word. Leë velde word oorgeslaan.</p>';
+    h += '<table style="width:100%;border-collapse:collapse;font-size:0.80rem;">';
+    h += '<tr style="background:#2a1808;color:#e0a060;">' +
+      '<th style="padding:4px 6px;text-align:left;width:20%;">Veld</th>' +
+      '<th style="padding:4px 6px;text-align:left;width:36%;">Bron: ' + bronId + '</th>' +
+      '<th style="padding:4px 6px;text-align:left;width:36%;">Doel: ' + doelId + '</th>' +
+      '<th style="padding:4px 6px;text-align:center;width:8%;">Keuse</th></tr>';
+
+    velde.forEach(function(v, vi) {
+      var bVal = String(bron[v.k] !== undefined && bron[v.k] !== null ? bron[v.k] : '');
+      var dVal = String(doel[v.k] !== undefined && doel[v.k] !== null ? doel[v.k] : '');
+      if (!bVal && !dVal) return; // Oorsla as albei leeg
+      var bg = vi % 2 === 0 ? '#1a1008' : '#120c04';
+      var selfs = (bVal === dVal); // Identical — no choice needed
+      var bVis = bVal.length > 60 ? bVal.substring(0, 60) + '…' : bVal;
+      var dVis = dVal.length > 60 ? dVal.substring(0, 60) + '…' : dVal;
+      h += '<tr style="background:' + bg + ';vertical-align:top;">' +
+        '<td style="padding:4px 6px;color:#c09060;font-size:0.78rem;">' + v.l + '</td>' +
+        '<td style="padding:4px 6px;color:' + (bVal ? '#e0c090' : '#555') + ';font-size:0.78rem;">' + (bVis || '—') + '</td>' +
+        '<td style="padding:4px 6px;color:' + (dVal ? '#e0c090' : '#555') + ';font-size:0.78rem;">' + (dVis || '—') + '</td>' +
+        '<td style="padding:4px 6px;text-align:center;">';
+      if (selfs) {
+        h += '<span style="color:#7a7a7a;font-size:0.75rem;">=</span>';
+        h += '<input type="hidden" name="merge-keuse" data-veld="' + v.k + '" value="doel"/>';
+      } else if (!bVal) {
+        h += '<span style="color:#7a7a7a;font-size:0.75rem;">→</span>';
+        h += '<input type="hidden" name="merge-keuse" data-veld="' + v.k + '" value="doel"/>';
+      } else if (!dVal) {
+        h += '<span style="color:#7a7a7a;font-size:0.75rem;">←</span>';
+        h += '<input type="hidden" name="merge-keuse" data-veld="' + v.k + '" value="bron"/>';
+      } else {
+        h += '<label style="display:block;font-size:0.75rem;color:#c09060;white-space:nowrap;">' +
+          '<input type="radio" name="mk-' + v.k + '" data-veld="' + v.k + '" value="bron" checked/> B</label>' +
+          '<label style="display:block;font-size:0.75rem;color:#c09060;white-space:nowrap;">' +
+          '<input type="radio" name="mk-' + v.k + '" data-veld="' + v.k + '" value="doel"/> D</label>';
+      }
+      h += '</td></tr>';
+    });
+    h += '</table>';
+    h += '<div style="margin-top:0.8rem;display:flex;gap:0.6rem;">';
+    h += '<button onclick="admMergeBevestig(\'' + bronId + '\',\'' + doelId + '\')" ' +
+      'style="padding:0.45rem 1.1rem;background:#8a4a2a;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:0.88rem;font-weight:bold;">🔀 Voer Samesmelting Uit</button>';
+    h += '<button onclick="document.getElementById(\'adm-merge-uitset\').innerHTML=\'\';" ' +
+      'style="padding:0.45rem 0.9rem;background:#333;color:#ccc;border:none;border-radius:4px;cursor:pointer;font-size:0.85rem;">✕ Kanselleer</button>';
+    h += '</div></div>';
+    uitset.innerHTML = h;
+  };
+
+  // ── Samesmelting: uitvoer ──
+  window.admMergeBevestig = function(bronId, doelId) {
+    var idx = window.indexById;
+    var bron = idx[bronId];
+    var doel = idx[doelId];
+    if (!bron || !doel) { alert('Rekords nie meer beskikbaar nie.'); return; }
+
+    // Versamel keuses uit die UI
+    var keuses = {};
+    // Vaste keuses (hidden inputs)
+    document.querySelectorAll('input[name="merge-keuse"]').forEach(function(el) {
+      keuses[el.getAttribute('data-veld')] = el.value;
+    });
+    // Radio-keuses
+    var velde = ['name','given','surname','sex','birth_date','birth_year','birth_place',
+      'death_date','death_place','burial_place','family_code','branch','generation','narrative','note'];
+    velde.forEach(function(v) {
+      var geselekteer = document.querySelector('input[name="mk-' + v + '"]:checked');
+      if (geselekteer) keuses[v] = geselekteer.value;
+    });
+
+    // Pas keuses toe op doel-rekord (in geheue)
+    var toegepas = {};
+    velde.forEach(function(v) {
+      var keuse = keuses[v];
+      if (!keuse) return;
+      var nuweWaarde = keuse === 'bron' ? bron[v] : doel[v];
+      if (nuweWaarde !== undefined && nuweWaarde !== null) {
+        doel[v] = nuweWaarde;
+        toegepas[v] = { keuse: keuse, waarde: nuweWaarde };
+      }
+    });
+
+    // Kinders-bywerking (slegs manlike bron-rekords)
+    var kinders_bygewerk = [];
+    if (bron.sex === 'M') {
+      var data = window.CONRADIE_DATA;
+      (bron.children_ids || []).forEach(function(kidId) {
+        var kid = idx[kidId];
+        if (!kid || !kid.parents) return;
+        kid.parents = kid.parents.map(function(p) {
+          if (p.id === bronId) { kinders_bygewerk.push(kidId); return { id: doelId, name: doel.name }; }
+          return p;
+        });
+        // Voeg ook kidId by doel se children_ids as dit nie reeds daar is nie
+        if (!doel.children_ids) doel.children_ids = [];
+        if (doel.children_ids.indexOf(kidId) === -1) doel.children_ids.push(kidId);
+      });
+    }
+
+    // Merk bron-rekord as saamgesmelt
+    bron.merged_into = doelId;
+    bron.merged_date = new Date().toISOString().substring(0, 10);
+
+    // Skryf patch-log inskrywing
+    var inskrywing = {
+      tipe: 'samesmelting',
+      bron_id: bronId,
+      doel_id: doelId,
+      veld_keuses: keuses,
+      velde_toegepas: toegepas,
+      kinders_bygewerk: kinders_bygewerk,
+      tydstip: new Date().toISOString()
+    };
+    var log = JSON.parse(localStorage.getItem('conradie_patch_log') || '[]');
+    log.push(inskrywing);
+    localStorage.setItem('conradie_patch_log', JSON.stringify(log));
+
+    // Toon bevestiging
+    var uitset = document.getElementById('adm-merge-uitset');
+    var kindBoodskap = kinders_bygewerk.length > 0
+      ? ' ' + kinders_bygewerk.length + ' kind(er) se ouer-verwysing bygewerk.'
+      : '';
+    uitset.innerHTML = '<div style="background:#1a3a1a;border:1px solid #4a8a4a;border-radius:6px;padding:0.7rem 1rem;color:#a0e0a0;font-size:0.85rem;">' +
+      '✅ Samesmelting suksesvol uitgevoer.<br/>' +
+      '<b>' + bronId + '</b> gemerk as <code>merged_into: "' + doelId + '"</code>.' + kindBoodskap +
+      '<br/><span style="font-size:0.78rem;color:#7a9a7a;">Onthou om "Pas Patches Toe &amp; Laai Af" te gebruik om die wysigings in die JSON te stoor.</span>' +
+      '</div>';
   };
 
   // Waarskuwings-pop-up by nuwe rekord: blokkeer en wys treffers

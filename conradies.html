@@ -6364,8 +6364,13 @@ function attachCorrectionListeners() {
     if (!uitset) return;
     if (!bronId || !doelId) { uitset.innerHTML = '<p style="color:#c44;">Voer beide ID\'s in.</p>'; return; }
     if (bronId === doelId) { uitset.innerHTML = '<p style="color:#c44;">Bron en doel mag nie dieselfde wees nie.</p>'; return; }
+    if (!window.indexById) {
+      var data2 = (typeof CONRADIE_DATA !== 'undefined') ? CONRADIE_DATA : window.CONRADIE_DATA;
+      if (!data2) { uitset.innerHTML = '<p style="color:#c44;">Databasis nie gelaai nie — herlaai die bladsy en probeer weer.</p>'; return; }
+      window.indexById = {};
+      data2.forEach(function(p) { if (p && p.id) window.indexById[p.id] = p; });
+    }
     var idx = window.indexById;
-    if (!idx) { uitset.innerHTML = '<p style="color:#c44;">Databasis nie gelaai nie.</p>'; return; }
     var bron = idx[bronId];
     var doel = idx[doelId];
     if (!bron) { uitset.innerHTML = '<p style="color:#c44;">Bron-ID nie gevind: ' + bronId + '</p>'; return; }
@@ -6470,10 +6475,15 @@ function attachCorrectionListeners() {
 
   // ── Samesmelting: uitvoer ──
   window.admMergeBevestig = function(bronId, doelId) {
-    var idx = window.indexById;
+    if (!window.indexById) {
+      var data3 = (typeof CONRADIE_DATA !== 'undefined') ? CONRADIE_DATA : window.CONRADIE_DATA;
+      if (data3) { window.indexById = {}; data3.forEach(function(p) { if (p && p.id) window.indexById[p.id] = p; }); }
+    }
+    var idx = window.indexById || {};
     var bron = idx[bronId];
     var doel = idx[doelId];
     if (!bron || !doel) { alert('Rekords nie meer beskikbaar nie.'); return; }
+
 
     // Versamel keuses uit die UI
     var keuses = {};

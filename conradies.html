@@ -6532,19 +6532,19 @@ function attachCorrectionListeners() {
     bron.merged_into = doelId;
     bron.merged_date = new Date().toISOString().substring(0, 10);
 
-    // Skryf patch-log inskrywing
+    // Skryf patch-log inskrywing (struktuur versoenbaar met patchLogBouAfdeling en admPasToeEnLaaiAf)
     var inskrywing = {
       tipe: 'samesmelting',
+      rekord_id: doelId,
+      naam: doel.name || doelId,
+      tyd: new Date().toISOString(),
       bron_id: bronId,
       doel_id: doelId,
       veld_keuses: keuses,
       velde_toegepas: toegepas,
-      kinders_bygewerk: kinders_bygewerk,
-      tydstip: new Date().toISOString()
+      kinders_bygewerk: kinders_bygewerk
     };
-    var log = JSON.parse(localStorage.getItem('conradie_patch_log') || '[]');
-    log.push(inskrywing);
-    localStorage.setItem('conradie_patch_log', JSON.stringify(log));
+    patchLogVoegBy(inskrywing);
 
     // Toon bevestiging
     var uitset = document.getElementById('adm-merge-uitset');

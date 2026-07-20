@@ -4596,6 +4596,11 @@ function attachCorrectionListeners() {
       html += '<button onclick="admPasToeEnLaaiAf()" style="padding:0.5rem 1.2rem;background:#3a6a2a;color:#e8f5e8;border:none;border-radius:4px;cursor:pointer;font-size:0.85rem;font-weight:bold;">\u2B07\uFE0F Pas Patches Toe &amp; Laai Af</button>';
       html += '<div id="adm-merge-status" style="font-size:0.83rem;min-height:1rem;margin-top:0.5rem;color:#8ab08a;"></div>';
       html += '</div>';
+      html += '<div style="padding:0.6rem 0.8rem;background:#1a2a1a;border:1px solid #2a4a2a;border-radius:6px;margin-bottom:0.6rem;">';
+      html += '<div style="color:#8ab08a;font-size:0.85rem;font-weight:bold;margin-bottom:0.4rem;">&#128269; Databasis-kontrole</div>';
+      html += '<div style="color:#8a9a7a;font-size:0.80rem;margin-bottom:0.6rem;">Skandeer alle rekords vir moontlike duplikate (selfde naam + geboortejaar).</div>';
+      html += '<button onclick="admDupVerslag()" style="padding:0.5rem 1.2rem;background:#2d4a2a;color:#e8f5e8;border:none;border-radius:4px;cursor:pointer;font-size:0.85rem;font-weight:bold;">&#128269; Toets vir Duplikate</button>';
+      html += '</div>';
       html += '<div style="padding:0.6rem 0.8rem;background:#0a0a0a;border:1px solid #2a3a2a;border-radius:6px;opacity:0.5;">';
       html += '<div style="color:#5a7a5a;font-size:0.80rem;margin-bottom:0.4rem;">\u2601\uFE0F Direkte GitHub-oplaai (tydelik gedeaktiveer \u2014 stadige verbinding)</div>';
       html += '<div style="display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:0.4rem;">';
@@ -5694,7 +5699,22 @@ function attachCorrectionListeners() {
         window.admHuwPending = null;
       };
     } else {
-      // Nie \'n Conradie nie — stoor net huwelik sonder nuwe rekord
+      // Nie \'n Conradie nie — duptoets vir S-rekord, dan finaliseer
+      var naamDeleS = (gadNaam || '').trim().split(' ');
+      var vanS   = naamDeleS[naamDeleS.length - 1];
+      var gegeeS = naamDeleS.slice(0, -1).join(' ');
+      var dupS = admDupToets(gegeeS, vanS, null, 'S', null);
+      if (dupS.length > 0) {
+        (function(snapData) {
+          admDupWaarskuwing(dupS, function() {
+            admHuwFinaliseer(snapData, false);
+          });
+        })({
+          gadNaam:gadNaam, huwDatum:huwDatum, huwPlek:huwPlek, egsk:egsk,
+          isConr:isConr, gadId:gadId, nuweNr:nuweNr, geslag:''
+        });
+        return;
+      }
       admHuwFinaliseer({
         gadNaam:gadNaam, huwDatum:huwDatum, huwPlek:huwPlek, egsk:egsk,
         isConr:isConr, gadId:gadId, nuweNr:nuweNr, geslag:''
@@ -5705,7 +5725,22 @@ function attachCorrectionListeners() {
   // ── Bevestig kind-nommer en skep rekords ──
   function admHuwBevestig() {
     document.getElementById('adm-huw-kind-bevestig').style.display = 'none';
-    admHuwFinaliseer(window.admHuwPending, true);
+    var d = window.admHuwPending;
+    if (!d) return;
+
+    // Duplikaattoets vir nuwe Conradie-gade (I-rekord)
+    var naamDeleH = (d.gadNaam || '').trim().split(' ');
+    var vanH   = naamDeleH[naamDeleH.length - 1];
+    var gegeeH = naamDeleH.slice(0, -1).join(' ');
+    var dupH = admDupToets(gegeeH, vanH, null, 'I', null);
+    if (dupH.length > 0) {
+      admDupWaarskuwing(dupH, function() {
+        admHuwFinaliseer(d, true);
+        window.admHuwPending = null;
+      });
+      return;
+    }
+    admHuwFinaliseer(d, true);
     window.admHuwPending = null;
   }
 
@@ -5887,6 +5922,30 @@ function attachCorrectionListeners() {
     window.admKindPending = null;
     if (!d) return;
 
+    // ── Duplikaattoets voor skepping ──
+    var naamDeleToets = (d.naam || '').trim().split(' ');
+    var vanToets   = naamDeleToets[naamDeleToets.length - 1];
+    var gegeeToets = naamDeleToets.slice(0, -1).join(' ');
+    var jaarToets  = null;
+    if (d.gebDat) { var mT = d.gebDat.match(/\b(\d{4})\b/); if (mT) jaarToets = parseInt(mT[1]); }
+    var dupTreffers = admDupToets(gegeeToets, vanToets, jaarToets, 'I', null);
+    if (dupTreffers.length > 0) {
+      // Herstel pending sodat callback dit kan gebruik
+      window.admKindPending = d;
+      admDupWaarskuwing(dupTreffers, function() {
+        window.admKindPending = d;
+        admKindBevestigDoer();
+      });
+      return;
+    }
+    admKindBevestigDoer();
+  }
+
+  function admKindBevestigDoer() {
+    var d = window.admKindPending;
+    window.admKindPending = null;
+    if (!d) return;
+
     var p = window.indexById[admCurrentId];
     var data = (typeof CONRADIE_DATA !== 'undefined') ? CONRADIE_DATA : window.CONRADIE_DATA;
 
@@ -6009,6 +6068,196 @@ function attachCorrectionListeners() {
       }
     });
     patchLogBouAfdeling();
+  }
+
+  // ── DUPLIKAATTOETS (v9-0-1) ──
+
+  // Normaliseer naam vir vergelyking: kleinletters, diakritieke weg, ekstra spasies weg
+  function dupNormNaam(s) {
+    return (s || '').toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/\s+/g, ' ').trim();
+  }
+
+  // Trek jaar uit birth_date of birth_year (hergebruik bestaande logika)
+  function dupJaar(r) {
+    if (r.birth_year) return parseInt(r.birth_year);
+    if (r.birth_date) {
+      var m = String(r.birth_date).match(/\d{4}/);
+      if (m) return parseInt(m[0]);
+    }
+    return null;
+  }
+
+  // Kernsoekfunksie: soek duplikate van 'n gegewe naam + geboortejaar binne tipe ('I' of 'S')
+  // Sluit rekord met uitsluitId uit (om nie rekord teen homself te toets nie)
+  // Gee terug: [] of [{id, name, birth_year, family_code, generation}]
+  function admDupToets(gegee, van, gebJaar, tipe, uitsluitId) {
+    var data = (typeof CONRADIE_DATA !== 'undefined') ? CONRADIE_DATA : window.CONRADIE_DATA;
+    if (!data) return [];
+    var nGegee = dupNormNaam(gegee);
+    var nVan   = dupNormNaam(van);
+    if (!nGegee || !nVan) return [];
+    var treffers = [];
+    data.forEach(function(r) {
+      if (!r || !r.id) return;
+      if (uitsluitId && r.id === uitsluitId) return;
+      // Tipe-filter
+      var rTipe = r.id.charAt(0);
+      if (tipe === 'I' && rTipe !== 'I') return;
+      if (tipe === 'S' && rTipe !== 'S') return;
+      // Naam-vergelyking
+      var rGegee = dupNormNaam(r.given || '');
+      var rVan   = dupNormNaam(r.surname || '');
+      if (rGegee !== nGegee || rVan !== nVan) return;
+      // Geboortejaar-vergelyking: as een of beide null, nie 'n treffer nie
+      var rJaar = dupJaar(r);
+      if (gebJaar === null || rJaar === null) return;
+      if (gebJaar !== rJaar) return;
+      treffers.push({ id: r.id, name: r.name, birth_year: rJaar,
+        family_code: r.family_code || '', generation: r.generation || '' });
+    });
+    return treffers;
+  }
+
+  // Op-aanvraag verslag: skandeer alle I én S-rekords, bou HTML-tabel + CSV-aflaai
+  window.admDupVerslag = function admDupVerslag() {
+    var data = (typeof CONRADIE_DATA !== 'undefined') ? CONRADIE_DATA : window.CONRADIE_DATA;
+    if (!data) { alert('Databasis nog nie gelaai nie.'); return; }
+
+    var gesoek = {}; // sleutel: "gegee|van|jaar|tipe"
+    var groepe = []; // [{sleutel, rekords:[]}]
+    var indeks  = {};
+
+    data.forEach(function(r) {
+      if (!r || !r.id) return;
+      var tipe = r.id.charAt(0);
+      if (tipe !== 'I' && tipe !== 'S') return;
+      var nGegee = dupNormNaam(r.given || '');
+      var nVan   = dupNormNaam(r.surname || '');
+      if (!nGegee || !nVan) return;
+      var jaar = dupJaar(r);
+      if (jaar === null) return; // ignoreer sonder geboortejaar
+      var sleutel = nGegee + '|' + nVan + '|' + jaar + '|' + tipe;
+      if (!indeks[sleutel]) {
+        indeks[sleutel] = [];
+        groepe.push(sleutel);
+      }
+      indeks[sleutel].push(r);
+    });
+
+    // Filtreer: slegs groepe met 2+ rekords = werklike duplikate
+    var dupGroepe = groepe.filter(function(s) { return indeks[s].length > 1; });
+
+    // Bou HTML-tabel
+    var iDup = dupGroepe.filter(function(s) { return s.endsWith('|I'); });
+    var sDup = dupGroepe.filter(function(s) { return s.endsWith('|S'); });
+
+    function bouTabel(lys) {
+      if (lys.length === 0) return '<p style="color:green;margin:0.5rem 0;">✅ Geen duplikate gevind nie.</p>';
+      var html = '<table style="width:100%;border-collapse:collapse;font-size:0.82rem;margin-bottom:1rem;">';
+      html += '<tr style="background:#2d4a2a;color:#fff;">' +
+        '<th style="padding:4px 6px;text-align:left;">ID</th>' +
+        '<th style="padding:4px 6px;text-align:left;">Naam</th>' +
+        '<th style="padding:4px 6px;text-align:left;">Geboortejaar</th>' +
+        '<th style="padding:4px 6px;text-align:left;">Geslag. / Gen.</th></tr>';
+      lys.forEach(function(s, gi) {
+        var reks = indeks[s];
+        var bg = gi % 2 === 0 ? '#fff8ee' : '#f0e8d8';
+        reks.forEach(function(r, ri) {
+          html += '<tr style="background:' + (ri === 0 ? '#ffe0b2' : bg) + ';">' +
+            '<td style="padding:3px 6px;font-family:monospace;">' + r.id + '</td>' +
+            '<td style="padding:3px 6px;">' + (r.name || '') + '</td>' +
+            '<td style="padding:3px 6px;">' + (dupJaar(r) || '') + '</td>' +
+            '<td style="padding:3px 6px;">' + (r.family_code || '') + ' / Gen ' + (r.generation || '') + '</td></tr>';
+        });
+        // Skeidingsry tussen groepe
+        html += '<tr><td colspan="4" style="padding:2px;background:#ddd;"></td></tr>';
+      });
+      html += '</table>';
+      return html;
+    }
+
+    var html = '<div style="padding:0.5rem;">';
+    html += '<h3 style="color:var(--forest);margin-bottom:0.5rem;">🔍 Duplikaatverslag</h3>';
+    html += '<p style="font-size:0.8rem;color:var(--muted);margin-bottom:1rem;">Kriteria: selfde voornaam + van + geboortejaar. I- en S-rekords afsonderlik.</p>';
+    html += '<b>I-rekords (bloedverwante) — ' + iDup.length + ' groep(e):</b>';
+    html += bouTabel(iDup);
+    html += '<b>S-rekords (aangetroudes) — ' + sDup.length + ' groep(e):</b>';
+    html += bouTabel(sDup);
+
+    // CSV-data bou
+    var csvRye = ['Tipe,ID,Naam,Voornaam,Van,Geboortejaar,FamilieKode,Generasie'];
+    dupGroepe.forEach(function(s) {
+      indeks[s].forEach(function(r) {
+        var tipe = r.id.charAt(0);
+        csvRye.push([tipe, r.id, '"'+(r.name||'')+'"', '"'+(r.given||'')+'"',
+          '"'+(r.surname||'')+'"', dupJaar(r)||'',
+          '"'+(r.family_code||'')+'"', r.generation||''].join(','));
+      });
+      csvRye.push(',,,,,,,' ); // leë skeiding tussen groepe
+    });
+    var csvData = csvRye.join('\n');
+
+    html += '<button onclick="admDupLaaiAf()" style="margin-top:0.5rem;padding:0.4rem 1rem;' +
+      'background:#2d4a2a;color:#fff;border:none;border-radius:3px;cursor:pointer;font-size:0.85rem;">' +
+      '⬇️ Laai CSV af</button></div>';
+
+    // Stoor CSV globaal vir aflaai
+    window._dupCsvData = csvData;
+
+    // Wys in Admin-tab
+    var statusEl = document.getElementById('adm-status');
+    if (statusEl) {
+      statusEl.innerHTML = html;
+      statusEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  // CSV-aflaai funksie
+  window.admDupLaaiAf = function admDupLaaiAf() {
+    var csv = window._dupCsvData || '';
+    if (!csv) return;
+    var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = 'conradie_duplikate.csv';
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  // Waarskuwings-pop-up by nuwe rekord: blokkeer en wys treffers
+  // callback() word geroep as admin bevestig om voort te gaan
+  function admDupWaarskuwing(treffers, callback) {
+    var bestaande = document.getElementById('adm-dup-popup');
+    if (bestaande) bestaande.remove();
+
+    var lys = treffers.map(function(t) {
+      return '<li style="margin:0.3rem 0;font-family:monospace;">' +
+        t.id + ' — ' + t.name + ' (' + t.birth_year + ')</li>';
+    }).join('');
+
+    var pop = document.createElement('div');
+    pop.id = 'adm-dup-popup';
+    pop.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);' +
+      'z-index:9999;background:#fff;border:2px solid #8b3a1a;border-radius:6px;' +
+      'padding:1.2rem;max-width:90%;width:360px;box-shadow:0 4px 20px rgba(0,0,0,0.4);';
+    pop.innerHTML =
+      '<h3 style="color:#8b3a1a;margin-bottom:0.6rem;">⚠️ Moontlike duplikaat(e) gevind</h3>' +
+      '<p style="font-size:0.88rem;margin-bottom:0.5rem;">Die volgende rekord(s) het dieselfde naam en geboortejaar:</p>' +
+      '<ul style="font-size:0.85rem;margin:0 0 0.8rem 1rem;padding:0;">' + lys + '</ul>' +
+      '<p style="font-size:0.83rem;color:#666;margin-bottom:0.9rem;">Gaan jy voort met die skepping van \'n nuwe rekord?</p>' +
+      '<div style="display:flex;gap:0.6rem;justify-content:flex-end;">' +
+      '<button id="dup-kanselleer" style="padding:0.4rem 0.9rem;background:#8b3a1a;color:#fff;' +
+        'border:none;border-radius:3px;cursor:pointer;font-size:0.9rem;">✕ Kanselleer</button>' +
+      '<button id="dup-voortgaan" style="padding:0.4rem 0.9rem;background:#2d4a2a;color:#fff;' +
+        'border:none;border-radius:3px;cursor:pointer;font-size:0.9rem;">✓ Gaan voort</button>' +
+      '</div>';
+
+    document.body.appendChild(pop);
+    document.getElementById('dup-kanselleer').onclick = function() { pop.remove(); };
+    document.getElementById('dup-voortgaan').onclick  = function() { pop.remove(); callback(); };
   }
 
   // ── Stuur gewysigde velde via WhatsApp ──

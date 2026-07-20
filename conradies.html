@@ -6209,7 +6209,66 @@ function attachCorrectionListeners() {
       return '—';
     }
 
-    // Bou tabel vir een kategorie
+    // Klassifiseer S-groep: 'werklik' | 'conradie-conradie' | 'verskillend'
+    function klassifiseerS(reks) {
+      // Vind die gekoppelde I-rekord vir elke S-rekord via spouses[] (in-geheue)
+      var iKoppelings = reks.map(function(r) {
+        // spouses[] word tydens initApp() ingevul vir S-rekords
+        if (r.spouses && r.spouses.length > 0) return r.spouses[0].id || null;
+        return null;
+      });
+      // As alle koppelings dieselfde I-rekord is (of null), is dit 'n werklike duplikaat
+      var uniek = {};
+      iKoppelings.forEach(function(id) { if (id) uniek[id] = true; });
+      var aantalUniek = Object.keys(uniek).length;
+      if (aantalUniek <= 1) return 'werklik';
+      // Verskillende I-rekords — Conradie-Conradie-risiko
+      return 'conradie-conradie';
+    }
+
+    // Bou tabel spesifiek vir S-rekord duplikate
+    function bouTabelS(lys, kategorie) {
+      if (lys.length === 0) return '<p style="color:green;margin:0.3rem 0 0.8rem;">✅ Geen in hierdie kategorie nie.</p>';
+      var h = '<table style="width:100%;border-collapse:collapse;font-size:0.80rem;margin-bottom:0.8rem;">';
+      h += '<tr style="background:#2d4a2a;color:#fff;">';
+      ['ID','Naam','Geboortedatum','Gekoppel aan','Opmerking'].forEach(function(k) {
+        h += '<th style="padding:4px 6px;text-align:left;white-space:nowrap;">' + k + '</th>';
+      });
+      h += '</tr>';
+      lys.forEach(function(s, gi) {
+        var reks = indeks[s];
+        var bg = gi % 2 === 0 ? '#fff8ee' : '#f0e8d8';
+        // Bepaal koppelings vir hele groep
+        var iKoppelings = reks.map(function(r) {
+          if (r.spouses && r.spouses.length > 0) return r.spouses[0];
+          return null;
+        });
+        var uniekI = {};
+        iKoppelings.forEach(function(sp) { if (sp && sp.id) uniekI[sp.id] = sp.name || sp.id; });
+        var aantalUniek = Object.keys(uniekI).length;
+        reks.forEach(function(r, ri) {
+          var sp = iKoppelings[ri];
+          var koppeling = sp ? ('<span style="font-family:monospace;color:#555;">' + sp.id + '</span> — ' + (sp.name || '')) : '<span style="color:#888;">—</span>';
+          var opmerking = '';
+          if (kategorie === 'conradie-conradie') {
+            opmerking = '<span style="color:#c44;font-size:0.76rem;">⚠️ Verskillende Conradies</span>';
+          } else if (!sp) {
+            opmerking = '<span style="color:#888;font-size:0.76rem;">Geen koppeling</span>';
+          }
+          h += '<tr style="background:' + (ri === 0 ? '#ffe0b2' : bg) + ';">' +
+            '<td style="padding:3px 6px;font-family:monospace;white-space:nowrap;">' + r.id + '</td>' +
+            '<td style="padding:3px 6px;">' + (r.name || '') + '</td>' +
+            '<td style="padding:3px 6px;white-space:nowrap;">' + gebDatum(r) + '</td>' +
+            '<td style="padding:3px 6px;font-size:0.78rem;">' + koppeling + '</td>' +
+            '<td style="padding:3px 6px;">' + opmerking + '</td></tr>';
+        });
+        h += '<tr><td colspan="5" style="padding:1px;background:#ccc;"></td></tr>';
+      });
+      h += '</table>';
+      return h;
+    }
+
+    // Bou tabel vir I-rekord duplikate (met opsionele merge-knoppie)
     function bouTabel(lys, koppe, metMerge) {
       if (lys.length === 0) return '<p style="color:green;margin:0.3rem 0 0.8rem;">✅ Geen in hierdie kategorie nie.</p>';
       var kolomme = metMerge ? koppe.concat(['']) : koppe;
@@ -6265,7 +6324,16 @@ function attachCorrectionListeners() {
     }
 
     var iKat = verdeel('I');
-    var sKat = verdeel('S');
+
+    // S-rekords: gebruik klassifiseerS (koppeling-gebaseerd, nie family_code nie)
+    var sWerklik = [], sConCon = [];
+    dupGroepe.filter(function(s){ return s.endsWith('|S'); })
+      .forEach(function(s) {
+        var kat = klassifiseerS(indeks[s]);
+        if (kat === 'conradie-conradie') sConCon.push(s);
+        else sWerklik.push(s);
+      });
+
     var totaal = dupGroepe.length;
 
     // Bou HTML
@@ -6276,9 +6344,9 @@ function attachCorrectionListeners() {
 
     // Opsomming-blokke
     html += '<div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1rem;font-size:0.82rem;">';
-    html += '<span style="background:#c62828;color:#fff;padding:3px 8px;border-radius:3px;">🔴 Werklik: ' + (iKat.werklik.length+sKat.werklik.length) + '</span>';
-    html += '<span style="background:#e65100;color:#fff;padding:3px 8px;border-radius:3px;">⚠️ Onseker: ' + (iKat.onseker.length+sKat.onseker.length) + '</span>';
-    html += '<span style="background:#2d4a2a;color:#fff;padding:3px 8px;border-radius:3px;">✅ Neefs/Niggies: ' + (iKat.neef.length+sKat.neef.length) + '</span>';
+    html += '<span style="background:#c62828;color:#fff;padding:3px 8px;border-radius:3px;">🔴 Werklik: ' + (iKat.werklik.length + sWerklik.length) + '</span>';
+    html += '<span style="background:#e65100;color:#fff;padding:3px 8px;border-radius:3px;">⚠️ Onseker/CC: ' + (iKat.onseker.length + sConCon.length) + '</span>';
+    html += '<span style="background:#2d4a2a;color:#fff;padding:3px 8px;border-radius:3px;">✅ Neefs/Niggies: ' + iKat.neef.length + '</span>';
     html += '</div>';
 
     // I-rekorde
@@ -6290,12 +6358,12 @@ function attachCorrectionListeners() {
     html += bouTabel(iKat.neef, koppe);
 
     // S-rekorde
-    html += '<div style="font-weight:bold;margin:0.6rem 0 0.2rem;color:#c62828;">🔴 S-rekords — Werklike duplikate (' + sKat.werklik.length + ')</div>';
-    html += bouTabel(sKat.werklik, koppe);
-    html += '<div style="font-weight:bold;margin:0.6rem 0 0.2rem;color:#e65100;">⚠️ S-rekords — Onseker (' + sKat.onseker.length + ')</div>';
-    html += bouTabel(sKat.onseker, koppe);
-    html += '<div style="font-weight:bold;margin:0.6rem 0 0.2rem;color:#2d4a2a;">✅ S-rekords — Verskillende ouers (' + sKat.neef.length + ')</div>';
-    html += bouTabel(sKat.neef, koppe);
+    html += '<div style="font-weight:bold;margin:0.6rem 0 0.2rem;color:#c62828;">🔴 S-rekords — Werklike duplikate (' + sWerklik.length + ')</div>';
+    html += '<div style="font-size:0.78rem;color:#9a7a6a;margin-bottom:0.4rem;">Dieselfde persoon verskyn twee keer as gade van dieselfde Conradie, of een rekord het geen koppeling nie.</div>';
+    html += bouTabelS(sWerklik, 'werklik');
+    html += '<div style="font-weight:bold;margin:0.6rem 0 0.2rem;color:#e65100;">⚠️ S-rekords — Verskillende Conradies / Moontlike Conradie-Conradie (' + sConCon.length + ')</div>';
+    html += '<div style="font-size:0.78rem;color:#9a7a6a;margin-bottom:0.4rem;">Hierdie persone is aan <b>verskillende</b> Conradie-rekords gekoppel. Verifieer voor samesmelting \u2014 dit kan ' + "'n" + ' wettige Conradie-Conradie-huwelik wees.</div>';
+    html += bouTabelS(sConCon, 'conradie-conradie');
 
     // CSV (uitgebrei met Geboortedatum en Ouer-kode)
     var csvRye = ['Kategorie,Tipe,ID,Naam,Voornaam,Van,Geboortedatum,Geboortejaar,FamilieKode,OuerKode,Generasie'];
@@ -6315,9 +6383,8 @@ function attachCorrectionListeners() {
     csvGroep(iKat.werklik, 'Werklik');
     csvGroep(iKat.onseker, 'Onseker');
     csvGroep(iKat.neef, 'Neef/Niggie');
-    csvGroep(sKat.werklik, 'Werklik');
-    csvGroep(sKat.onseker, 'Onseker');
-    csvGroep(sKat.neef, 'Neef/Niggie');
+    csvGroep(sWerklik, 'S-Werklik');
+    csvGroep(sConCon, 'S-Conradie-Conradie');
     var csvData = csvRye.join('\n');
     window._dupCsvData = csvData;
 

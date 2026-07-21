@@ -4496,7 +4496,7 @@ function attachCorrectionListeners() {
     var html = '<div style="max-width:720px;margin:0 auto;padding:1rem;">';
     html += '<div style="display:flex;align-items:baseline;gap:0.7rem;margin-bottom:0.9rem;">';
     html += '<h2 style="color:var(--sepia-light);font-size:1.2rem;margin:0;">✏️ Admin</h2>';
-    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-3-2</span>';
+    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-4-1</span>';
     html += '</div>';
 
     // ── Proses-verduideliking (inklapbaar) ──
@@ -4531,7 +4531,8 @@ function attachCorrectionListeners() {
         { id:'taak-nuut',     ikoon:'➕', naam:'Nuwe Rekord',      kleur:'#3a5a6a' },
         { id:'taak-stoor',    ikoon:'☁️', naam:'Stoor',            kleur:'#4a7a4a' },
         { id:'taak-duptoets',  ikoon:'🔍', naam:'Duplikaattoets',   kleur:'#7a4a8a' },
-        { id:'taak-merge',     ikoon:'🔀', naam:'Samesmelting',      kleur:'#8a4a2a' }
+        { id:'taak-merge',     ikoon:'🔀', naam:'Samesmelting',      kleur:'#8a4a2a' },
+        { id:'taak-datum',     ikoon:'📅', naam:'Datumnormalisering', kleur:'#3a6a8a' }
       ];
       html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-bottom:1rem;">';
       take.forEach(function(t) {
@@ -4714,6 +4715,23 @@ function attachCorrectionListeners() {
       html += '</div>';
       html += '<div id="adm-merge-uitset" style="margin-top:0.5rem;"></div>';
       html += '</div>'; // end taak-merge
+
+      // ── PANEEL: Datumnormalisering ──
+      html += '<div id="taak-datum" class="adm-taak" style="display:none;">';
+      html += '<div style="padding:0.7rem 0.9rem;background:#04101a;border:1px solid #3a6a8a44;border-radius:6px;margin-bottom:0.7rem;">';
+      html += '<div style="color:#5090b8;font-size:0.85rem;font-weight:bold;margin-bottom:0.4rem;">📅 Datumnormalisering</div>';
+      html += "<div style=\"color:#6a8a9a;font-size:0.80rem;margin-bottom:0.7rem;\">Fase A skandeer alle datumvelde en wys 'n verslag sonder om enige data te verander. Fase B skryf normaliseringe na die patch-log vir stoor by die volgende JSON-aflaai.</div>";
+      html += '<div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.6rem;">';
+      html += '<button onclick="admDatumDiag()" style="padding:0.45rem 1rem;background:#0a2030;color:#70b8d8;border:1px solid #3a6a8a;border-radius:4px;cursor:pointer;font-size:0.85rem;font-weight:bold;">🔍 Fase A: Diagnostiese Verslag</button>';
+      html += '<button onclick="admDatumCsv()" id="btn-datum-csv" style="display:none;padding:0.45rem 0.9rem;background:#0a1a10;color:#70c890;border:1px solid #3a6a4a;border-radius:4px;cursor:pointer;font-size:0.84rem;">⬇️ Laai CSV af</button>';
+      html += '</div>';
+      html += '<div id="adm-datum-norm-knop" style="display:none;margin-bottom:0.6rem;">';
+      html += '<button onclick="admDatumNormaliseer()" style="padding:0.45rem 1rem;background:#0a2010;color:#70d890;border:1px solid #3a7a4a;border-radius:4px;cursor:pointer;font-size:0.85rem;font-weight:bold;">✅ Fase B: Normaliseer &amp; Skryf na Patch-log</button>';
+      html += '<span style="color:#5a8a6a;font-size:0.78rem;display:block;margin-top:0.3rem;">Skryf normaliseringe as <code>datum_normalisering</code>-inskrywings — saam toegepas by volgende aflaai.</span>';
+      html += '</div>';
+      html += '<div id="adm-datum-uitset" style="margin-top:0.3rem;font-size:0.80rem;"></div>';
+      html += '</div>';
+      html += '</div>'; // end taak-datum
 
     }
 
@@ -5640,7 +5658,9 @@ function attachCorrectionListeners() {
       var tyd = item.tyd ? item.tyd.slice(0,16).replace('T',' ') : '?';
       var velde = item.tipe === 'samesmelting'
         ? '\uD83D\uDD00 ' + (item.bron_id || '?') + ' \u2192 ' + (item.doel_id || '?')
-        : (Object.keys(item.wysigings || {}).join(', ') || item.tipe || '?');
+        : item.tipe === 'datum_normalisering'
+          ? '\uD83D\uDCC5 ' + Object.keys(item.wysigings || {}).length + ' datum(s) genormaliseer'
+          : (Object.keys(item.wysigings || {}).join(', ') || item.tipe || '?');
       html += '<tr style="border-bottom:1px solid #2a2010;color:#c8b890;">';
       html += '<td style="padding:0.3rem 0.4rem;">' + tyd + '</td>';
       html += '<td style="padding:0.3rem 0.4rem;">' + (item.naam || item.rekord_id) + '</td>';
@@ -6239,6 +6259,274 @@ function attachCorrectionListeners() {
     });
     return treffers;
   }
+
+  // ══════════════════════════════════════════════════════════════════
+  // DATUMNORMALISERING — Fase A (Diagnosties) & Fase B (Pas toe)
+  // ══════════════════════════════════════════════════════════════════
+
+  // Datumvelde om te skandeer per rekord
+  var DATUM_VELDE = ['birth_date','death_date','baptism_date','divorce_date'];
+  // Velde wat array is: marr_dates[]
+  var DATUM_ARRAY_VELDE = ['marr_dates'];
+
+  // Probeer normaliseer 'n datum-string na ISO (YYYY, YYYY-MM, YYYY-MM-DD)
+  // Gee { normaal: string, redes: string } terug, of null as geen verandering nodig
+  function datumNormaliseer(waarde) {
+    if (!waarde && waarde !== 0) return null;
+    var s = String(waarde).trim();
+    if (!s || s === '' || s === '—') return null;
+
+    // Reeds in orde
+    if (/^~?\d{4}$/.test(s)) return null;            // "1950" of "~1950" — behou
+    if (/^\d{4}-\d{2}$/.test(s)) return null;         // "1950-01" — behou
+    if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return null;  // "1950-01-01" — behou
+
+    var maande = { jan:1,feb:2,mar:3,mrt:3,apr:4,may:5,mei:5,jun:6,
+                   jul:7,aug:8,sep:9,oct:10,okt:10,nov:11,dec:12,des:12 };
+
+    // DD/MM/YYYY of D/M/YYYY
+    var m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if (m) {
+      var d = parseInt(m[1]), mo = parseInt(m[2]), y = parseInt(m[3]);
+      if (d >= 1 && d <= 31 && mo >= 1 && mo <= 12)
+        return { normaal: y + '-' + String(mo).padStart(2,'0') + '-' + String(d).padStart(2,'0'), rede: 'DD/MM/YYYY' };
+    }
+
+    // DD.MM.YYYY
+    m = s.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+    if (m) {
+      var d2 = parseInt(m[1]), mo2 = parseInt(m[2]), y2 = parseInt(m[3]);
+      if (d2 >= 1 && d2 <= 31 && mo2 >= 1 && mo2 <= 12)
+        return { normaal: y2 + '-' + String(mo2).padStart(2,'0') + '-' + String(d2).padStart(2,'0'), rede: 'DD.MM.YYYY' };
+    }
+
+    // D Mon YYYY (bv. "1 Jan 1950" of "01 Jan 1950")
+    m = s.match(/^(\d{1,2})\s+([A-Za-z]{3,})\s+(\d{4})$/);
+    if (m) {
+      var dv = parseInt(m[1]), mk = m[2].toLowerCase().substring(0,3), yv = parseInt(m[3]);
+      var mon = maande[mk];
+      if (mon && dv >= 1 && dv <= 31)
+        return { normaal: yv + '-' + String(mon).padStart(2,'0') + '-' + String(dv).padStart(2,'0'), rede: 'D Mon YYYY' };
+    }
+
+    // Mon YYYY (bv. "Jan 1950")
+    m = s.match(/^([A-Za-z]{3,})\s+(\d{4})$/);
+    if (m) {
+      var mk2 = m[1].toLowerCase().substring(0,3), yw = parseInt(m[2]);
+      var mon2 = maande[mk2];
+      if (mon2)
+        return { normaal: yw + '-' + String(mon2).padStart(2,'0'), rede: 'Mon YYYY' };
+    }
+
+    // "YYYY" as string (moet integer wees) — meld maar normaliseer nie
+    if (/^\d{4}$/.test(s)) return null; // string-jaar — meld as inligting
+
+    return { normaal: null, rede: 'Onbekend formaat: ' + s };
+  }
+
+  // Bou lys van alle nie-standaard datums
+  function datumSkandeerlys() {
+    var data = (typeof CONRADIE_DATA !== 'undefined') ? CONRADIE_DATA : window.CONRADIE_DATA;
+    if (!data) return null;
+    var lys = [];
+    data.forEach(function(r) {
+      if (!r || !r.id || r.merged_into) return;
+      var tipe = r.id.charAt(0);
+      if (tipe !== 'I' && tipe !== 'S') return;
+
+      function kontroleer(veld, waarde, sleutel) {
+        if (!waarde && waarde !== 0) return;
+        var s = String(waarde).trim();
+        if (!s) return;
+        var res = datumNormaliseer(waarde);
+        if (res !== null) {
+          lys.push({
+            id: r.id,
+            naam: r.name || (r.given + ' ' + r.surname),
+            veld: sleutel || veld,
+            huidig: s,
+            normaal: res ? (res.normaal || '(onbekend)') : s,
+            rede: res ? res.rede : '',
+            kanFiks: !!(res && res.normaal)
+          });
+        }
+      }
+
+      DATUM_VELDE.forEach(function(v) { kontroleer(v, r[v]); });
+      DATUM_ARRAY_VELDE.forEach(function(av) {
+        if (Array.isArray(r[av])) {
+          r[av].forEach(function(w, i) { kontroleer(av, w, av + '[' + i + ']'); });
+        }
+      });
+    });
+    return lys;
+  }
+
+  // Fase A: Diagnostiese verslag
+  window.admDatumDiag = function admDatumDiag() {
+    var uitset = document.getElementById('adm-datum-uitset');
+    var normKnop = document.getElementById('adm-datum-norm-knop');
+    var csvKnop = document.getElementById('btn-datum-csv');
+    if (!uitset) return;
+    uitset.innerHTML = '<span style="color:#6a9ab8;">⏳ Skandeer datums...</span>';
+    if (normKnop) normKnop.style.display = 'none';
+    if (csvKnop) csvKnop.style.display = 'none';
+
+    var lys = datumSkandeerlys();
+    if (!lys) { uitset.innerHTML = '<span style="color:#e05050;">Databasis nie gelaai nie.</span>'; return; }
+
+    var kanFiks = lys.filter(function(x) { return x.kanFiks; });
+    var onbekend = lys.filter(function(x) { return !x.kanFiks; });
+
+    // Bou CSV
+    var csv = 'ID,Naam,Veld,Huidige Waarde,Voorgestelde Normalisering,Formaat,Kan Fix\n';
+    lys.forEach(function(x) {
+      function kw(s) { return '"' + String(s || '').replace(/"/g,'""') + '"'; }
+      csv += kw(x.id)+','+kw(x.naam)+','+kw(x.veld)+','+kw(x.huidig)+','+kw(x.normaal)+','+kw(x.rede)+','+(x.kanFiks?'Ja':'Nee')+'\n';
+    });
+    window._datumCsvData = csv;
+    window._datumLys = lys;
+
+    if (lys.length === 0) {
+      uitset.innerHTML = '<p style="color:#5ab07a;font-size:0.82rem;">✅ Geen nie-standaard datums gevind nie — databasis is reeds genormaliseer.</p>';
+      return;
+    }
+
+    // Toon opsomming
+    var h = '<div style="margin-bottom:0.6rem;">';
+    h += '<span style="color:#70b8d8;font-weight:bold;">' + lys.length + '</span>';
+    h += ' <span style="color:#8aabb8;font-size:0.80rem;">nie-standaard datums gevind ';
+    h += '(' + kanFiks.length + ' herstelbaar, ' + onbekend.length + ' onbekend formaat)</span>';
+    h += '</div>';
+
+    // Tabel
+    if (kanFiks.length > 0) {
+      h += '<div style="color:#70d890;font-size:0.80rem;font-weight:bold;margin-bottom:0.3rem;">Herstelbare datums (' + kanFiks.length + ')</div>';
+      h += '<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:0.76rem;margin-bottom:0.8rem;">';
+      h += '<tr style="color:#3a6a8a;border-bottom:1px solid #2a4a6a;">';
+      h += '<th style="text-align:left;padding:0.25rem 0.3rem;">ID</th>';
+      h += '<th style="text-align:left;padding:0.25rem 0.3rem;">Naam</th>';
+      h += '<th style="text-align:left;padding:0.25rem 0.3rem;">Veld</th>';
+      h += '<th style="text-align:left;padding:0.25rem 0.3rem;">Huidig</th>';
+      h += '<th style="text-align:left;padding:0.25rem 0.3rem;">Normaal</th>';
+      h += '<th style="text-align:left;padding:0.25rem 0.3rem;">Formaat</th></tr>';
+      kanFiks.forEach(function(x) {
+        h += '<tr style="border-bottom:1px solid #1a2a3a;color:#b8ccd8;">';
+        h += '<td style="padding:0.2rem 0.3rem;font-family:monospace;color:#70b8d8;">' + escHtml(x.id) + '</td>';
+        h += '<td style="padding:0.2rem 0.3rem;">' + escHtml(x.naam) + '</td>';
+        h += '<td style="padding:0.2rem 0.3rem;font-family:monospace;color:#9ab8d8;">' + escHtml(x.veld) + '</td>';
+        h += '<td style="padding:0.2rem 0.3rem;color:#e07050;">' + escHtml(x.huidig) + '</td>';
+        h += '<td style="padding:0.2rem 0.3rem;color:#70d890;">' + escHtml(x.normaal) + '</td>';
+        h += '<td style="padding:0.2rem 0.3rem;color:#7a9aa8;">' + escHtml(x.rede) + '</td>';
+        h += '</tr>';
+      });
+      h += '</table></div>';
+    }
+
+    if (onbekend.length > 0) {
+      h += '<div style="color:#e0a050;font-size:0.80rem;font-weight:bold;margin-bottom:0.3rem;">Onbekende formate (' + onbekend.length + ') — handmatig kontroleer</div>';
+      h += '<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:0.76rem;margin-bottom:0.8rem;">';
+      h += '<tr style="color:#6a5a3a;border-bottom:1px solid #4a3a2a;">';
+      h += '<th style="text-align:left;padding:0.25rem 0.3rem;">ID</th>';
+      h += '<th style="text-align:left;padding:0.25rem 0.3rem;">Naam</th>';
+      h += '<th style="text-align:left;padding:0.25rem 0.3rem;">Veld</th>';
+      h += '<th style="text-align:left;padding:0.25rem 0.3rem;">Huidige Waarde</th></tr>';
+      onbekend.forEach(function(x) {
+        h += '<tr style="border-bottom:1px solid #2a1a0a;color:#c8b8a8;">';
+        h += '<td style="padding:0.2rem 0.3rem;font-family:monospace;color:#d8a050;">' + escHtml(x.id) + '</td>';
+        h += '<td style="padding:0.2rem 0.3rem;">' + escHtml(x.naam) + '</td>';
+        h += '<td style="padding:0.2rem 0.3rem;font-family:monospace;color:#a8b8c8;">' + escHtml(x.veld) + '</td>';
+        h += '<td style="padding:0.2rem 0.3rem;color:#e07050;">' + escHtml(x.huidig) + '</td>';
+        h += '</tr>';
+      });
+      h += '</table></div>';
+    }
+
+    uitset.innerHTML = h;
+    if (csvKnop) csvKnop.style.display = 'inline-block';
+    if (normKnop && kanFiks.length > 0) normKnop.style.display = 'block';
+  };
+
+  // CSV-aflaai vir datumverslag
+  window.admDatumCsv = function admDatumCsv() {
+    var csv = window._datumCsvData || '';
+    if (!csv) return;
+    var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = 'conradie_datums.csv';
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  // Fase B: Skryf normaliseringe na patch-log
+  window.admDatumNormaliseer = function admDatumNormaliseer() {
+    var lys = window._datumLys;
+    var uitset = document.getElementById('adm-datum-uitset');
+    var normKnop = document.getElementById('adm-datum-norm-knop');
+    if (!lys || lys.length === 0) {
+      if (uitset) uitset.innerHTML = '<span style="color:#e0a050;">Voer eers Fase A uit.</span>';
+      return;
+    }
+    var kanFiks = lys.filter(function(x) { return x.kanFiks; });
+    if (kanFiks.length === 0) {
+      if (uitset) uitset.innerHTML = '<span style="color:#e0a050;">Geen herstelbare datums nie.</span>';
+      return;
+    }
+
+    // Groepeer per rekord-ID
+    var perRekord = {};
+    kanFiks.forEach(function(x) {
+      if (!perRekord[x.id]) perRekord[x.id] = {};
+      perRekord[x.id][x.veld] = { ou: x.huidig, nuut: x.normaal };
+    });
+
+    // Pas toe op CONRADIE_DATA in geheue
+    var data = (typeof CONRADIE_DATA !== 'undefined') ? CONRADIE_DATA : window.CONRADIE_DATA;
+    if (!data) { if (uitset) uitset.innerHTML = '<span style="color:#e05050;">Databasis nie gelaai nie.</span>'; return; }
+    var indeks = {};
+    data.forEach(function(p) { if (p && p.id) indeks[p.id] = p; });
+
+    var geskryf = 0;
+    Object.keys(perRekord).forEach(function(rekordId) {
+      var p = indeks[rekordId];
+      if (!p) return;
+      var veldWys = perRekord[rekordId];
+      // Pas in geheue toe
+      Object.keys(veldWys).forEach(function(veld) {
+        var arrMatch = veld.match(/^(.+)\[(\d+)\]$/);
+        if (arrMatch) {
+          var av = arrMatch[1], ai = parseInt(arrMatch[2]);
+          if (Array.isArray(p[av])) p[av][ai] = veldWys[veld].nuut;
+        } else {
+          p[veld] = veldWys[veld].nuut;
+        }
+      });
+      // Skryf patch-log inskrywing
+      var inskrywing = {
+        tipe: 'datum_normalisering',
+        rekord_id: rekordId,
+        tyd: new Date().toISOString(),
+        wysigings: veldWys
+      };
+      patchLogVoegBy(inskrywing);
+      geskryf++;
+    });
+
+    // Wis gestoorde lys sodat Fase B nie weer uitgevoer kan word sonder nuwe Fase A
+    window._datumLys = null;
+    if (normKnop) normKnop.style.display = 'none';
+
+    var nuH = '<p style="color:#70d890;font-size:0.82rem;">✅ ' + geskryf + ' rekord(s) (in geheue) genormaliseer en na patch-log geskryf.</p>';
+    nuH += '<p style="color:#5a8a6a;font-size:0.78rem;">Gaan na <b>Stoor</b>-paneel → <b>Pas Patches Toe &amp; Laai Af</b> om die gekorrigeerde JSON af te laai.</p>';
+    if (uitset) uitset.innerHTML = nuH;
+
+    // Hernu patch-log vertoning as oop
+    if (typeof patchLogBouAfdeling === 'function') patchLogBouAfdeling();
+  };
+
+  // ── Einde: Datumnormalisering ──
 
   // Op-aanvraag verslag: skandeer alle I én S-rekords, bou HTML-tabel + CSV-aflaai
   window.admDupVerslag = function admDupVerslag() {
@@ -7008,7 +7296,7 @@ function attachCorrectionListeners() {
         toegepas++;
         return;
       }
-      // ── Gewone wysiging-inskrywing ──
+      // ── Gewone wysiging-inskrywing (ook: datum_normalisering) ──
       if (!item.rekord_id || !item.wysigings) { oorgeslaan++; return; }
       var p = indeks[item.rekord_id];
       if (!p) { oorgeslaan++; return; }

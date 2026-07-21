@@ -4496,7 +4496,7 @@ function attachCorrectionListeners() {
     var html = '<div style="max-width:720px;margin:0 auto;padding:1rem;">';
     html += '<div style="display:flex;align-items:baseline;gap:0.7rem;margin-bottom:0.9rem;">';
     html += '<h2 style="color:var(--sepia-light);font-size:1.2rem;margin:0;">✏️ Admin</h2>';
-    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-4-1</span>';
+    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-4-2</span>';
     html += '</div>';
 
     // ── Proses-verduideliking (inklapbaar) ──
@@ -6269,8 +6269,19 @@ function attachCorrectionListeners() {
   // Velde wat array is: marr_dates[]
   var DATUM_ARRAY_VELDE = ['marr_dates'];
 
+  // Afrikaanse veldname vir nota-inskrywings
+  var DATUM_VELDNAME = {
+    'birth_date': 'Geboortedatum', 'death_date': 'Sterfdatum',
+    'baptism_date': 'Doopdatum', 'divorce_date': 'Skeidingsdatum',
+    'marr_dates[0]': 'Troudatum (1)', 'marr_dates[1]': 'Troudatum (2)',
+    'marr_dates[2]': 'Troudatum (3)', 'marr_dates[3]': 'Troudatum (4)'
+  };
+  function datumVeldNaam(sleutel) {
+    return DATUM_VELDNAME[sleutel] || sleutel;
+  }
+
   // Probeer normaliseer 'n datum-string na ISO (YYYY, YYYY-MM, YYYY-MM-DD)
-  // Gee { normaal: string, redes: string } terug, of null as geen verandering nodig
+  // Gee { normaal: string, rede: string, metNota: bool } terug, of null as geen verandering nodig
   function datumNormaliseer(waarde) {
     if (!waarde && waarde !== 0) return null;
     var s = String(waarde).trim();
@@ -6284,12 +6295,25 @@ function attachCorrectionListeners() {
     var maande = { jan:1,feb:2,mar:3,mrt:3,apr:4,may:5,mei:5,jun:6,
                    jul:7,aug:8,sep:9,oct:10,okt:10,nov:11,dec:12,des:12 };
 
+    // ── Circa-patrone: c.YYYY, c. YYYY, ca.YYYY, ca YYYY, ca. YYYY ──
+    var mc = s.match(/^ca?\.?\s*(\d{4})$/i);
+    if (mc) return { normaal: '~' + mc[1], rede: 'circa (c./ca.)', metNota: false };
+
+    // ── Plus-minus: ±YYYY, +/-YYYY ──
+    var mp = s.match(/^[±]\s*(\d{4})$/);
+    if (mp) return { normaal: '~' + mp[1], rede: '± (benaderend)', metNota: false };
+
+    // ── Relatiewe patrone met nota ──
+    // "voor YYYY", "na YYYY", "omstreeks YYYY", "ongeveer YYYY", "after YYYY", "before YYYY"
+    var mr = s.match(/^(?:voor|na|omstreeks|ongeveer|before|after)\s+(\d{4})$/i);
+    if (mr) return { normaal: '~' + mr[1], rede: 'relatief (' + s.replace(/\s*\d{4}$/, '').trim() + ')', metNota: true };
+
     // DD/MM/YYYY of D/M/YYYY
     var m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
     if (m) {
       var d = parseInt(m[1]), mo = parseInt(m[2]), y = parseInt(m[3]);
       if (d >= 1 && d <= 31 && mo >= 1 && mo <= 12)
-        return { normaal: y + '-' + String(mo).padStart(2,'0') + '-' + String(d).padStart(2,'0'), rede: 'DD/MM/YYYY' };
+        return { normaal: y + '-' + String(mo).padStart(2,'0') + '-' + String(d).padStart(2,'0'), rede: 'DD/MM/YYYY', metNota: false };
     }
 
     // DD.MM.YYYY
@@ -6297,7 +6321,7 @@ function attachCorrectionListeners() {
     if (m) {
       var d2 = parseInt(m[1]), mo2 = parseInt(m[2]), y2 = parseInt(m[3]);
       if (d2 >= 1 && d2 <= 31 && mo2 >= 1 && mo2 <= 12)
-        return { normaal: y2 + '-' + String(mo2).padStart(2,'0') + '-' + String(d2).padStart(2,'0'), rede: 'DD.MM.YYYY' };
+        return { normaal: y2 + '-' + String(mo2).padStart(2,'0') + '-' + String(d2).padStart(2,'0'), rede: 'DD.MM.YYYY', metNota: false };
     }
 
     // D Mon YYYY (bv. "1 Jan 1950" of "01 Jan 1950")
@@ -6306,7 +6330,7 @@ function attachCorrectionListeners() {
       var dv = parseInt(m[1]), mk = m[2].toLowerCase().substring(0,3), yv = parseInt(m[3]);
       var mon = maande[mk];
       if (mon && dv >= 1 && dv <= 31)
-        return { normaal: yv + '-' + String(mon).padStart(2,'0') + '-' + String(dv).padStart(2,'0'), rede: 'D Mon YYYY' };
+        return { normaal: yv + '-' + String(mon).padStart(2,'0') + '-' + String(dv).padStart(2,'0'), rede: 'D Mon YYYY', metNota: false };
     }
 
     // Mon YYYY (bv. "Jan 1950")
@@ -6315,13 +6339,10 @@ function attachCorrectionListeners() {
       var mk2 = m[1].toLowerCase().substring(0,3), yw = parseInt(m[2]);
       var mon2 = maande[mk2];
       if (mon2)
-        return { normaal: yw + '-' + String(mon2).padStart(2,'0'), rede: 'Mon YYYY' };
+        return { normaal: yw + '-' + String(mon2).padStart(2,'0'), rede: 'Mon YYYY', metNota: false };
     }
 
-    // "YYYY" as string (moet integer wees) — meld maar normaliseer nie
-    if (/^\d{4}$/.test(s)) return null; // string-jaar — meld as inligting
-
-    return { normaal: null, rede: 'Onbekend formaat: ' + s };
+    return { normaal: null, rede: 'Onbekend formaat: ' + s, metNota: false };
   }
 
   // Bou lys van alle nie-standaard datums
@@ -6347,7 +6368,8 @@ function attachCorrectionListeners() {
             huidig: s,
             normaal: res ? (res.normaal || '(onbekend)') : s,
             rede: res ? res.rede : '',
-            kanFiks: !!(res && res.normaal)
+            kanFiks: !!(res && res.normaal),
+            metNota: !!(res && res.metNota)
           });
         }
       }
@@ -6460,7 +6482,7 @@ function attachCorrectionListeners() {
     URL.revokeObjectURL(url);
   };
 
-  // Fase B: Skryf normaliseringe na patch-log
+  // Fase B: Skryf normaliseringe na patch-log (met nota vir relatiewe datums)
   window.admDatumNormaliseer = function admDatumNormaliseer() {
     var lys = window._datumLys;
     var uitset = document.getElementById('adm-datum-uitset');
@@ -6475,11 +6497,15 @@ function attachCorrectionListeners() {
       return;
     }
 
-    // Groepeer per rekord-ID
+    // Groepeer per rekord-ID; nota-items afsonderlik
     var perRekord = {};
     kanFiks.forEach(function(x) {
-      if (!perRekord[x.id]) perRekord[x.id] = {};
-      perRekord[x.id][x.veld] = { ou: x.huidig, nuut: x.normaal };
+      if (!perRekord[x.id]) perRekord[x.id] = { wysigings: {}, notas: [] };
+      perRekord[x.id].wysigings[x.veld] = { ou: x.huidig, nuut: x.normaal };
+      if (x.metNota) {
+        perRekord[x.id].notas.push(datumVeldNaam(x.veld) +
+          ' oorspronklik gedokumenteer as "' + x.huidig + '"');
+      }
     });
 
     // Pas toe op CONRADIE_DATA in geheue
@@ -6488,12 +6514,14 @@ function attachCorrectionListeners() {
     var indeks = {};
     data.forEach(function(p) { if (p && p.id) indeks[p.id] = p; });
 
-    var geskryf = 0;
+    var geskryf = 0, metNotas = 0;
     Object.keys(perRekord).forEach(function(rekordId) {
       var p = indeks[rekordId];
       if (!p) return;
-      var veldWys = perRekord[rekordId];
-      // Pas in geheue toe
+      var groep = perRekord[rekordId];
+      var veldWys = groep.wysigings;
+
+      // Pas datumvelde in geheue toe
       Object.keys(veldWys).forEach(function(veld) {
         var arrMatch = veld.match(/^(.+)\[(\d+)\]$/);
         if (arrMatch) {
@@ -6503,14 +6531,25 @@ function attachCorrectionListeners() {
           p[veld] = veldWys[veld].nuut;
         }
       });
+
+      // Voeg nota by as nodig
+      if (groep.notas.length > 0) {
+        var nuutNota = groep.notas.join('; ');
+        var ouNota = p.note || '';
+        var gesamentlik = ouNota ? ouNota + '; ' + nuutNota : nuutNota;
+        p.note = gesamentlik;
+        veldWys['note'] = { ou: ouNota, nuut: gesamentlik };
+        metNotas++;
+      }
+
       // Skryf patch-log inskrywing
-      var inskrywing = {
+      patchLogVoegBy({
         tipe: 'datum_normalisering',
         rekord_id: rekordId,
+        naam: p.name || rekordId,
         tyd: new Date().toISOString(),
         wysigings: veldWys
-      };
-      patchLogVoegBy(inskrywing);
+      });
       geskryf++;
     });
 
@@ -6518,11 +6557,12 @@ function attachCorrectionListeners() {
     window._datumLys = null;
     if (normKnop) normKnop.style.display = 'none';
 
-    var nuH = '<p style="color:#70d890;font-size:0.82rem;">✅ ' + geskryf + ' rekord(s) (in geheue) genormaliseer en na patch-log geskryf.</p>';
-    nuH += '<p style="color:#5a8a6a;font-size:0.78rem;">Gaan na <b>Stoor</b>-paneel → <b>Pas Patches Toe &amp; Laai Af</b> om die gekorrigeerde JSON af te laai.</p>';
+    var nuH = '<p style="color:#70d890;font-size:0.82rem;">✅ ' + geskryf + ' rekord(s) genormaliseer';
+    if (metNotas > 0) nuH += ' (' + metNotas + ' met nota in Note-veld aangeheg)';
+    nuH += '.</p>';
+    nuH += '<p style="color:#5a8a6a;font-size:0.78rem;">Gaan na <b>Stoor</b>-paneel \u2192 <b>Pas Patches Toe &amp; Laai Af</b> om die gekorrigeerde JSON af te laai.</p>';
     if (uitset) uitset.innerHTML = nuH;
 
-    // Hernu patch-log vertoning as oop
     if (typeof patchLogBouAfdeling === 'function') patchLogBouAfdeling();
   };
 

@@ -2100,25 +2100,17 @@ body.druk-aktief #druk-skerp {
             <label style="font-size:0.72rem;color:#7a6a4a;display:block;margin-bottom:0.2rem;">Tipe</label>
             <select id="vm-ev-tipe"
               style="padding:0.35rem 0.4rem;background:#2a1e0a;color:#e8dfc8;border:1px solid #5a4830;border-radius:3px;font-size:0.85rem;">
-              <option value="SKOOL">🏫 Skool</option>
-              <option value="MATRIEK">🎓 Matriek</option>
-              <option value="KWALIFIKASIE">🎓 Kwalifikasie</option>
-              <option value="BEURS">🏅 Beurs</option>
-              <option value="WERK">💼 Werk</option>
-              <option value="BEVORDERING">📈 Bevordering</option>
-              <option value="AFTREDE">🏖 Aftrede</option>
-              <option value="VERHUISING">🏠 Verhuising</option>
-              <option value="MILITÊR">🪖 Militêr</option>
-              <option value="TOEKENNING">🏆 Toekenning</option>
-              <option value="GESONDHEID">🏥 Gesondheid</option>
-              <option value="KERK">⛪ Kerk</option>
-              <option value="ANDER">📌 Ander</option>
             </select>
           </div>
           <div style="flex:1;min-width:8rem;">
             <label style="font-size:0.72rem;color:#7a6a4a;display:block;margin-bottom:0.2rem;">Beskrywing</label>
             <input type="text" id="vm-ev-teks" placeholder="bv. Aangestel as skoolhoof in Pretoria"
               style="width:100%;box-sizing:border-box;padding:0.35rem 0.4rem;background:#2a1e0a;color:#e8dfc8;border:1px solid #5a4830;border-radius:3px;font-size:0.85rem;">
+            <div id="vm-ev-ekstra" style="display:none;margin-top:0.3rem;">
+              <label style="font-size:0.72rem;color:#7a6a4a;display:block;margin-bottom:0.2rem;">Kind se van:</label>
+              <input type="text" id="vm-ev-ekstra-waarde" placeholder="bv. Van der Berg"
+                style="width:100%;box-sizing:border-box;padding:0.35rem 0.4rem;background:#2a1e0a;color:#e8dfc8;border:1px solid #5a4830;border-radius:3px;font-size:0.85rem;">
+            </div>
           </div>
           <button onclick="vmEvVoegBy()"
             style="padding:0.35rem 0.75rem;background:#c49a3a;color:#1a1208;border:none;border-radius:3px;cursor:pointer;font-size:0.85rem;font-weight:bold;white-space:nowrap;">
@@ -2318,6 +2310,28 @@ async function laaiData() {
       spouse_individuals: sCount,
       max_generation: maxGen
     };
+    // Laai event-tipes: JSON meta -> localStorage -> verstek
+    var VERSTEK_EVENT_TIPES = [
+      { kode: 'SKOOL',          naam: 'Skool',                      ikon: '\uD83C\uDFEB', printbaar: false, ekstra_veld: null },
+      { kode: 'MATRIEK',        naam: 'Matriek',                    ikon: '\uD83C\uDF93', printbaar: false, ekstra_veld: null },
+      { kode: 'KWALIFIKASIE',   naam: 'Kwalifikasie',               ikon: '\uD83C\uDF93', printbaar: false, ekstra_veld: null },
+      { kode: 'BEURS',          naam: 'Beurs',                      ikon: '\uD83C\uDFC5', printbaar: false, ekstra_veld: null },
+      { kode: 'WERK',           naam: 'Werk / beroep',              ikon: '\uD83D\uDCBC', printbaar: false, ekstra_veld: null },
+      { kode: 'BEVORDERING',    naam: 'Bevordering',                ikon: '\uD83D\uDCC8', printbaar: false, ekstra_veld: null },
+      { kode: 'AFTREDE',        naam: 'Aftrede',                    ikon: '\uD83C\uDFD6', printbaar: false, ekstra_veld: null },
+      { kode: 'VERHUISING',     naam: 'Verhuising',                 ikon: '\uD83C\uDFE0', printbaar: true,  ekstra_veld: null },
+      { kode: 'MILIT\u00CAR', naam: 'Militere diens',             ikon: '\uD83E\uDE96', printbaar: true,  ekstra_veld: null },
+      { kode: 'TOEKENNING',     naam: 'Toekenning / onderskeiding', ikon: '\uD83C\uDFC6', printbaar: false, ekstra_veld: null },
+      { kode: 'GESONDHEID',     naam: 'Gesondheid',                 ikon: '\uD83C\uDFE5', printbaar: false, ekstra_veld: null },
+      { kode: 'KERK',           naam: 'Kerk / geloof',              ikon: '\u26EA',        printbaar: false, ekstra_veld: null },
+      { kode: 'KIND_ANDER_VAN', naam: 'Kind gebore (ander van)',    ikon: '\uD83D\uDC76', printbaar: true,  ekstra_veld: 'ander_van' },
+      { kode: 'ANDER',          naam: 'Ander',                      ikon: '\uD83D\uDCCC', printbaar: false, ekstra_veld: null }
+    ];
+    var _metaTipes = jsonData.meta && jsonData.meta.event_tipes;
+    var _lsTipes = null;
+    try { var _lsStr = localStorage.getItem('conradie_event_tipes'); if (_lsStr) _lsTipes = JSON.parse(_lsStr); } catch(e2) {}
+    window.CONRADIE_EVENT_TIPES = _metaTipes || _lsTipes || VERSTEK_EVENT_TIPES;
+    window.VERSTEK_EVENT_TIPES = VERSTEK_EVENT_TIPES;
     // Dateer kop-statistieke op
     try {
       document.getElementById('stat-conradie').textContent = iCount.toLocaleString();
@@ -3088,7 +3102,19 @@ function deelPersoon(id) {
   if (r.baptism_date) reëls.push('⛪ Gedoop: ' + r.baptism_date);
   if (r.nickname) reëls.push('🏷️ Bynaam: ' + r.nickname);
   if (r.occupation) reëls.push('💼 Beroep: ' + r.occupation);
-  if (r.events && r.events.length) reëls.push('📋 Gebeurtenisse: ' + r.events.length);
+  if (r.events && r.events.length) {
+    var evTipes = window.CONRADIE_EVENT_TIPES || [];
+    var drukEvents = r.events.filter(function(ev) {
+      var t = evTipes.find(function(x) { return x.kode === ev.type; });
+      return t ? t.printbaar : false;
+    });
+    drukEvents.forEach(function(ev) {
+      var t = evTipes.find(function(x) { return x.kode === ev.type; });
+      var ikon = (t && t.ikon) ? t.ikon : '📌';
+      var ekstra = ev.ander_van ? ' (' + ev.ander_van + ')' : '';
+      reëls.push(ikon + ' ' + (ev.year || '') + ' ' + (t ? t.naam : ev.type) + ': ' + (ev.text || '') + ekstra);
+    });
+  }
 
   if (r.spouses && r.spouses.length) {
     r.spouses.forEach(function(sp, i) {
@@ -3474,16 +3500,16 @@ function buildTydlyn(r) {
 
   // Persoonlike gebeurtenisse (events-veld)
   if (r.events && r.events.length) {
-    const tipeIkon = {
-      'SKOOL': '🏫', 'MATRIEK': '🎓', 'KWALIFIKASIE': '🎓', 'BEURS': '🏅',
-      'WERK': '💼', 'BEVORDERING': '📈', 'AFTREDE': '🏖',
-      'VERHUISING': '🏠', 'MILITÊR': '🪖', 'TOEKENNING': '🏆', 'GESONDHEID': '🏥',
-      'KERK': '⛪', 'ANDER': '📌'
-    };
+    const _evTipes = window.CONRADIE_EVENT_TIPES || [];
     r.events.forEach(function(ev) {
-      const ikon = tipeIkon[ev.type] || '📌';
+      const _t = _evTipes.find(function(x) { return x.kode === ev.type; });
+      const ikon = (_t && _t.ikon) ? _t.ikon : '📌';
+      const titel = (_t && _t.naam) ? _t.naam : (ev.type || 'Ander');
       const ey = ev.year ? +ev.year : null;
-      gebeure.push({ jaar: ey, ikon: ikon, titel: ev.type || 'ANDER', detail: ev.text || '' });
+      // Fase C: KIND_ANDER_VAN — wys kind se van as ekstra detail
+      var detail = ev.text || '';
+      if (ev.type === 'KIND_ANDER_VAN' && ev.ander_van) detail += ' (' + ev.ander_van + ')';
+      gebeure.push({ jaar: ey, ikon: ikon, titel: titel, detail: detail });
     });
   }
 
@@ -3851,17 +3877,16 @@ function vulVoorstelModal(id) {
   if (evLys) {
     var bestaandeEvents = (r.events && r.events.length) ? r.events : [];
     if (bestaandeEvents.length) {
-      var tipeIkon = {
-        'SKOOL':'🏫','MATRIEK':'🎓','KWALIFIKASIE':'🎓','BEURS':'🏅',
-        'WERK':'💼','BEVORDERING':'📈','AFTREDE':'🏖','VERHUISING':'🏠',
-        'MILITÊR':'🪖','TOEKENNING':'🏆','GESONDHEID':'🏥','KERK':'⛪','ANDER':'📌'
-      };
+      var _evTipesVm = window.CONRADIE_EVENT_TIPES || [];
       evLys.innerHTML = '<div style="font-size:0.75rem;color:#c49a3a;margin-bottom:0.4rem;font-weight:bold;">Bestaande gebeurtenisse — stel wysiging voor:</div>' +
         bestaandeEvents.map(function(ev, idx) {
-          var ikon = tipeIkon[ev.type] || '📌';
+          var _tv = _evTipesVm.find(function(x) { return x.kode === ev.type; });
+          var ikon = (_tv && _tv.ikon) ? _tv.ikon : '📌';
+          var tiepNaam = (_tv && _tv.naam) ? _tv.naam : (ev.type || '');
+          var ekstraStr = (ev.type === 'KIND_ANDER_VAN' && ev.ander_van) ? ' (' + ev.ander_van + ')' : '';
           return '<div class="vm-ev-item" style="display:flex;gap:0.4rem;align-items:flex-start;margin-bottom:0.4rem;background:#1a1208;border:1px solid #3a2e1a;border-radius:3px;padding:0.45rem 0.5rem;">' +
-            '<span style="flex-shrink:0;color:#c49a3a;font-size:0.85rem;">' + ikon + ' ' + (ev.year || '?') + ' — ' + (ev.type || '') + '</span>' +
-            '<span style="flex:1;font-size:0.82rem;color:#c8b888;">' + (ev.text || '') + '</span>' +
+            '<span style="flex-shrink:0;color:#c49a3a;font-size:0.85rem;">' + ikon + ' ' + (ev.year || '?') + ' — ' + tiepNaam + '</span>' +
+            '<span style="flex:1;font-size:0.82rem;color:#c8b888;">' + (ev.text || '') + ekstraStr + '</span>' +
             '<div style="flex-shrink:0;display:flex;gap:0.3rem;">' +
               '<button onclick="vmEvWysig(' + idx + ')" title="Wysig" ' +
                 'style="padding:0.2rem 0.45rem;background:#3a5a3a;color:#90d090;border:none;border-radius:3px;cursor:pointer;font-size:0.8rem;">✏️</button>' +
@@ -3880,6 +3905,8 @@ function vulVoorstelModal(id) {
   var evFout = document.getElementById('vm-ev-fout');
   if (evJaar) evJaar.value = '';
   if (evTeks) evTeks.value = '';
+  var ekstraReset = document.getElementById('vm-ev-ekstra-waarde');
+  if (ekstraReset) ekstraReset.value = '';
   if (evFout) { evFout.style.display = 'none'; evFout.textContent = ''; }
 
   // Reset nota, nuwe persoon, en stuur-kassie
@@ -3921,6 +3948,39 @@ function sluitVoorstelModal() {
 // Globale lys van events-voorstelle vir hierdie persoon
 var vmEvVoorstelle = []; // [{aksie:'NUUT'|'WYSIG'|'VVEE', indeks, jaar, tipe, teks}]
 
+function vmEvTipeBouSelect() {
+  var sel = document.getElementById('vm-ev-tipe');
+  if (!sel) return;
+  var tipes = window.CONRADIE_EVENT_TIPES || window.VERSTEK_EVENT_TIPES || [];
+  var huidig = sel.value;
+  sel.innerHTML = '';
+  tipes.forEach(function(t) {
+    var op = document.createElement('option');
+    op.value = t.kode;
+    op.textContent = (t.ikon ? t.ikon + ' ' : '') + t.naam;
+    sel.appendChild(op);
+  });
+  if (huidig) sel.value = huidig;
+  // Wys/verberg ekstra-veld (bv. ander_van)
+  sel.onchange = function() { vmEvToggleEkstra(); };
+  vmEvToggleEkstra();
+}
+
+function vmEvToggleEkstra() {
+  var sel = document.getElementById('vm-ev-tipe');
+  var tipes = window.CONRADIE_EVENT_TIPES || [];
+  var gekose = tipes.find(function(t) { return t.kode === (sel ? sel.value : ''); });
+  var ekstraDiv = document.getElementById('vm-ev-ekstra');
+  if (!ekstraDiv) return;
+  if (gekose && gekose.ekstra_veld) {
+    var lbl = ekstraDiv.querySelector('label');
+    if (lbl) lbl.textContent = gekose.ekstra_veld === 'ander_van' ? 'Kind se van:' : gekose.ekstra_veld;
+    ekstraDiv.style.display = 'block';
+  } else {
+    ekstraDiv.style.display = 'none';
+  }
+}
+
 function vmEvVoegBy() {
   var jaar = (document.getElementById('vm-ev-jaar') || {}).value || '';
   var tipe = (document.getElementById('vm-ev-tipe') || {}).value || 'ANDER';
@@ -3931,7 +3991,9 @@ function vmEvVoegBy() {
     return;
   }
   if (fout) fout.style.display = 'none';
-  vmEvVoorstelle.push({ aksie: 'NUUT', jaar: jaar || '', tipe: tipe, teks: teks });
+  var ekstraInv = document.getElementById('vm-ev-ekstra-waarde');
+  var ekstraWaarde = ekstraInv ? ekstraInv.value.trim() : '';
+  vmEvVoorstelle.push({ aksie: 'NUUT', jaar: jaar || '', tipe: tipe, teks: teks, ekstra: ekstraWaarde });
   // Reset invoervelde
   var evJaar = document.getElementById('vm-ev-jaar');
   var evTeks = document.getElementById('vm-ev-teks');
@@ -3942,7 +4004,11 @@ function vmEvVoegBy() {
   if (lys) {
     var nuutDiv = document.createElement('div');
     nuutDiv.style.cssText = 'padding:0.3rem 0.5rem;background:#1a2a1a;border:1px solid #2d5a2d;border-radius:3px;font-size:0.82rem;color:#80d080;margin-bottom:0.3rem;';
-    nuutDiv.textContent = '✅ Nuut: ' + (jaar || '?') + ' | ' + tipe + ' — ' + teks;
+    var _tLys = window.CONRADIE_EVENT_TIPES || [];
+    var _tObj = _tLys.find(function(x) { return x.kode === tipe; });
+    var _tNaam = (_tObj && _tObj.naam) ? _tObj.naam : tipe;
+    var _ekstraStr = ekstraWaarde ? ' (' + ekstraWaarde + ')' : '';
+    nuutDiv.textContent = '✅ Nuut: ' + (jaar || '?') + ' | ' + _tNaam + ' — ' + teks + _ekstraStr;
     lys.appendChild(nuutDiv);
   }
 }
@@ -4185,6 +4251,7 @@ function sendViaWhatsAppWeb()    { vmStuurWA(true);  }
 function sendViaEmail()          { vmStuurEmail(); }
 
 function attachCorrectionListeners() {
+  vmEvTipeBouSelect();
   var editBtn = document.getElementById('btn-edit');
   if (editBtn) {
     editBtn.addEventListener('click', function() {
@@ -4429,7 +4496,7 @@ function attachCorrectionListeners() {
     var html = '<div style="max-width:720px;margin:0 auto;padding:1rem;">';
     html += '<div style="display:flex;align-items:baseline;gap:0.7rem;margin-bottom:0.9rem;">';
     html += '<h2 style="color:var(--sepia-light);font-size:1.2rem;margin:0;">✏️ Admin</h2>';
-    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-1-1</span>';
+    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-3-2</span>';
     html += '</div>';
 
     // ── Proses-verduideliking (inklapbaar) ──
@@ -4612,6 +4679,13 @@ function attachCorrectionListeners() {
       html += '<button id="adm-github-btn" style="padding:0.4rem 1.1rem;background:#1a2a1a;color:#4a6a4a;border:none;border-radius:4px;cursor:not-allowed;font-size:0.83rem;" disabled>\u2601\uFE0F Stoor na GitHub</button>';
       html += '</div>';
       html += '<div id="adm-github-status" style="font-size:0.83rem;min-height:1rem;color:#4a5a4a;"></div>';
+      html += '</div>';
+      // Event-tipe bestuurder
+      html += '<div style="padding:0.6rem 0.8rem;background:#1a1a2a;border:1px solid #3a3a6a;border-radius:6px;margin-bottom:0.6rem;">';
+      html += '<div style="color:#8a8ad8;font-size:0.85rem;font-weight:bold;margin-bottom:0.4rem;">&#127931; Gebeurtenis-tipes</div>';
+      html += '<div style="color:#8a8a9a;font-size:0.80rem;margin-bottom:0.6rem;">Bestuur die lys van gebeurtenis-tipes wat familielede kan kies. Printbaar = verskyn ook op PDF/druk-blad.</div>';
+      html += '<button onclick="admEvTipesBou()" style="padding:0.5rem 1.2rem;background:#2a2a5a;color:#c8c8f8;border:none;border-radius:4px;cursor:pointer;font-size:0.85rem;font-weight:bold;">&#9999;&#65039; Redigeer Gebeurtenis-tipes</button>';
+      html += '<div id="adm-ev-tipes-paneel" style="display:none;margin-top:0.7rem;"></div>';
       html += '</div>';
       html += '</div>'; // end taak-stoor
 
@@ -4988,7 +5062,13 @@ function attachCorrectionListeners() {
           oudTeks = (ou_ev.year || '?') + ' | ' + (ou_ev.type || '') + ' — ' + (ou_ev.text || '');
         }
         var nuutTeks = ev.aksie === 'VVEE' ? '<em style="color:#e05050;">Verwyder</em>' :
-          (ev.jaar || '?') + ' | ' + (ev.tipe || '') + ' — ' + (ev.teks || '');
+          (function() {
+            var _tL = window.CONRADIE_EVENT_TIPES || [];
+            var _tO = _tL.find(function(x) { return x.kode === ev.tipe; });
+            var _tN = (_tO && _tO.naam) ? _tO.naam : (ev.tipe || '');
+            var _ek = ev.ekstra ? ' (' + ev.ekstra + ')' : '';
+            return (ev.jaar || '?') + ' | ' + _tN + ' — ' + (ev.teks || '') + _ek;
+          })();
         html += '<tr style="background:#0a0e14;">' +
           '<td style="padding:0.3rem 0.5rem;color:' + aksieKleur + ';font-size:0.82rem;">' + aksieLabel + '</td>' +
           '<td style="padding:0.3rem 0.5rem;color:#5c4510;font-size:0.82rem;">' + (oudTeks || '<em>—</em>') + '</td>' +
@@ -5001,6 +5081,7 @@ function attachCorrectionListeners() {
           'data-ev-jaar="' + (ev.jaar || '').replace(/"/g,'&quot;') + '" ' +
           'data-ev-tipe="' + (ev.tipe || '').replace(/"/g,'&quot;') + '" ' +
           'data-ev-teks="' + (ev.teks || '').replace(/"/g,'&quot;') + '" ' +
+          'data-ev-ekstra="' + (ev.ekstra || '').replace(/"/g,'&quot;') + '" ' +
           'checked style="cursor:pointer;width:16px;height:16px;accent-color:' + aksieKleur + ';"> ' +
           '<span style="color:' + aksieKleur + ';font-size:0.8rem;">Aanvaar</span></label>' +
           '</td></tr>';
@@ -5159,9 +5240,12 @@ function attachCorrectionListeners() {
       var jaar   = cb.getAttribute('data-ev-jaar');
       var tipe   = cb.getAttribute('data-ev-tipe');
       var teks   = cb.getAttribute('data-ev-teks');
+      var ekstra = cb.getAttribute('data-ev-ekstra') || '';
       if (!persoon.events) persoon.events = [];
       if (aksie === 'NUUT') {
-        persoon.events.push({ year: jaar || null, type: tipe || 'ANDER', text: teks });
+        var nuutEv = { year: jaar || null, type: tipe || 'ANDER', text: teks };
+        if (ekstra) nuutEv.ander_van = ekstra;
+        persoon.events.push(nuutEv);
         // Sorteer events op jaar na byvoeging
         persoon.events.sort(function(a, b) {
           if (!a.year && !b.year) return 0;
@@ -5171,7 +5255,9 @@ function attachCorrectionListeners() {
         });
         toegepas++;
       } else if (aksie === 'WYSIG' && !isNaN(indeks) && persoon.events[indeks]) {
-        persoon.events[indeks] = { year: jaar || null, type: tipe || 'ANDER', text: teks };
+        var wysigEv = { year: jaar || null, type: tipe || 'ANDER', text: teks };
+        if (ekstra) wysigEv.ander_van = ekstra;
+        persoon.events[indeks] = wysigEv;
         toegepas++;
       } else if (aksie === 'VVEE' && !isNaN(indeks) && persoon.events[indeks]) {
         persoon.events.splice(indeks, 1);
@@ -5552,7 +5638,9 @@ function attachCorrectionListeners() {
     html += '<th style="text-align:left;padding:0.3rem 0.4rem;">Velde</th></tr>';
     log.forEach(function(item, i) {
       var tyd = item.tyd ? item.tyd.slice(0,16).replace('T',' ') : '?';
-      var velde = Object.keys(item.wysigings || {}).join(', ') || item.tipe || '?';
+      var velde = item.tipe === 'samesmelting'
+        ? '\uD83D\uDD00 ' + (item.bron_id || '?') + ' \u2192 ' + (item.doel_id || '?')
+        : (Object.keys(item.wysigings || {}).join(', ') || item.tipe || '?');
       html += '<tr style="border-bottom:1px solid #2a2010;color:#c8b890;">';
       html += '<td style="padding:0.3rem 0.4rem;">' + tyd + '</td>';
       html += '<td style="padding:0.3rem 0.4rem;">' + (item.naam || item.rekord_id) + '</td>';
@@ -6771,6 +6859,108 @@ function attachCorrectionListeners() {
     document.getElementById('adm-status').textContent = '⬇️ JSON afgelaai.';
   }
 
+  // ── Event-tipe bestuurder ──
+  window.admEvTipesBou = function() {
+    var paneel = document.getElementById('adm-ev-tipes-paneel');
+    if (!paneel) return;
+    var tipes = window.CONRADIE_EVENT_TIPES || [];
+    // Tel gebruik per tipe
+    var gebruik = {};
+    (window.CONRADIE_DATA || []).forEach(function(r) {
+      (r.events || []).forEach(function(ev) {
+        if (ev.type) gebruik[ev.type] = (gebruik[ev.type] || 0) + 1;
+      });
+    });
+    var h = '<table style="width:100%;border-collapse:collapse;font-size:0.82rem;margin-bottom:0.5rem;">';
+    h += '<tr style="color:#8a8ad8;border-bottom:1px solid #3a3a6a;">';
+    h += '<th style="text-align:left;padding:0.3rem 0.3rem;">Tipe</th>';
+    h += '<th style="text-align:center;padding:0.3rem 0.3rem;">Druk</th>';
+    h += '<th style="text-align:center;padding:0.3rem 0.3rem;">Gebruik</th>';
+    h += '<th style="text-align:left;padding:0.3rem 0.3rem;">Aksie</th></tr>';
+    tipes.forEach(function(t, i) {
+      var geb = gebruik[t.kode] || 0;
+      h += '<tr style="border-bottom:1px solid #2a2a4a;color:#c8c8e8;" id="adm-ev-ry-' + i + '">';
+      h += '<td style="padding:0.3rem 0.3rem;">' + (t.ikon || '') + ' ';
+      h += '<input type="text" value="' + escHtml(t.naam) + '" id="adm-ev-naam-' + i + '" '
+        + 'style="background:#1a1a3a;color:#e8e8f8;border:1px solid #4a4a7a;border-radius:3px;padding:0.2rem 0.4rem;font-size:0.82rem;width:9rem;">';
+      h += '</td>';
+      h += '<td style="text-align:center;padding:0.3rem 0.3rem;">';
+      h += '<input type="checkbox" id="adm-ev-druk-' + i + '"' + (t.printbaar ? ' checked' : '') + '>';
+      h += '</td>';
+      h += '<td style="text-align:center;padding:0.3rem 0.3rem;color:' + (geb > 0 ? '#8ab08a' : '#5a5a7a') + ';">' + geb + '</td>';
+      h += '<td style="padding:0.3rem 0.3rem;">';
+      if (geb === 0) {
+        h += '<button onclick="admEvTipeVerwyder(' + i + ')" style="padding:0.15rem 0.5rem;background:#5a1a1a;color:#e8c8c8;border:none;border-radius:3px;cursor:pointer;font-size:0.78rem;">Verwyder</button>';
+      } else {
+        h += '<span style="color:#4a4a6a;font-size:0.75rem;">(' + geb + ' rekords)</span>';
+      }
+      h += '</td></tr>';
+    });
+    h += '</table>';
+    h += '<div style="display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:0.4rem;">';
+    h += '<input type="text" id="adm-ev-nuut-naam" placeholder="Nuwe tipe naam"'
+      + ' style="padding:0.3rem 0.5rem;background:#1a1a3a;color:#e8e8f8;border:1px solid #4a4a7a;border-radius:3px;font-size:0.82rem;flex:1;min-width:8rem;">';
+    h += '<label style="color:#c8c8e8;font-size:0.82rem;display:flex;align-items:center;gap:0.3rem;">'
+      + '<input type="checkbox" id="adm-ev-nuut-druk"> Printbaar</label>';
+    h += '<button onclick="admEvTipeVoegBy()" style="padding:0.3rem 0.8rem;background:#2a2a6a;color:#c8c8f8;border:none;border-radius:3px;cursor:pointer;font-size:0.82rem;">+ Voeg by</button>';
+    h += '</div>';
+    h += '<div style="display:flex;gap:0.4rem;flex-wrap:wrap;">';
+    h += '<button onclick="admEvTipesStoor()" style="padding:0.4rem 1rem;background:#3a3a8a;color:#e8e8ff;border:none;border-radius:4px;cursor:pointer;font-size:0.84rem;font-weight:bold;">&#128190; Stoor Wysigings</button>';
+    h += '<button onclick="admEvTipesHerstel()" style="padding:0.4rem 0.8rem;background:#3a2a1a;color:#e8d8c8;border:none;border-radius:4px;cursor:pointer;font-size:0.84rem;">&#8635; Herstel verstek</button>';
+    h += '</div>';
+    h += '<div id="adm-ev-status" style="font-size:0.82rem;margin-top:0.4rem;color:#8a8ad8;min-height:1rem;"></div>';
+    paneel.innerHTML = h;
+    paneel.style.display = 'block';
+  };
+
+  window.admEvTipeVerwyder = function(i) {
+    var tipes = window.CONRADIE_EVENT_TIPES || [];
+    if (!confirm('Verwyder tipe "' + (tipes[i] ? tipes[i].naam : i) + '"?')) return;
+    tipes.splice(i, 1);
+    window.CONRADIE_EVENT_TIPES = tipes;
+    window.admEvTipesBou();
+  };
+
+  window.admEvTipeVoegBy = function() {
+    var naam = (document.getElementById('adm-ev-nuut-naam') || {}).value.trim();
+    if (!naam) return;
+    var druk = !!(document.getElementById('adm-ev-nuut-druk') || {}).checked;
+    var kode = naam.toUpperCase().replace(/[^A-Z0-9]/g, '_').substring(0, 20);
+    var tipes = window.CONRADIE_EVENT_TIPES || [];
+    tipes.push({ kode: kode, naam: naam, ikon: '📌', printbaar: druk, ekstra_veld: null });
+    window.CONRADIE_EVENT_TIPES = tipes;
+    window.admEvTipesBou();
+  };
+
+  window.admEvTipesStoor = function() {
+    var tipes = window.CONRADIE_EVENT_TIPES || [];
+    // Lees terug uit UI (naam + printbaar kan gewysig wees)
+    tipes.forEach(function(t, i) {
+      var naamEl = document.getElementById('adm-ev-naam-' + i);
+      var drukEl = document.getElementById('adm-ev-druk-' + i);
+      if (naamEl) t.naam = naamEl.value.trim() || t.naam;
+      if (drukEl) t.printbaar = drukEl.checked;
+    });
+    window.CONRADIE_EVENT_TIPES = tipes;
+    try {
+      localStorage.setItem('conradie_event_tipes', JSON.stringify(tipes));
+      var st = document.getElementById('adm-ev-status');
+      if (st) { st.textContent = '✅ Gestoor in localStorage. Sal saamgaan met volgende JSON-aflaai.'; st.style.color = '#8ab08a'; }
+      // Hernu voorstel-modal se keuselijstjie
+      if (typeof vmEvTipeBouSelect === 'function') vmEvTipeBouSelect();
+    } catch(e) {
+      var st = document.getElementById('adm-ev-status');
+      if (st) { st.textContent = 'Fout: ' + e.message; st.style.color = '#e05050'; }
+    }
+  };
+
+  window.admEvTipesHerstel = function() {
+    if (!confirm('Herstel na verstek-lys? Alle wysigings word verwyder.')) return;
+    window.CONRADIE_EVENT_TIPES = JSON.parse(JSON.stringify(window.VERSTEK_EVENT_TIPES));
+    try { localStorage.removeItem('conradie_event_tipes'); } catch(e) {}
+    window.admEvTipesBou();
+  };
+
   // ── Pas patch-log toe op data en laai af (handmatige merge-werkstroom) ──
   window.admPasToeEnLaaiAf = function admPasToeEnLaaiAf() {
     var statusEl = document.getElementById('adm-merge-status');
@@ -6791,6 +6981,34 @@ function attachCorrectionListeners() {
     CONRADIE_DATA.forEach(function(p) { if (p.id) indeks[p.id] = p; });
     var toegepas = 0, oorgeslaan = 0;
     log.forEach(function(item) {
+      // ── Samesmelting-inskrywing ──
+      if (item.tipe === 'samesmelting') {
+        var bron = indeks[item.bron_id];
+        var doel = indeks[item.doel_id];
+        if (!bron || !doel) { oorgeslaan++; return; }
+        // Pas veld-keuses toe op doel-rekord
+        var veldToe = item.velde_toegepas || {};
+        Object.keys(veldToe).forEach(function(v) {
+          var waarde = veldToe[v].waarde;
+          if (waarde !== undefined && waarde !== null) doel[v] = waarde;
+        });
+        // Kinders-bywerking: vervang bron se parents-verwysing met doel
+        (item.kinders_bygewerk || []).forEach(function(kidId) {
+          var kid = indeks[kidId];
+          if (!kid || !kid.parents) return;
+          kid.parents = kid.parents.map(function(p) {
+            return p.id === item.bron_id ? { id: item.doel_id, name: doel.name } : p;
+          });
+          if (!doel.children_ids) doel.children_ids = [];
+          if (doel.children_ids.indexOf(kidId) === -1) doel.children_ids.push(kidId);
+        });
+        // Merk bron-rekord as saamgesmelt
+        bron.merged_into = item.doel_id;
+        bron.merged_date = item.tyd ? item.tyd.substring(0, 10) : new Date().toISOString().substring(0, 10);
+        toegepas++;
+        return;
+      }
+      // ── Gewone wysiging-inskrywing ──
       if (!item.rekord_id || !item.wysigings) { oorgeslaan++; return; }
       var p = indeks[item.rekord_id];
       if (!p) { oorgeslaan++; return; }
@@ -6811,6 +7029,7 @@ function attachCorrectionListeners() {
     // Laai af
     var uitvoerData = { people: CONRADIE_DATA };
     if (window.CONRADIE_STATS) uitvoerData.stats = CONRADIE_STATS;
+    if (window.CONRADIE_EVENT_TIPES) uitvoerData.meta = { event_tipes: window.CONRADIE_EVENT_TIPES };
     var blob = new Blob([JSON.stringify(uitvoerData)], { type: 'application/json' });
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a');

@@ -2979,7 +2979,7 @@ function buildPanelHTML(r) {
   const sterfDatum = r.death_date || (r.death_year ? String(r.death_year) : '');
   if (sterfDatum) dateRows.push(`<div class="panel-row"><span class="label">Oorlede</span><span class="value">${b(sterfDatum)}${r.death_place ? ', '+r.death_place : ''}</span></div>`);
   if (r.burial_place) dateRows.push(`<div class="panel-row"><span class="label">Begrawe</span><span class="value">${r.burial_place}</span></div>`);
-  if (r.note) dateRows.push(`<div class="panel-row"><span class="label">Nota</span><span class="value">${escHtml(r.note)}</span></div>`);
+  if (r.note) dateRows.push(`<div class="panel-row"><span class="label">Nota</span><span class="value" style="white-space:pre-wrap;">${escHtml(r.note)}</span></div>`);
   if (dateRows.length) parts.push(`<div class="panel-section"><h3>Lewensdata</h3>${dateRows.join('')}</div>`);
 
   // Parents
@@ -4496,7 +4496,7 @@ function attachCorrectionListeners() {
     var html = '<div style="max-width:720px;margin:0 auto;padding:1rem;">';
     html += '<div style="display:flex;align-items:baseline;gap:0.7rem;margin-bottom:0.9rem;">';
     html += '<h2 style="color:var(--sepia-light);font-size:1.2rem;margin:0;">✏️ Admin</h2>';
-    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-4-2</span>';
+    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-5-1</span>';
     html += '</div>';
 
     // ── Proses-verduideliking (inklapbaar) ──
@@ -5560,6 +5560,39 @@ function attachCorrectionListeners() {
     p.events      = p.events || [];
     p.note        = get('adm-note');       // Leë waarde toegelaat (nota mag verwyder word)
 
+    // ── Outomatiese datumnormalisering (v9-5-1) ──
+    // Normaliseer datumvelde indien nie-standaard formaat ingevoer is
+    var datumNormLys = [];
+    var admDatumVelde = [
+      { veld: 'birth_date',  naam: 'Geboortedatum' },
+      { veld: 'death_date',  naam: 'Sterfdatum' }
+    ];
+    admDatumVelde.forEach(function(dp) {
+      var huidig = p[dp.veld];
+      if (!huidig) return;
+      if (typeof datumNormaliseer === 'function') {
+        var res = datumNormaliseer(huidig);
+        if (res && res.normaal) {
+          datumNormLys.push({ veld: dp.veld, naam: dp.naam, oud: huidig, nuut: res.normaal, rede: res.rede, metNota: res.metNota });
+          p[dp.veld] = res.normaal;
+          // Bywerk die invoerveld ook sodat dit die genormaliseerde waarde wys
+          var invEl = document.getElementById('adm-' + dp.veld.replace('_', '-'));
+          if (invEl) invEl.value = res.normaal;
+          // As relatiewe datum, voeg nota by
+          if (res.metNota) {
+            var notaTeks = dp.naam + ' oorspronklik gedokumenteer as "' + huidig + '"';
+            if (p.note && p.note.trim()) {
+              p.note = p.note.trim() + '; ' + notaTeks;
+            } else {
+              p.note = notaTeks;
+            }
+            var noteEl = document.getElementById('adm-note');
+            if (noteEl) noteEl.value = p.note;
+          }
+        }
+      }
+    });
+
     // Herbereken name
     if (p.given || p.surname) {
       p.name = ((p.given || '') + ' ' + (p.surname || '')).trim();
@@ -5596,11 +5629,16 @@ function attachCorrectionListeners() {
       });
       // Dateer admOrig op sodat dubbel-stoor nie duplikate skep nie
       window.admOrig = JSON.parse(JSON.stringify(na));
+      var normTeks = datumNormLys.length > 0
+        ? ' [📅 ' + datumNormLys.map(function(x) { return x.naam + ': "' + x.oud + '" → "' + x.nuut + '"'; }).join('; ') + ']'
+        : '';
       document.getElementById('adm-status').textContent =
-        '✅ Gewysig: ' + p.name + ' (' + veranderCount + ' veld(e)) — veilig gestoor. Gebruik \"Stoor na GitHub\" om te voltooi.';
+        '✅ Gewysig: ' + p.name + ' (' + veranderCount + ' veld(e)) — veilig gestoor.' + normTeks + ' Gebruik "Stoor na GitHub" om te voltooi.';
     } else {
-      document.getElementById('adm-status').textContent =
-        'ℹ️ Geen veranderinge opgespoor vir ' + p.name + '.';
+      var normTeks2 = datumNormLys.length > 0
+        ? '📅 Datum(s) genormaliseer: ' + datumNormLys.map(function(x) { return x.naam + ': "' + x.oud + '" → "' + x.nuut + '"'; }).join('; ') + '. Stoor nou om te bevestig.'
+        : 'ℹ️ Geen veranderinge opgespoor vir ' + p.name + '.';
+      document.getElementById('adm-status').textContent = normTeks2;
     }
     patchLogBouAfdeling();
   }

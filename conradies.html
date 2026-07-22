@@ -4116,12 +4116,13 @@ function vmBouBoodskap(nuutPersAppart) {
 
   // Events-voorstelle
   vmEvVoorstelle.forEach(function(ev) {
+    var vanSuffix = (ev.tipe === 'KIND_ANDER_VAN' && ev.ander_van) ? '|VAN:' + ev.ander_van : '';
     if (ev.aksie === 'NUUT') {
-      lyne.push('EVENT_NUUT: ' + (ev.jaar || '') + '|' + (ev.tipe || 'ANDER') + '|' + (ev.teks || ''));
+      lyne.push('EVENT_NUUT: ' + (ev.jaar || '') + '|' + (ev.tipe || 'ANDER') + '|' + (ev.teks || '') + vanSuffix);
     } else if (ev.aksie === 'WYSIG') {
-      lyne.push('EVENT_WYSIG: ' + ((ev.indeks + 1) || '?') + '|' + (ev.jaar || '') + '|' + (ev.tipe || '') + '|' + (ev.teks || ''));
+      lyne.push('EVENT_WYSIG: ' + ((ev.indeks + 1) || '?') + '|' + (ev.jaar || '') + '|' + (ev.tipe || '') + '|' + (ev.teks || '') + vanSuffix);
     } else if (ev.aksie === 'VVEE') {
-      lyne.push('EVENT_VVEE: ' + ((ev.indeks + 1) || '?') + '|' + (ev.jaar || '') + '|' + (ev.tipe || '') + '|' + (ev.teks || ''));
+      lyne.push('EVENT_VVEE: ' + ((ev.indeks + 1) || '?') + '|' + (ev.jaar || '') + '|' + (ev.tipe || '') + '|' + (ev.teks || '') + vanSuffix);
     }
   });
 
@@ -4496,7 +4497,7 @@ function attachCorrectionListeners() {
     var html = '<div style="max-width:720px;margin:0 auto;padding:1rem;">';
     html += '<div style="display:flex;align-items:baseline;gap:0.7rem;margin-bottom:0.9rem;">';
     html += '<h2 style="color:var(--sepia-light);font-size:1.2rem;margin:0;">✏️ Admin</h2>';
-    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-5-2</span>';
+    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-5-3</span>';
     html += '</div>';
 
     // ── Proses-verduideliking (inklapbaar) ──
@@ -4952,12 +4953,32 @@ function attachCorrectionListeners() {
       var kol = reel.indexOf(':');
       var sleutel = reel.substring(0, kol).trim().toUpperCase();
       var dele = reel.substring(kol + 1).trim().split('|');
+      // Hulpfunksie: onttrek |VAN:xxx as dit teenwoordig is
+      function parseerEvDele(deleArr, teksIndeks) {
+        var teksRou = (deleArr[teksIndeks] || '').trim();
+        var vanWaarde = '';
+        var vanMatch = teksRou.match(/\|VAN:(.+)$/);
+        if (vanMatch) {
+          vanWaarde = vanMatch[1].trim();
+          teksRou = teksRou.substring(0, vanMatch.index).trim();
+        }
+        return { teks: teksRou, ander_van: vanWaarde };
+      }
       if (sleutel === 'EVENT_NUUT' && dele.length >= 2) {
-        evVoorstelle.push({ aksie:'NUUT', jaar: dele[0].trim(), tipe: dele[1].trim(), teks: (dele[2] || '').trim() });
+        var p2 = parseerEvDele(dele, 2);
+        var ev2 = { aksie:'NUUT', jaar: dele[0].trim(), tipe: dele[1].trim(), teks: p2.teks };
+        if (p2.ander_van) ev2.ander_van = p2.ander_van;
+        evVoorstelle.push(ev2);
       } else if (sleutel === 'EVENT_WYSIG' && dele.length >= 3) {
-        evVoorstelle.push({ aksie:'WYSIG', indeks: (parseInt(dele[0].trim()) - 1), jaar: dele[1].trim(), tipe: dele[2].trim(), teks: (dele[3] || '').trim() });
+        var p3 = parseerEvDele(dele, 3);
+        var ev3 = { aksie:'WYSIG', indeks: (parseInt(dele[0].trim()) - 1), jaar: dele[1].trim(), tipe: dele[2].trim(), teks: p3.teks };
+        if (p3.ander_van) ev3.ander_van = p3.ander_van;
+        evVoorstelle.push(ev3);
       } else if (sleutel === 'EVENT_VVEE') {
-        evVoorstelle.push({ aksie:'VVEE', indeks: (parseInt(dele[0].trim()) - 1), jaar: dele[1].trim(), tipe: dele[2].trim(), teks: (dele[3] || '').trim() });
+        var p4 = parseerEvDele(dele, 3);
+        var ev4 = { aksie:'VVEE', indeks: (parseInt(dele[0].trim()) - 1), jaar: dele[1].trim(), tipe: dele[2].trim(), teks: p4.teks };
+        if (p4.ander_van) ev4.ander_van = p4.ander_van;
+        evVoorstelle.push(ev4);
       }
     });
 
@@ -6663,13 +6684,35 @@ function attachCorrectionListeners() {
         : teksOmByTeVoeg.join('\n');
       p.note = gesamentlik;
 
-      // Skryf patch-log inskrywing (slegs note-veld)
+      // Stel ongeldige datumvelde leeg in geheue
+      var datumWysigings = { note: { oud: ouNota, nuut: gesamentlik } };
+      items.forEach(function(x) {
+        var basisVeld = x.veld.replace(/\[\d+\]$/, '');
+        var indeksMatch = x.veld.match(/\[(\d+)\]$/);
+        if (indeksMatch) {
+          // Array-veld (bv. marr_dates[0])
+          var arr = p[basisVeld];
+          if (Array.isArray(arr)) {
+            var idx = parseInt(indeksMatch[1]);
+            var ouWaarde = arr[idx] || '';
+            arr[idx] = '';
+            datumWysigings[x.veld] = { oud: ouWaarde, nuut: '' };
+          }
+        } else {
+          // Enkelveld (bv. birth_date, death_date)
+          var ouWaarde = p[basisVeld] || '';
+          p[basisVeld] = '';
+          datumWysigings[basisVeld] = { oud: ouWaarde, nuut: '' };
+        }
+      });
+
+      // Skryf patch-log inskrywing (note + leeggemaakte datumvelde)
       patchLogVoegBy({
         tipe: 'datum_normalisering',
         rekord_id: rekordId,
         naam: p.name || rekordId,
         tyd: new Date().toISOString(),
-        wysigings: { note: { oud: ouNota, nuut: gesamentlik } }
+        wysigings: datumWysigings
       });
       geskryf++;
     });

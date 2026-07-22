@@ -4496,7 +4496,7 @@ function attachCorrectionListeners() {
     var html = '<div style="max-width:720px;margin:0 auto;padding:1rem;">';
     html += '<div style="display:flex;align-items:baseline;gap:0.7rem;margin-bottom:0.9rem;">';
     html += '<h2 style="color:var(--sepia-light);font-size:1.2rem;margin:0;">✏️ Admin</h2>';
-    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-5-1</span>';
+    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-5-2</span>';
     html += '</div>';
 
     // ── Proses-verduideliking (inklapbaar) ──
@@ -4728,6 +4728,10 @@ function attachCorrectionListeners() {
       html += '<div id="adm-datum-norm-knop" style="display:none;margin-bottom:0.6rem;">';
       html += '<button onclick="admDatumNormaliseer()" style="padding:0.45rem 1rem;background:#0a2010;color:#70d890;border:1px solid #3a7a4a;border-radius:4px;cursor:pointer;font-size:0.85rem;font-weight:bold;">✅ Fase B: Normaliseer &amp; Skryf na Patch-log</button>';
       html += '<span style="color:#5a8a6a;font-size:0.78rem;display:block;margin-top:0.3rem;">Skryf normaliseringe as <code>datum_normalisering</code>-inskrywings — saam toegepas by volgende aflaai.</span>';
+      html += '</div>';
+      html += '<div id="adm-datum-c-knop" style="display:none;margin-bottom:0.6rem;">';
+      html += '<button onclick="admDatumMerkOnbekend()" style="padding:0.45rem 1rem;background:#2a1a00;color:#e0a050;border:1px solid #6a4a1a;border-radius:4px;cursor:pointer;font-size:0.85rem;font-weight:bold;">📝 Fase C: Merk Ongeldige Datums in Note-veld</button>';
+      html += '<span style="color:#8a6a3a;font-size:0.78rem;display:block;margin-top:0.3rem;">Voeg nota by vir elke ongeldige datum — datumveld self bly ongeroerd.</span>';
       html += '</div>';
       html += '<div id="adm-datum-uitset" style="margin-top:0.3rem;font-size:0.80rem;"></div>';
       html += '</div>';
@@ -6505,6 +6509,10 @@ function attachCorrectionListeners() {
     uitset.innerHTML = h;
     if (csvKnop) csvKnop.style.display = 'inline-block';
     if (normKnop && kanFiks.length > 0) normKnop.style.display = 'block';
+
+    // Fase C-knoppie: slegs as daar onbekende formate is
+    var cKnop = document.getElementById('adm-datum-c-knop');
+    if (cKnop) cKnop.style.display = onbekend.length > 0 ? 'block' : 'none';
   };
 
   // CSV-aflaai vir datumverslag
@@ -6601,6 +6609,78 @@ function attachCorrectionListeners() {
     nuH += '<p style="color:#5a8a6a;font-size:0.78rem;">Gaan na <b>Stoor</b>-paneel \u2192 <b>Pas Patches Toe &amp; Laai Af</b> om die gekorrigeerde JSON af te laai.</p>';
     if (uitset) uitset.innerHTML = nuH;
 
+    if (typeof patchLogBouAfdeling === 'function') patchLogBouAfdeling();
+  };
+
+  // Fase C: Voeg nota by vir ongeldige datums — datumveld self bly ongeroerd
+  window.admDatumMerkOnbekend = function admDatumMerkOnbekend() {
+    var lys = window._datumLys;
+    var uitset = document.getElementById('adm-datum-uitset');
+    var cKnop = document.getElementById('adm-datum-c-knop');
+    if (!lys || lys.length === 0) {
+      if (uitset) uitset.innerHTML = '<span style="color:#e0a050;">Voer eers Fase A uit.</span>';
+      return;
+    }
+    var onbekend = lys.filter(function(x) { return !x.kanFiks; });
+    if (onbekend.length === 0) {
+      if (uitset) uitset.innerHTML = '<span style="color:#70d890;">Geen ongeldige datums om te merk nie.</span>';
+      return;
+    }
+
+    var data = (typeof CONRADIE_DATA !== 'undefined') ? CONRADIE_DATA : window.CONRADIE_DATA;
+    if (!data) { if (uitset) uitset.innerHTML = '<span style="color:#e05050;">Databasis nie gelaai nie.</span>'; return; }
+    var indeks = {};
+    data.forEach(function(p) { if (p && p.id) indeks[p.id] = p; });
+
+    // Groepeer per rekord-ID (rekord kan meer as een ongeldige datum hê)
+    var perRekord = {};
+    onbekend.forEach(function(x) {
+      if (!perRekord[x.id]) perRekord[x.id] = [];
+      perRekord[x.id].push(x);
+    });
+
+    var geskryf = 0;
+    Object.keys(perRekord).forEach(function(rekordId) {
+      var p = indeks[rekordId];
+      if (!p) return;
+      var items = perRekord[rekordId];
+
+      // Bou nota-teks vir elke ongeldige datumveld
+      var nuweNotas = items.map(function(x) {
+        var veldLabel = datumVeldNaam(x.veld.replace(/\[\d+\]$/, ''));
+        return '%' + veldLabel + ' nie bekend nie; aangeteken in brondokument as: "' + x.huidig + '"';
+      });
+
+      // Heg aan by bestaande nota (vermy duplikate)
+      var ouNota = p.note || '';
+      var teksOmByTeVoeg = nuweNotas.filter(function(n) {
+        return ouNota.indexOf(n) === -1;
+      });
+      if (teksOmByTeVoeg.length === 0) return; // Reeds gemerk
+
+      var gesamentlik = ouNota
+        ? ouNota.trim() + '\n' + teksOmByTeVoeg.join('\n')
+        : teksOmByTeVoeg.join('\n');
+      p.note = gesamentlik;
+
+      // Skryf patch-log inskrywing (slegs note-veld)
+      patchLogVoegBy({
+        tipe: 'datum_normalisering',
+        rekord_id: rekordId,
+        naam: p.name || rekordId,
+        tyd: new Date().toISOString(),
+        wysigings: { note: { oud: ouNota, nuut: gesamentlik } }
+      });
+      geskryf++;
+    });
+
+    // Wis Fase C-knoppie sodat dit nie herhaal word nie
+    window._datumLys = null;
+    if (cKnop) cKnop.style.display = 'none';
+
+    var nuH = '<p style="color:#e0c070;font-size:0.82rem;">📝 ' + geskryf + ' rekord(s) gemerk met nota in Note-veld.</p>';
+    nuH += '<p style="color:#8a7a4a;font-size:0.78rem;">Gaan na <b>Stoor</b>-paneel \u2192 <b>Pas Patches Toe &amp; Laai Af</b> om die gekorrigeerde JSON af te laai.</p>';
+    if (uitset) uitset.innerHTML = nuH;
     if (typeof patchLogBouAfdeling === 'function') patchLogBouAfdeling();
   };
 

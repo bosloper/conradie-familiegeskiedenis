@@ -5486,7 +5486,7 @@ function attachCorrectionListeners() {
     set('adm-district',    p.district);
     set('adm-note',        p.note);
 
-    // Stoor oorspronklike waardes vir vergelyking
+    // Stoor oorspronklike waardes vir vergelyking (diep-kopie van events — nie verwysing nie)
     window.admOrig = {
       given:       p.given       || '',
       surname:     p.surname     || '',
@@ -5497,7 +5497,7 @@ function attachCorrectionListeners() {
       death_place: p.death_place || '',
       burial_place:p.burial_place|| '',
       occupation:  p.occupation  || '',
-      events:      p.events      || [],
+      events:      JSON.parse(JSON.stringify(p.events || [])),
       note:        p.note        || ''
     };
 
@@ -6690,7 +6690,6 @@ function attachCorrectionListeners() {
         var basisVeld = x.veld.replace(/\[\d+\]$/, '');
         var indeksMatch = x.veld.match(/\[(\d+)\]$/);
         if (indeksMatch) {
-          // Array-veld (bv. marr_dates[0])
           var arr = p[basisVeld];
           if (Array.isArray(arr)) {
             var idx = parseInt(indeksMatch[1]);
@@ -6699,7 +6698,6 @@ function attachCorrectionListeners() {
             datumWysigings[x.veld] = { oud: ouWaarde, nuut: '' };
           }
         } else {
-          // Enkelveld (bv. birth_date, death_date)
           var ouWaarde = p[basisVeld] || '';
           p[basisVeld] = '';
           datumWysigings[basisVeld] = { oud: ouWaarde, nuut: '' };

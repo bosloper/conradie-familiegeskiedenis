@@ -682,29 +682,43 @@ main {
   }
   aside.filters-open {
     max-height: 100vh;
-    padding-top: 1.4rem;
-    padding-bottom: 1.4rem;
+    padding-top: 0.8rem;
+    padding-bottom: 0.8rem;
     overflow-y: auto;
+    gap: 0.8rem;
   }
   .filter-toggle-btn {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    background: var(--ink);
+    gap: 0.6rem;
+    background: #2a1f0e;
     color: var(--sepia-light);
     border: none;
-    border-bottom: 1px solid var(--sepia);
+    border-bottom: 2px solid var(--sepia);
+    border-top: 1px solid #3d3020;
     width: 100%;
-    padding: 0.6rem 1rem;
+    padding: 0.85rem 1rem;
     font-family: 'Josefin Sans', sans-serif;
-    font-size: 0.65rem;
-    letter-spacing: 0.15em;
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
     cursor: pointer;
     text-align: left;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
   }
-  .filter-toggle-btn .toggle-arrow { margin-left: auto; transition: transform 0.3s; }
+  .filter-toggle-btn .toggle-arrow {
+    margin-left: auto;
+    transition: transform 0.3s;
+    font-size: 1rem;
+    color: var(--sepia);
+  }
+  .filter-toggle-btn.open {
+    background: #1a1208;
+    color: var(--sepia);
+  }
   .filter-toggle-btn.open .toggle-arrow { transform: rotate(180deg); }
+  main { min-height: calc(100vh - 130px); }
+  body.filters-oop main { min-height: 0; }
   #detail-panel { width: 100%; right: -100%; }
   header {
     padding: 0.9rem 1rem;
@@ -844,6 +858,31 @@ body.druk-aktief #druk-skerp {
     opacity: 1;
   }
   .filter-toggle-btn.open .filter-hint-badge { display: none; }
+  .filter-section label.section-label {
+    font-size: 0.55rem;
+    margin-bottom: 0.35rem;
+    padding-bottom: 0.2rem;
+  }
+  .filter-section {
+    margin-bottom: 0;
+  }
+  .search-wrap input {
+    font-size: 0.88rem;
+    padding: 0.4rem 2rem 0.4rem 0.6rem;
+  }
+  .toggle-row {
+    font-size: 0.82rem;
+    padding: 0.15rem 0;
+  }
+  .sort-select {
+    font-size: 0.82rem;
+    padding: 0.3rem 0.5rem;
+  }
+  .reset-btn {
+    font-size: 0.78rem;
+    padding: 0.4rem 0.8rem;
+    margin-top: 0.2rem;
+  }
   @keyframes pulse-badge {
     0%,100% { opacity:1; } 50% { opacity:0.4; }
   }
@@ -1820,7 +1859,7 @@ body.druk-aktief #druk-skerp {
     <div class="filter-section">
       <label class="section-label">Soek naam / kode</label>
       <div class="search-wrap">
-        <input type="text" id="search-input" placeholder="naam, kode, 4-syfer nr, geboortejaar…" autocomplete="off">
+        <input type="text" id="search-input" placeholder="naam, kode, rekordnr (bv. 4011 of 10234), geboortejaar…" autocomplete="off">
         <button class="search-clear" id="search-clear" title="Verwyder soektog">×</button>
       </div>
     </div>
@@ -1924,7 +1963,7 @@ body.druk-aktief #druk-skerp {
   </div>
 <!-- Injected into panel, after panel-close div -->
 <div class="panel-actions" id="panel-actions" style="display:none">
-  <button class="btn-edit" id="btn-edit">✏️ Stel wysiging voor</button>
+  <button class="btn-edit" id="btn-edit" onclick="toggleCorrectionDrawer(correctionPersonId)">✏️ Stel wysiging voor</button>
   <button class="btn-druk" id="btn-druk" onclick="if(correctionPersonId){var r=indexById[correctionPersonId];if(r)oopDrukSkerp(r);}" title="Druk / stoor as PDF">🖨️ Druk / PDF</button>
 </div>
 
@@ -3733,7 +3772,7 @@ const HULP_INHOUD = {
     afdelings: [
       {
         kop: 'Soek \'n persoon',
-        teks: 'Tik \'n naam, familiekode (bv. c2d4e8), 4-syfer rekordnommer, of geboortejaar in die soekveld. Resultate verskyn onmiddellik terwyl jy tik.'
+        teks: 'Tik \'n naam, familiekode (bv. c2d4e8), rekordnommer (4 of 5 syfers), of geboortejaar in die soekveld. Resultate verskyn onmiddellik terwyl jy tik.'
       },
       {
         kop: 'Filters (links)',
@@ -4253,23 +4292,15 @@ function sendViaEmail()          { vmStuurEmail(); }
 
 function attachCorrectionListeners() {
   vmEvTipeBouSelect();
-  var editBtn = document.getElementById('btn-edit');
-  if (editBtn) {
-    editBtn.addEventListener('click', function() {
-      toggleCorrectionDrawer(correctionPersonId);
-    });
-    editBtn.addEventListener('touchend', function(e) {
-      e.preventDefault();
-      toggleCorrectionDrawer(correctionPersonId);
-    });
-  }
-  // Overlay sluit modal
+  // btn-edit gebruik onclick direk (sien HTML) — geen addEventListener nodig nie
+  // Overlay: bind slegs een keer om stapeling te vermy
   var ov = document.getElementById('voorstel-overlay');
-  if (ov) {
+  if (ov && !ov._luisterGebind) {
     ov.addEventListener('click', sluitVoorstelModal);
     ov.addEventListener('touchend', function(e) {
       e.preventDefault(); sluitVoorstelModal();
     });
+    ov._luisterGebind = true;
   }
 }
 
@@ -4497,7 +4528,7 @@ function attachCorrectionListeners() {
     var html = '<div style="max-width:720px;margin:0 auto;padding:1rem;">';
     html += '<div style="display:flex;align-items:baseline;gap:0.7rem;margin-bottom:0.9rem;">';
     html += '<h2 style="color:var(--sepia-light);font-size:1.2rem;margin:0;">✏️ Admin</h2>';
-    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-6-0</span>';
+    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-7-0</span>';
     html += '</div>';
 
     // ── Proses-verduideliking (inklapbaar) ──
@@ -5378,18 +5409,40 @@ function attachCorrectionListeners() {
     var npAanvaar = npAanvaardLys.length > 0;
     var veldWysigings = toegepas - npAanvaardLys.length - (huwGestoor ? 1 : 0);
     if (veldWysigings > 0) {
+      // Stel admCurrentId sodat admStoor die regte rekord gebruik
+      var vorigId = admCurrentId;
+      admCurrentId = persoon.id;
+      window.admCurrentId = persoon.id;
+      // Stel ook admOrig in sodat admStoor verskille kan bereken
+      if (!window.admOrig || window.admOrig.id !== persoon.id) {
+        window.admOrig = {
+          given: persoon.given || '', surname: persoon.surname || '',
+          nickname: persoon.nickname || '',
+          birth_date: persoon.birth_date || '', birth_place: persoon.birth_place || '',
+          death_date: persoon.death_date || '', death_place: persoon.death_place || '',
+          burial_place: persoon.burial_place || '', occupation: persoon.occupation || '',
+          events: JSON.parse(JSON.stringify(persoon.events || [])),
+          note: persoon.note || ''
+        };
+      }
       admStoor();
+      if (vorigId && vorigId !== persoon.id) {
+        admCurrentId = vorigId;
+        window.admCurrentId = vorigId;
+      }
     }
     if ((veldWysigings > 0 || huwGestoor) && !npAanvaar) {
       var totaalGestoor = veldWysigings + (huwGestoor ? 1 : 0);
-      document.getElementById('adm-status').textContent =
-        '✅ Voorstel aanvaar: ' + totaalGestoor + ' wysiging(s) — in patch-log gestoor. Gebruik \"Stoor na GitHub\" om te voltooi.';
-      // Auto-navigeer na Stoor-paneel sodat admin die rekord kan sien en patch-log kontroleer
+      var statusEl2 = document.getElementById('adm-status');
+      if (statusEl2) statusEl2.textContent =
+        '\u2705 Voorstel aanvaar: ' + totaalGestoor + ' wysiging(s) \u2014 in patch-log gestoor.';
+      // Auto-navigeer na Stoor-paneel sodat admin die patch-log kan sien
       setTimeout(function() {
         if (typeof admTaakKies === 'function') admTaakKies('taak-stoor');
       }, 400);
     } else if (!npAanvaar) {
-      document.getElementById('adm-status').textContent = 'ℹ️ Geen wysigings aanvaar nie.';
+      var statusEl3 = document.getElementById('adm-status');
+      if (statusEl3) statusEl3.textContent = '\u2139\uFE0F Geen wysigings aanvaar nie.';
     }
     patchLogBouAfdeling();
   }
@@ -7856,6 +7909,7 @@ function attachCorrectionListeners() {
     var open = aside.classList.toggle('filters-open');
     btn.classList.toggle('open', open);
     btn.setAttribute('aria-expanded', open);
+    document.body.classList.toggle('filters-oop', open);
   });
 })();
 </script>

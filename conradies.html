@@ -4497,7 +4497,7 @@ function attachCorrectionListeners() {
     var html = '<div style="max-width:720px;margin:0 auto;padding:1rem;">';
     html += '<div style="display:flex;align-items:baseline;gap:0.7rem;margin-bottom:0.9rem;">';
     html += '<h2 style="color:var(--sepia-light);font-size:1.2rem;margin:0;">✏️ Admin</h2>';
-    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-5-3</span>';
+    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-6-0</span>';
     html += '</div>';
 
     // ── Proses-verduideliking (inklapbaar) ──
@@ -5384,6 +5384,10 @@ function attachCorrectionListeners() {
       var totaalGestoor = veldWysigings + (huwGestoor ? 1 : 0);
       document.getElementById('adm-status').textContent =
         '✅ Voorstel aanvaar: ' + totaalGestoor + ' wysiging(s) — in patch-log gestoor. Gebruik \"Stoor na GitHub\" om te voltooi.';
+      // Auto-navigeer na Stoor-paneel sodat admin die rekord kan sien en patch-log kontroleer
+      setTimeout(function() {
+        if (typeof admTaakKies === 'function') admTaakKies('taak-stoor');
+      }, 400);
     } else if (!npAanvaar) {
       document.getElementById('adm-status').textContent = 'ℹ️ Geen wysigings aanvaar nie.';
     }
@@ -5714,6 +5718,7 @@ function attachCorrectionListeners() {
 
     var html = '<table style="width:100%;border-collapse:collapse;font-size:0.82rem;">';
     html += '<tr style="color:#c49a3a;border-bottom:1px solid #3d3020;">';
+    html += '<th style="padding:0.3rem 0.4rem;text-align:center;">✓</th>';
     html += '<th style="text-align:left;padding:0.3rem 0.4rem;">Tyd</th>';
     html += '<th style="text-align:left;padding:0.3rem 0.4rem;">Rekord</th>';
     html += '<th style="text-align:left;padding:0.3rem 0.4rem;">Velde</th></tr>';
@@ -5725,6 +5730,9 @@ function attachCorrectionListeners() {
           ? '\uD83D\uDCC5 ' + Object.keys(item.wysigings || {}).length + ' datum(s) genormaliseer'
           : (Object.keys(item.wysigings || {}).join(', ') || item.tipe || '?');
       html += '<tr style="border-bottom:1px solid #2a2010;color:#c8b890;">';
+      html += '<td style="padding:0.3rem 0.4rem;text-align:center;">' +
+        '<input type="checkbox" class="patch-merk" data-indeks="' + i + '" ' +
+        'style="width:1.1rem;height:1.1rem;cursor:pointer;accent-color:#c49a3a;"></td>';
       html += '<td style="padding:0.3rem 0.4rem;">' + tyd + '</td>';
       html += '<td style="padding:0.3rem 0.4rem;">' + (item.naam || item.rekord_id) + '</td>';
       html += '<td style="padding:0.3rem 0.4rem;">' + velde + '</td>';
@@ -5732,12 +5740,30 @@ function attachCorrectionListeners() {
     });
     html += '</table>';
     html += '<div style="margin-top:0.6rem;display:flex;gap:0.5rem;flex-wrap:wrap;">';
+    html += '<button onclick="patchLogVerwyder()" style="padding:0.35rem 0.8rem;background:#6a2a1a;color:#f0c8b0;border:none;border-radius:4px;cursor:pointer;font-size:0.82rem;">🗑️ Verwyder gemerkdes</button>';
     html += '<button onclick="patchLogAflaai()" style="padding:0.35rem 0.8rem;background:#3d3020;color:#e8dfc8;border:none;border-radius:4px;cursor:pointer;font-size:0.82rem;">⬇️ Laai log af</button>';
-    html += '<button onclick="if(confirm(\'Alle hangende wysigings uitvee?\')) { patchLogWis(); patchLogBouAfdeling(); }" style="padding:0.35rem 0.8rem;background:#5a1a1a;color:#e8c8c8;border:none;border-radius:4px;cursor:pointer;font-size:0.82rem;">🗑️ Maak log skoon</button>';
+    html += '<button onclick="if(confirm(\'Alle hangende wysigings uitvee?\')) { patchLogWis(); patchLogBouAfdeling(); }" style="padding:0.35rem 0.8rem;background:#5a1a1a;color:#e8c8c8;border:none;border-radius:4px;cursor:pointer;font-size:0.82rem;">🗑️ Maak alles skoon</button>';
     html += '<button onclick="patchLogDiagnose()" style="padding:0.35rem 0.8rem;background:#1a3a5a;color:#c8dce8;border:none;border-radius:4px;cursor:pointer;font-size:0.82rem;">🔍 Diagnose</button>';
     html += '</div>';
     el.innerHTML = html;
   }
+
+  window.patchLogVerwyder = function() {
+    var cbks = document.querySelectorAll('.patch-merk:checked');
+    if (cbks.length === 0) {
+      alert('Merk eers een of meer inskrywings om te verwyder.');
+      return;
+    }
+    if (!confirm(cbks.length + ' inskrywing(s) permanent verwyder?')) return;
+    var teVerwyder = [];
+    cbks.forEach(function(cb) { teVerwyder.push(parseInt(cb.getAttribute('data-indeks'))); });
+    var log = patchLogLees();
+    var nuweLog = log.filter(function(_, i) { return teVerwyder.indexOf(i) === -1; });
+    patchLogSkryf(nuweLog);
+    patchLogBouAfdeling();
+    var teller = document.getElementById('adm-patch-teller');
+    if (teller) teller.textContent = nuweLog.length > 0 ? ' (' + nuweLog.length + ' hangend)' : '';
+  };
 
   window.patchLogAflaai = function() {
     var log = patchLogLees();

@@ -3519,7 +3519,7 @@ function buildTydlyn(r) {
       if (spBy && gadeRol) { const d = cy - spBy; if (d >= 0 && d <= 80) ouParts.push(gadeRol + ' ' + d); }
       const ouStr = ouParts.length ? ' (' + ouParts.join(', ') + ')' : '';
       const detail = ch.name + ouStr;
-      gebeure.push({ jaar: cy, ikon: '👶', titel: 'Kind gebore', detail: detail });
+      gebeure.push({ jaar: cy, ikon: '👶', titel: 'Kind gebore', detail: detail, linkId: cid });
     });
   }
 
@@ -3545,9 +3545,12 @@ function buildTydlyn(r) {
       const ikon = (_t && _t.ikon) ? _t.ikon : '📌';
       const titel = (_t && _t.naam) ? _t.naam : (ev.type || 'Ander');
       const ey = ev.year ? +ev.year : null;
-      // Fase C: KIND_ANDER_VAN — wys kind se van as ekstra detail
+      // KIND_ANDER_VAN — wys kind se van + ouer se ouderdom
       var detail = ev.text || '';
-      if (ev.type === 'KIND_ANDER_VAN' && ev.ander_van) detail += ' (' + ev.ander_van + ')';
+      if (ev.type === 'KIND_ANDER_VAN') {
+        if (ev.ander_van) detail += ' (' + ev.ander_van + ')';
+        detail += ouderdom(ry, ey);
+      }
       gebeure.push({ jaar: ey, ikon: ikon, titel: titel, detail: detail });
     });
   }
@@ -4528,7 +4531,7 @@ function attachCorrectionListeners() {
     var html = '<div style="max-width:720px;margin:0 auto;padding:1rem;">';
     html += '<div style="display:flex;align-items:baseline;gap:0.7rem;margin-bottom:0.9rem;">';
     html += '<h2 style="color:var(--sepia-light);font-size:1.2rem;margin:0;">✏️ Admin</h2>';
-    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-7-0</span>';
+    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-7-1</span>';
     html += '</div>';
 
     // ── Proses-verduideliking (inklapbaar) ──

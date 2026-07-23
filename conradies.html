@@ -4531,7 +4531,7 @@ function attachCorrectionListeners() {
     var html = '<div style="max-width:720px;margin:0 auto;padding:1rem;">';
     html += '<div style="display:flex;align-items:baseline;gap:0.7rem;margin-bottom:0.9rem;">';
     html += '<h2 style="color:var(--sepia-light);font-size:1.2rem;margin:0;">✏️ Admin</h2>';
-    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-7-1</span>';
+    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-7-2</span>';
     html += '</div>';
 
     // ── Proses-verduideliking (inklapbaar) ──
@@ -5730,6 +5730,22 @@ function attachCorrectionListeners() {
 
   // ── Patch-log hulpfunksies (localStorage) ──
   var PATCH_SLEUTEL = 'conradie_patch_log';
+  var TRANSAKSIE_SLEUTEL = 'conradie_transaksies';
+
+  function transaksieLees() {
+    try {
+      var data = localStorage.getItem(TRANSAKSIE_SLEUTEL);
+      return data ? JSON.parse(data) : [];
+    } catch(e) { return []; }
+  }
+
+  function transaksieVoegBy(inskrywing) {
+    try {
+      var log = transaksieLees();
+      log.push(inskrywing);
+      localStorage.setItem(TRANSAKSIE_SLEUTEL, JSON.stringify(log));
+    } catch(e) { console.warn('Transaksie-log skryf misluk:', e); }
+  }
 
   function patchLogLees() {
     try {
@@ -7595,7 +7611,7 @@ function attachCorrectionListeners() {
       });
       toegepas++;
     });
-    // Laai af
+    // Laai af — conradies.json
     var uitvoerData = { people: CONRADIE_DATA };
     if (window.CONRADIE_STATS) uitvoerData.stats = CONRADIE_STATS;
     if (window.CONRADIE_EVENT_TIPES) uitvoerData.meta = { event_tipes: window.CONRADIE_EVENT_TIPES };
@@ -7608,8 +7624,42 @@ function attachCorrectionListeners() {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+
+    // Bou transaksie-inskrywing en laai transaksies.json af
+    var tydstempel = new Date().toISOString();
+    var patchLog = patchLogLees();
+    var nuweInskrywing = {
+      tyd: tydstempel,
+      gebruiker: 'admin',
+      rekord_telling: patchLog.length,
+      items: patchLog.map(function(item) {
+        return {
+          rekord_id: item.rekord_id || '',
+          naam: item.naam || '',
+          tipe: item.tipe || 'wysiging',
+          wysigings: item.wysigings || {}
+        };
+      })
+    };
+    if (patchLog.length === 1) {
+      nuweInskrywing.rekord_id = patchLog[0].rekord_id || '';
+      nuweInskrywing.naam = patchLog[0].naam || '';
+      nuweInskrywing.wysigings = patchLog[0].wysigings || {};
+    }
+    transaksieVoegBy(nuweInskrywing);
+    var tLog = transaksieLees();
+    var tBlob = new Blob([JSON.stringify(tLog, null, 2)], { type: 'application/json' });
+    var tUrl = URL.createObjectURL(tBlob);
+    var tA = document.createElement('a');
+    tA.href = tUrl;
+    tA.download = 'transaksies.json';
+    document.body.appendChild(tA);
+    tA.click();
+    document.body.removeChild(tA);
+    URL.revokeObjectURL(tUrl);
+
     mStatus('\u2705 ' + toegepas + ' wysiging(s) toegepas' + (oorgeslaan ? ', ' + oorgeslaan + ' oorgeslaan' : '') +
-      ' \u2014 conradies.json afgelaai. Laai dit nou handmatig op na GitHub.', '#8ab08a');
+      ' \u2014 conradies.json \u00e9n transaksies.json afgelaai. Laai albei handmatig op na GitHub.', '#8ab08a');
     // Wis patch-log na suksesvolle aflaai
     patchLogWis();
     patchLogBouAfdeling();

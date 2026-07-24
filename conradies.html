@@ -1954,6 +1954,15 @@ body.druk-aktief #druk-skerp {
     <button id="vv-sluit" onclick="sluitVoorvaderModal()">✕</button>
     <h2>🧬 Voorvaderketting</h2>
     <div id="vv-inhoud"></div>
+
+<!-- WikiTree vergelyking-modal -->
+<div id="wt-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:3000;overflow-y:auto;padding:1rem;">
+  <div style="background:var(--parchment);max-width:520px;margin:2rem auto;border-radius:8px;padding:1.2rem 1rem;position:relative;">
+    <button onclick="document.getElementById('wt-modal').style.display='none'" style="position:absolute;top:0.6rem;right:0.8rem;background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--ink);">✕</button>
+    <h3 style="margin:0 0 0.8rem;color:var(--forest);">🌳 WikiTree Vergelyking</h3>
+    <div id="wt-modal-inhoud" style="font-size:0.88rem;"></div>
+  </div>
+</div>
   </div>
 </div>
 <div id="detail-panel">
@@ -3108,6 +3117,27 @@ function buildPanelHTML(r) {
     </div>`);
   }
 
+  // Eksterne skakels (FamilySearch / WikiTree)
+  var eksSk = [];
+  if (r.fs_id) eksSk.push(
+    '<a href="https://www.familysearch.org/tree/person/details/' + r.fs_id + '" target="_blank" rel="noopener" style="' +
+    'display:inline-flex;align-items:center;gap:0.4rem;background:#2e6da4;color:#fff;border-radius:16px;' +
+    'padding:0.35rem 0.9rem;font-size:0.82rem;text-decoration:none;font-family:inherit;">🔗 FamilySearch</a>'
+  );
+  if (r.wt_id) eksSk.push(
+    '<a href="https://www.wikitree.com/wiki/' + r.wt_id + '" target="_blank" rel="noopener" style="' +
+    'display:inline-flex;align-items:center;gap:0.4rem;background:#5a8a3c;color:#fff;border-radius:16px;' +
+    'padding:0.35rem 0.9rem;font-size:0.82rem;text-decoration:none;font-family:inherit;">🌳 WikiTree</a>'
+  );
+  if (r.wt_id) eksSk.push(
+    '<button onclick="wtVergelyk(\'' + r.id + '\')" style="' +
+    'display:inline-flex;align-items:center;gap:0.4rem;background:#7a5c2a;color:#f5edd8;border:none;border-radius:16px;' +
+    'padding:0.35rem 0.9rem;font-size:0.82rem;cursor:pointer;font-family:inherit;">⚖️ Vergelyk</button>'
+  );
+  if (eksSk.length) {
+    parts.push('<div style="margin-top:0.8rem;text-align:center;display:flex;gap:0.5rem;justify-content:center;flex-wrap:wrap">' + eksSk.join('') + '</div>');
+  }
+
   // Deel- en Druk-knoppies
   parts.push(`<div style="margin-top:1.2rem;text-align:center;padding-bottom:0.5rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap">
     <button onclick="deelPersoon('${r.id}')" style="
@@ -3195,6 +3225,94 @@ function deelPersoon(id) {
       alert('Deel nie beskikbaar op hierdie toestel nie.');
     });
   }
+}
+
+// ── WIKITREE VERGELYKING ──
+function wtVergelyk(id) {
+  var r = window.indexById && window.indexById[id];
+  if (!r || !r.wt_id) return;
+  var modal = document.getElementById('wt-modal');
+  var inhoud = document.getElementById('wt-modal-inhoud');
+  if (!modal || !inhoud) return;
+  inhoud.innerHTML = '<p style="color:#7a6a4a;">⏳ WikiTree data word gelaai…</p>';
+  modal.style.display = 'block';
+
+  var proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(
+    'https://api.wikitree.com/api.php?action=getPerson&key=' + encodeURIComponent(r.wt_id) +
+    '&fields=Id,Name,FirstName,LastNameAtBirth,BirthDate,DeathDate,BirthLocation,DeathLocation,Spouses,Children,Gender&format=json'
+  );
+
+  fetch(proxyUrl)
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      // WikiTree terugvoer: array[0].person
+      var wt = (Array.isArray(data) && data[0] && data[0].person) ? data[0].person : null;
+      if (!wt) {
+        inhoud.innerHTML = '<p style="color:#c00;">⚠️ Geen data ontvang nie. Kontroleer WikiTree ID: <strong>' + escHtml(r.wt_id) + '</strong></p>';
+        return;
+      }
+      inhoud.innerHTML = wtBouVergelyking(r, wt);
+    })
+    .catch(function(err) {
+      inhoud.innerHTML = '<p style="color:#c00;">⚠️ Verbinding met WikiTree het misluk. Probeer later weer.</p>' +
+        '<p style="font-size:0.78rem;color:#999;">' + escHtml(String(err)) + '</p>';
+    });
+}
+
+function wtBouVergelyking(r, wt) {
+  function ry(label, plaaslik, wiki, veldNm) {
+    var verskil = plaaslik.trim() !== wiki.trim() && wiki.trim() !== '';
+    var kleur = verskil ? 'background:#fff3cd' : '';
+    var kopieerKnp = (verskil && veldNm) ?
+      ' <button onclick="wtKopieer(\'' + r.id + '\',\'' + veldNm + '\',\'' + wiki.replace(/'/g, "\\'") + '\')" ' +
+      'style="font-size:0.72rem;padding:0.1rem 0.4rem;background:#2d6a2d;color:#fff;border:none;border-radius:3px;cursor:pointer;margin-left:0.4rem;">Kopieer ↓</button>' : '';
+    return '<tr style="' + kleur + '">' +
+      '<td style="padding:0.3rem 0.5rem;color:#7a6a4a;font-weight:600;">' + label + '</td>' +
+      '<td style="padding:0.3rem 0.5rem;">' + escHtml(plaaslik || '—') + '</td>' +
+      '<td style="padding:0.3rem 0.5rem;">' + escHtml(wiki || '—') + kopieerKnp + '</td>' +
+      '</tr>';
+  }
+
+  var plaaslikGade = (r.spouses || []).map(function(s) { return s.name || ''; }).join('; ');
+  var wtGade = wt.Spouses ? Object.values(wt.Spouses).map(function(s) { return (s.FirstName || '') + ' ' + (s.LastNameAtBirth || ''); }).join('; ') : '';
+  var plaaslikKinders = r.children_ids ? String(r.children_ids.length) : '0';
+  var wtKinders = wt.Children ? String(Object.keys(wt.Children).length) : '0';
+  var plaaslikGebDatum = r.birth_date || (r.birth_year ? String(r.birth_year) : '');
+  var plaaslikSterfDatum = r.death_date || (r.death_year ? String(r.death_year) : '');
+
+  var html = '<table style="width:100%;border-collapse:collapse;font-size:0.84rem;">';
+  html += '<thead><tr style="background:var(--forest);color:var(--parchment);">' +
+    '<th style="padding:0.3rem 0.5rem;text-align:left;">Veld</th>' +
+    '<th style="padding:0.3rem 0.5rem;text-align:left;">Stamboom</th>' +
+    '<th style="padding:0.3rem 0.5rem;text-align:left;">WikiTree</th></tr></thead><tbody>';
+  html += ry('Naam', r.name || '', (wt.FirstName || '') + ' ' + (wt.LastNameAtBirth || ''), null);
+  html += ry('Gebore', plaaslikGebDatum, wt.BirthDate || '', 'birth_date');
+  html += ry('Geboorteplek', r.birth_place || '', wt.BirthLocation || '', 'birth_place');
+  html += ry('Oorlede', plaaslikSterfDatum, wt.DeathDate || '', 'death_date');
+  html += ry('Sterfplek', r.death_place || '', wt.DeathLocation || '', 'death_place');
+  html += ry('Gade(s)', plaaslikGade, wtGade, null);
+  html += ry('Kinders (getal)', plaaslikKinders, wtKinders, null);
+  html += '</tbody></table>';
+  html += '<p style="margin-top:0.6rem;font-size:0.76rem;color:#999;">Geel rye = verskil. Groen "Kopieer ↓" stoor na Admin-stoor-paneel.</p>';
+  return html;
+}
+
+function wtKopieer(id, veld, waarde) {
+  // Stel die waarde in die Admin-paneel in sodat admStoor dit kan stoor
+  var veldMap = { birth_date:'adm-birth-date', birth_place:'adm-birth-place', death_date:'adm-death-date', death_place:'adm-death-place' };
+  var admId = veldMap[veld];
+  if (!admId) return;
+  var el = document.getElementById(admId);
+  if (el) {
+    el.value = waarde;
+    el.style.background = '#d4edda';
+    setTimeout(function() { el.style.background = ''; }, 2000);
+  }
+  // Maak seker admin-paneel se rekord ooreenstem
+  if (typeof admLaaiPersoon === 'function' && window.admCurrentId !== id) admLaaiPersoon(id);
+  document.getElementById('wt-modal').style.display = 'none';
+  if (typeof admTaakKies === 'function') admTaakKies('taak-stoor');
+  alert(veld + ' is na Admin-paneel gekopieer. Klik "Stoor Wysigings" om te bevestig.');
 }
 
 
@@ -4546,7 +4664,7 @@ function attachCorrectionListeners() {
     var html = '<div style="max-width:720px;margin:0 auto;padding:1rem;">';
     html += '<div style="display:flex;align-items:baseline;gap:0.7rem;margin-bottom:0.9rem;">';
     html += '<h2 style="color:var(--sepia-light);font-size:1.2rem;margin:0;">✏️ Admin</h2>';
-    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-9-0</span>';
+    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-10-0</span>';
     html += '</div>';
 
     // ── Proses-verduideliking (inklapbaar) ──
@@ -4637,6 +4755,8 @@ function attachCorrectionListeners() {
       html += _veld('adm-burial',      'Begraafplek',       'text');
       html += _veld('adm-occupation',  'Beroep',            'text');
       html += _veld('adm-note',        'Nota / Narratief',  'textarea');
+      html += _veld('adm-fs-id',       'FamilySearch ID',   'text', 'bv. LZNY-ABC');
+      html += _veld('adm-wt-id',       'WikiTree ID',       'text', 'bv. Conradie-123');
       html += '<div style="margin-top:0.6rem;">';
       html += '<button id="adm-stoor-btn" style="padding:0.45rem 1.1rem;background:#2d6a2d;color:#e8f5e8;border:none;border-radius:4px;cursor:pointer;font-size:0.9rem;">💾 Stoor Wysigings</button>';
       html += '</div>';
@@ -4921,6 +5041,8 @@ function attachCorrectionListeners() {
     'BEGRAAFPLEK':   'burial_place',
     'BEROEP':        'occupation',
     'NOTA':          'note',
+    'FS_ID':         'fs_id',
+    'WT_ID':         'wt_id',
   };
 
   // NP-velde wat 'n nuwe persoon (kind/gade) beskryf
@@ -5570,6 +5692,8 @@ function attachCorrectionListeners() {
     set('adm-occupation',  p.occupation);
     set('adm-district',    p.district);
     set('adm-note',        p.note);
+    set('adm-fs-id',       p.fs_id);
+    set('adm-wt-id',       p.wt_id);
 
     // Stoor oorspronklike waardes vir vergelyking (diep-kopie van events — nie verwysing nie)
     window.admOrig = {
@@ -5583,7 +5707,9 @@ function attachCorrectionListeners() {
       burial_place:p.burial_place|| '',
       occupation:  p.occupation  || '',
       events:      JSON.parse(JSON.stringify(p.events || [])),
-      note:        p.note        || ''
+      note:        p.note        || '',
+      fs_id:       p.fs_id       || '',
+      wt_id:       p.wt_id       || ''
     };
 
     // Wys bestaande huwelike
@@ -5669,6 +5795,8 @@ function attachCorrectionListeners() {
     p.occupation  = _g('adm-occupation',  p.occupation);
     p.events      = p.events || [];
     p.note        = get('adm-note');       // Leë waarde toegelaat (nota mag verwyder word)
+    p.fs_id       = get('adm-fs-id')  || p.fs_id  || '';
+    p.wt_id       = get('adm-wt-id')  || p.wt_id  || '';
 
     // ── Outomatiese datumnormalisering (v9-5-1) ──
     // Normaliseer datumvelde indien nie-standaard formaat ingevoer is
@@ -7377,7 +7505,9 @@ function attachCorrectionListeners() {
       { sleutel: 'STERFDATUM',   veld: 'adm-death-date',  oud: orig.death_date  },
       { sleutel: 'STERFPLEK',    veld: 'adm-death-place', oud: orig.death_place },
       { sleutel: 'BEGRAAFPLEK',  veld: 'adm-burial',      oud: orig.burial_place},
-      { sleutel: 'NOTA',         veld: 'adm-note',        oud: orig.note        }
+      { sleutel: 'NOTA',         veld: 'adm-note',        oud: orig.note        },
+      { sleutel: 'FS_ID',        veld: 'adm-fs-id',       oud: orig.fs_id       },
+      { sleutel: 'WT_ID',        veld: 'adm-wt-id',       oud: orig.wt_id       }
     ];
 
     var lyne = [
@@ -7418,7 +7548,8 @@ function attachCorrectionListeners() {
       {s:'VOORNAAM',v:'adm-given',o:orig.given},{s:'VAN',v:'adm-surname',o:orig.surname},
       {s:'GEBOORTEDATUM',v:'adm-birth-date',o:orig.birth_date},{s:'GEBOORTEPLEK',v:'adm-birth-place',o:orig.birth_place},
       {s:'STERFDATUM',v:'adm-death-date',o:orig.death_date},{s:'STERFPLEK',v:'adm-death-place',o:orig.death_place},
-      {s:'BEGRAAFPLEK',v:'adm-burial',o:orig.burial_place},{s:'NOTA',v:'adm-note',o:orig.note}
+      {s:'BEGRAAFPLEK',v:'adm-burial',o:orig.burial_place},{s:'NOTA',v:'adm-note',o:orig.note},
+      {s:'FS_ID',v:'adm-fs-id',o:orig.fs_id},{s:'WT_ID',v:'adm-wt-id',o:orig.wt_id}
     ];
     var lw = ['CONRADIE STAMBOOM VOORSTEL','REF: '+(p.ref||admCurrentId),'NAAM: '+(p.name||'')];
     var gw = 0;
@@ -7439,7 +7570,8 @@ function attachCorrectionListeners() {
       {s:'VOORNAAM',v:'adm-given',o:orig.given},{s:'VAN',v:'adm-surname',o:orig.surname},
       {s:'GEBOORTEDATUM',v:'adm-birth-date',o:orig.birth_date},{s:'GEBOORTEPLEK',v:'adm-birth-place',o:orig.birth_place},
       {s:'STERFDATUM',v:'adm-death-date',o:orig.death_date},{s:'STERFPLEK',v:'adm-death-place',o:orig.death_place},
-      {s:'BEGRAAFPLEK',v:'adm-burial',o:orig.burial_place},{s:'NOTA',v:'adm-note',o:orig.note}
+      {s:'BEGRAAFPLEK',v:'adm-burial',o:orig.burial_place},{s:'NOTA',v:'adm-note',o:orig.note},
+      {s:'FS_ID',v:'adm-fs-id',o:orig.fs_id},{s:'WT_ID',v:'adm-wt-id',o:orig.wt_id}
     ];
     var le = ['CONRADIE STAMBOOM VOORSTEL','REF: '+(p.ref||admCurrentId),'NAAM: '+(p.name||'')];
     var ge = 0;

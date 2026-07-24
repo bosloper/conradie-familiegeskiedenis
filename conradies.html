@@ -2965,6 +2965,18 @@ function buildDrukHTML(r) {
   }
   if (r.death_date || r.death_year)
     gebeure2.push({ j: r.death_year || jaarUitDatum(r.death_date), t: '✝ Oorlede', d: ry(r.death_date, r.death_year) + (r.death_place ? ', ' + r.death_place : ''), hist: false });
+  // Persoonlike events (slegs printbaar)
+  if (r.events && r.events.length) {
+    var _evT2 = window.CONRADIE_EVENT_TIPES || [];
+    r.events.forEach(function(ev) {
+      var t2 = _evT2.find(function(x) { return x.kode === ev.type; });
+      if (!t2 || !t2.printbaar) return;
+      var ikon2 = (t2 && t2.ikon) ? t2.ikon : '📌';
+      var naam2 = (t2 && t2.naam) ? t2.naam : (ev.type || 'Ander');
+      var ekstra2 = ev.ander_van ? ' (' + ev.ander_van + ')' : (ev.bestemming ? ' \u2192 ' + ev.bestemming : '');
+      gebeure2.push({ j: ev.year ? +ev.year : null, t: ikon2 + ' ' + naam2, d: (ev.text || '') + ekstra2, hist: false });
+    });
+  }
   gebeure2.sort((a,b) => { if (!a.j&&!b.j) return 0; if (!a.j) return 1; if (!b.j) return -1; return a.j-b.j; });
   if (gebeure2.length) {
     html += '<h2>Tydlyn</h2>';
@@ -3982,6 +3994,8 @@ var VM_VELDE = [
   ['Sterfplek',          'death_place',  'Dorp of distrik'],
   ['Begraafplek',        'burial_place', 'Kerkhof / dorp'],
   ['Beroep',             'occupation',   'bv. Boer, Onderwyser'],
+  ['FamilySearch ID',    'fs_id',        'bv. GCKG-TR5'],
+  ['WikiTree ID',        'wt_id',        'bv. Conradie-123'],
 ];
 
 function vulVoorstelModal(id) {
@@ -4270,7 +4284,8 @@ function vmBouBoodskap(nuutPersAppart) {
         given:'VOORNAAM', surname:'VAN', nickname:'BYNAAM',
         birth_date:'GEBOORTEDATUM', birth_place:'GEBOORTEPLEK',
         death_date:'STERFDATUM',    death_place:'STERFPLEK',
-        burial_place:'BEGRAAFPLEK', occupation:'BEROEP'
+        burial_place:'BEGRAAFPLEK', occupation:'BEROEP',
+        fs_id:'FS_ID',              wt_id:'WT_ID'
       };
       lyne.push((sleutelMap[sleutel] || sleutel.toUpperCase()) + ': ' + val);
     }
@@ -4664,7 +4679,7 @@ function attachCorrectionListeners() {
     var html = '<div style="max-width:720px;margin:0 auto;padding:1rem;">';
     html += '<div style="display:flex;align-items:baseline;gap:0.7rem;margin-bottom:0.9rem;">';
     html += '<h2 style="color:var(--sepia-light);font-size:1.2rem;margin:0;">✏️ Admin</h2>';
-    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-10-0</span>';
+    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-10-1</span>';
     html += '</div>';
 
     // ── Proses-verduideliking (inklapbaar) ──
@@ -5454,7 +5469,8 @@ function attachCorrectionListeners() {
       }
     }
 
-    // Events toepas
+    // Events toepas — stoor kopie voor wysiging vir admOrig-vergelyking
+    var eventsVoor = JSON.parse(JSON.stringify(persoon.events || []));
     var evCbs = document.querySelectorAll('.adm-vgl-event:checked');
     evCbs.forEach(function(cb) {
       var aksie  = cb.getAttribute('data-ev-aksie');
@@ -5571,8 +5587,10 @@ function attachCorrectionListeners() {
           birth_date: persoon.birth_date || '', birth_place: persoon.birth_place || '',
           death_date: persoon.death_date || '', death_place: persoon.death_place || '',
           burial_place: persoon.burial_place || '', occupation: persoon.occupation || '',
-          events: JSON.parse(JSON.stringify(persoon.events || [])),
-          note: persoon.note || ''
+          events: eventsVoor,
+          note: persoon.note || '',
+          fs_id: persoon.fs_id || '',
+          wt_id: persoon.wt_id || ''
         };
       }
       admStoor();
@@ -5775,7 +5793,9 @@ function attachCorrectionListeners() {
       burial_place:orig.burial_place !== undefined ? orig.burial_place : (p.burial_place || ''),
       occupation:  orig.occupation   !== undefined ? orig.occupation   : (p.occupation   || ''),
       events:      orig.events       !== undefined ? orig.events       : (p.events       || []),
-      note:        orig.note         !== undefined ? orig.note         : (p.note         || '')
+      note:        orig.note         !== undefined ? orig.note         : (p.note         || ''),
+      fs_id:       orig.fs_id        !== undefined ? orig.fs_id        : (p.fs_id        || ''),
+      wt_id:       orig.wt_id        !== undefined ? orig.wt_id        : (p.wt_id        || '')
     };
 
     // Behou bestaande waarde as invoerveld leeg is
@@ -5843,7 +5863,7 @@ function attachCorrectionListeners() {
       birth_place: p.birth_place || '', death_date: p.death_date || '',
       death_place: p.death_place || '', burial_place: p.burial_place || '',
       occupation: p.occupation || '', events: p.events || [],
-      note: p.note || ''
+      note: p.note || '', fs_id: p.fs_id || '', wt_id: p.wt_id || ''
     };
     var wysigings = {};
     Object.keys(voor).forEach(function(k) {

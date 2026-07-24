@@ -4679,7 +4679,7 @@ function attachCorrectionListeners() {
     var html = '<div style="max-width:720px;margin:0 auto;padding:1rem;">';
     html += '<div style="display:flex;align-items:baseline;gap:0.7rem;margin-bottom:0.9rem;">';
     html += '<h2 style="color:var(--sepia-light);font-size:1.2rem;margin:0;">✏️ Admin</h2>';
-    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-10-1</span>';
+    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-10-3</span>';
     html += '</div>';
 
     // ── Proses-verduideliking (inklapbaar) ──
@@ -7793,47 +7793,48 @@ function attachCorrectionListeners() {
     if (window.CONRADIE_STATS) uitvoerData.stats = CONRADIE_STATS;
     if (window.CONRADIE_EVENT_TIPES) uitvoerData.meta = { event_tipes: window.CONRADIE_EVENT_TIPES };
     var blob = new Blob([JSON.stringify(uitvoerData)], { type: 'application/json' });
-    var url = URL.createObjectURL(blob);
-    var a = document.createElement('a');
-    a.href = url;
-    a.download = 'conradies.json';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var a = document.createElement('a');
+      a.href = e.target.result;
+      a.download = 'conradies.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      // Laai transaksies.json af ná conradies.json (opeenvolgend)
+      setTimeout(function() {
+        var tBlob2 = new Blob([JSON.stringify(tLog, null, 2)], { type: 'application/json' });
+        var tReader2 = new FileReader();
+        tReader2.onload = function(te) {
+          var tA2 = document.createElement('a');
+          tA2.href = te.target.result;
+          tA2.download = 'transaksies.json';
+          document.body.appendChild(tA2);
+          tA2.click();
+          document.body.removeChild(tA2);
+        };
+        tReader2.readAsDataURL(tBlob2);
+      }, 800);
+    };
+    reader.readAsDataURL(blob);
 
-    // Bou transaksie-inskrywing en laai transaksies.json af
+    // Bou transaksie-inskrywings — een per patch-item, met volle rekord na wysiging
     var tydstempel = new Date().toISOString();
     var patchLog = patchLogLees();
-    var nuweInskrywing = {
-      tyd: tydstempel,
-      gebruiker: 'admin',
-      rekord_telling: patchLog.length,
-      items: patchLog.map(function(item) {
-        return {
-          rekord_id: item.rekord_id || '',
-          naam: item.naam || '',
-          tipe: item.tipe || 'wysiging',
-          wysigings: item.wysigings || {}
-        };
-      })
-    };
-    if (patchLog.length === 1) {
-      nuweInskrywing.rekord_id = patchLog[0].rekord_id || '';
-      nuweInskrywing.naam = patchLog[0].naam || '';
-      nuweInskrywing.wysigings = patchLog[0].wysigings || {};
-    }
-    transaksieVoegBy(nuweInskrywing);
+    patchLog.forEach(function(item, idx) {
+      var rekord = item.rekord_id ? indeks[item.rekord_id] : null;
+      var inskrywing = {
+        tyd: tydstempel,
+        volgorde: idx + 1,
+        rekord_id: item.rekord_id || '',
+        naam: item.naam || '',
+        tipe: item.tipe || 'wysiging',
+        wysigings: item.wysigings || {},
+        rekord_na: rekord ? JSON.parse(JSON.stringify(rekord)) : null
+      };
+      transaksieVoegBy(inskrywing);
+    });
     var tLog = transaksieLees();
-    var tBlob = new Blob([JSON.stringify(tLog, null, 2)], { type: 'application/json' });
-    var tUrl = URL.createObjectURL(tBlob);
-    var tA = document.createElement('a');
-    tA.href = tUrl;
-    tA.download = 'transaksies.json';
-    document.body.appendChild(tA);
-    tA.click();
-    document.body.removeChild(tA);
-    URL.revokeObjectURL(tUrl);
 
     mStatus('\u2705 ' + toegepas + ' wysiging(s) toegepas' + (oorgeslaan ? ', ' + oorgeslaan + ' oorgeslaan' : '') +
       ' \u2014 conradies.json \u00e9n transaksies.json afgelaai. Laai albei handmatig op na GitHub.', '#8ab08a');
@@ -8061,25 +8062,8 @@ function attachCorrectionListeners() {
   async function skryfTransaksie(pat, BASE, tydstempel) {
     // Gebruik patch-log as volledige bron van alle wysigings, kinders en huwelike
     var patchLog = patchLogLees();
-    var nuweInskrywing = {
-      tyd: tydstempel,
-      gebruiker: 'admin',
-      rekord_telling: patchLog.length,
-      items: patchLog.map(function(item) {
-        return {
-          rekord_id: item.rekord_id || '',
-          naam: item.naam || '',
-          tipe: item.tipe || 'wysiging',
-          wysigings: item.wysigings || {}
-        };
-      })
-    };
-    // Opsomming vir enkelvoudige wysiging (agterwaarts-versoenbaar)
-    if (patchLog.length === 1) {
-      nuweInskrywing.rekord_id = patchLog[0].rekord_id || '';
-      nuweInskrywing.naam = patchLog[0].naam || '';
-      nuweInskrywing.wysigings = patchLog[0].wysigings || {};
-    }
+    var indeksGH = {};
+    CONRADIE_DATA.forEach(function(p) { if (p.id) indeksGH[p.id] = p; });
     window.admLaastеWysigings = null;
     var CONTENTS = BASE + '/contents/logs/transaksies.json';
     var headers = {
@@ -8100,7 +8084,18 @@ function attachCorrectionListeners() {
         logData = JSON.parse(decoded);
       }
 
-      logData.push(nuweInskrywing);
+      patchLog.forEach(function(item, idx) {
+        var rekord = item.rekord_id ? indeksGH[item.rekord_id] : null;
+        logData.push({
+          tyd: tydstempel,
+          volgorde: idx + 1,
+          rekord_id: item.rekord_id || '',
+          naam: item.naam || '',
+          tipe: item.tipe || 'wysiging',
+          wysigings: item.wysigings || {},
+          rekord_na: rekord ? JSON.parse(JSON.stringify(rekord)) : null
+        });
+      });
 
       var b64 = btoa(unescape(encodeURIComponent(JSON.stringify(logData, null, 2))));
       var telling = patchLog.length;

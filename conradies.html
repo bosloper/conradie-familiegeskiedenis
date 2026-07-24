@@ -2974,7 +2974,8 @@ function buildDrukHTML(r) {
       var ikon2 = (t2 && t2.ikon) ? t2.ikon : '📌';
       var naam2 = (t2 && t2.naam) ? t2.naam : (ev.type || 'Ander');
       var ekstra2 = ev.ander_van ? ' (' + ev.ander_van + ')' : (ev.bestemming ? ' \u2192 ' + ev.bestemming : '');
-      gebeure2.push({ j: ev.year ? +ev.year : null, t: ikon2 + ' ' + naam2, d: (ev.text || '') + ekstra2, hist: false });
+      var dTeks2 = ev.text || (ev.type === 'KIND_ANDER_VAN' && ev.ander_van ? 'Kind' : '');
+      gebeure2.push({ j: ev.year ? +ev.year : null, t: ikon2 + ' ' + naam2, d: dTeks2 + ekstra2, hist: false });
     });
   }
   gebeure2.sort((a,b) => { if (!a.j&&!b.j) return 0; if (!a.j) return 1; if (!b.j) return -1; return a.j-b.j; });
@@ -3677,9 +3678,10 @@ function buildTydlyn(r) {
       const ikon = (_t && _t.ikon) ? _t.ikon : '📌';
       const titel = (_t && _t.naam) ? _t.naam : (ev.type || 'Ander');
       const ey = ev.year ? +ev.year : null;
-      // KIND_ANDER_VAN — wys kind se van + ouer se ouderdom
+      // KIND_ANDER_VAN — wys kind se naam (of 'Kind' as leeg) + van + ouer se ouderdom
       var detail = ev.text || '';
       if (ev.type === 'KIND_ANDER_VAN') {
+        if (!detail && ev.ander_van) detail = 'Kind';
         if (ev.ander_van) detail += ' (' + ev.ander_van + ')';
         detail += ouderdom(ry, ey);
       }
@@ -4679,7 +4681,7 @@ function attachCorrectionListeners() {
     var html = '<div style="max-width:720px;margin:0 auto;padding:1rem;">';
     html += '<div style="display:flex;align-items:baseline;gap:0.7rem;margin-bottom:0.9rem;">';
     html += '<h2 style="color:var(--sepia-light);font-size:1.2rem;margin:0;">✏️ Admin</h2>';
-    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-10-3</span>';
+    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-11-0</span>';
     html += '</div>';
 
     // ── Proses-verduideliking (inklapbaar) ──
@@ -5141,7 +5143,8 @@ function attachCorrectionListeners() {
       var dele = reel.substring(kol + 1).trim().split('|');
       // Hulpfunksie: onttrek |VAN:xxx of |BEST:xxx as dit teenwoordig is
       function parseerEvDele(deleArr, teksIndeks) {
-        var teksRou = (deleArr[teksIndeks] || '').trim();
+        // Kombineer alle dele vanaf teksIndeks sodat |VAN: of |BEST: ook werk as teks leeg is
+        var teksRou = deleArr.slice(teksIndeks).join('|').trim();
         var vanWaarde = '', bestWaarde = '';
         var vanMatch = teksRou.match(/\|VAN:(.+)$/);
         if (vanMatch) {
@@ -5213,9 +5216,10 @@ function attachCorrectionListeners() {
       return;
     }
 
-    // Wys vergelyking
+    // Wys vergelyking en navigeer na Stoor-blad sodat vergelyking + stoor-knoppies saam sigbaar is
     admWysVergelyking(persoon, verskille, narrVervang, narrVoegBy, ekstra, indiener, huwInfo, evVoorstelle, npLys);
     statusEl.textContent = '✅ Voorstel verwerk vir: ' + persoon.name + ' (REF ' + ref + ')';
+    if (typeof admTaakKies === 'function') setTimeout(function() { admTaakKies('taak-stoor'); }, 200);
   }
 
   // ── Wys Oud vs Nuut Vergelyking ──
@@ -5415,7 +5419,9 @@ function attachCorrectionListeners() {
         death_date:'adm-death-date', death_place:'adm-death-place',
         burial_place:'adm-burial',
         occupation:'adm-occupation',
-        note:'adm-note'
+        note:'adm-note',
+        fs_id:'adm-fs-id',
+        wt_id:'adm-wt-id'
       }[veld];
       if (veldId) {
         var el = document.getElementById(veldId);

@@ -3196,7 +3196,8 @@ function deelPersoon(id) {
       var t = evTipes.find(function(x) { return x.kode === ev.type; });
       var ikon = (t && t.ikon) ? t.ikon : '📌';
       var ekstra = ev.ander_van ? ' (' + ev.ander_van + ')' : (ev.bestemming ? ' \u2192 ' + ev.bestemming : '');
-      reëls.push(ikon + ' ' + (ev.year || '') + ' ' + (t ? t.naam : ev.type) + ': ' + (ev.text || '') + ekstra);
+      var evTeks = ev.text || (ev.type === 'KIND_ANDER_VAN' ? 'Kind' : '');
+      reëls.push(ikon + ' ' + (ev.year || '') + ' ' + (t ? t.naam : ev.type) + ': ' + evTeks + ekstra);
     });
   }
 
@@ -4193,6 +4194,8 @@ function vmEvToggleEkstra() {
     if (teksInv) {
       if (gekose.kode === 'KIND_ANDER_VAN') {
         teksInv.placeholder = 'Kind se volle naam (bv. Anna Maria)';
+      } else if (gekose.kode === 'VERHUISING') {
+        teksInv.placeholder = 'bv. Verhuis na plaas Nuwejaarsfontein';
       } else {
         teksInv.placeholder = 'bv. Aangestel as skoolhoof in Pretoria';
       }

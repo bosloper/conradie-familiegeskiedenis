@@ -3682,16 +3682,17 @@ function buildTydlyn(r) {
       const titel = (_t && _t.naam) ? _t.naam : (ev.type || 'Ander');
       const ey = ev.year ? +ev.year : null;
       // Bou detail-string vir alle events
-      var detail = ev.text || '';
+      var evTeks = (ev.text || '').trim();
+      var detail = '';
       if (ev.type === 'KIND_ANDER_VAN') {
-        // ev.text bevat die kind se naam; as leeg, gebruik 'Kind'
-        if (!detail) detail = 'Kind';
-        // Voeg van by as suffix
+        detail = evTeks || 'Kind';
         if (ev.ander_van) detail += ' (' + ev.ander_van + ')';
         detail += ouderdom(ry, ey);
-      }
-      if (ev.type === 'VERHUISING' && ev.bestemming) {
-        detail += ' \u2192 ' + ev.bestemming;
+      } else if (ev.type === 'VERHUISING') {
+        detail = evTeks;
+        if (ev.bestemming) detail += (detail ? ' \u2192 ' : '\u2192 ') + ev.bestemming;
+      } else {
+        detail = evTeks;
       }
       gebeure.push({ jaar: ey, ikon: ikon, titel: titel, detail: detail });
     });
@@ -3708,14 +3709,17 @@ function buildTydlyn(r) {
         var ikon = _t.ikon || '📌';
         var titel = _t.naam || (ev.type || 'Ander');
         var ey = ev.year ? +ev.year : null;
-        var detail = ev.text || '';
+        var evTeks = (ev.text || '').trim();
+        var detail = '';
         if (ev.type === 'KIND_ANDER_VAN') {
-          if (!detail) detail = 'Kind';
+          detail = evTeks || 'Kind';
           if (ev.ander_van) detail += ' (' + ev.ander_van + ')';
           detail += ouderdom(ry, ey);
-        }
-        if (ev.type === 'VERHUISING' && ev.bestemming) {
-          detail += ' \u2192 ' + ev.bestemming;
+        } else if (ev.type === 'VERHUISING') {
+          detail = evTeks;
+          if (ev.bestemming) detail += (detail ? ' → ' : '→ ') + ev.bestemming;
+        } else {
+          detail = evTeks;
         }
         gebeure.push({ jaar: ey, ikon: ikon, titel: titel, detail: detail });
       });

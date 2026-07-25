@@ -522,5 +522,1196 @@
       "fs_id": "",
       "wt_id": ""
     }
+  },
+  {
+    "tyd": "2026-07-24T21:20:10.998Z",
+    "volgorde": 1,
+    "rekord_id": "I4001",
+    "naam": "Cornelius Johannes CONRADIE",
+    "tipe": "wysiging",
+    "wysigings": {
+      "events": {
+        "oud": [
+          {
+            "year": "1942",
+            "type": "VERHUISING",
+            "text": "Na Bloemfontein, OVS"
+          },
+          {
+            "year": "1942",
+            "type": "VERHUISING",
+            "text": "Na Bloemfontein, OVS"
+          }
+        ],
+        "nuut": [
+          {
+            "year": "1942",
+            "type": "VERHUISING",
+            "text": "Na Bloemfontein, OVS"
+          }
+        ]
+      }
+    },
+    "rekord_na": {
+      "id": "I4001",
+      "ref": "4001",
+      "name": "Cornelius Johannes CONRADIE",
+      "given": "Cornelius Johannes",
+      "surname": "CONRADIE",
+      "sex": "M",
+      "family_code": "c2d5e1f8g1h1",
+      "branch": "c2",
+      "branch_path": [
+        "b1",
+        "c2",
+        "c2d5",
+        "c2d5e1",
+        "c2d5e1f8",
+        "c2d5e1f8g1",
+        "c2d5e1f8g1h1"
+      ],
+      "generation": 7,
+      "uncertain": false,
+      "nickname": "",
+      "birth_date": "1884-07-05",
+      "birth_year": 1884,
+      "birth_place": "",
+      "birth_circa": false,
+      "death_date": "1974-12-07",
+      "death_year": 1974,
+      "death_place": "Bloemfontein",
+      "burial_place": "",
+      "baptism_date": "",
+      "baptism_place": "",
+      "is_spouse": false,
+      "spouses": [
+        {
+          "id": "S4001",
+          "name": "Maria Magdalena Elizabeth LACOCK",
+          "birth_date": "1890-01-06",
+          "birth_year": 1890,
+          "divorce_date": "",
+          "divorced": false
+        }
+      ],
+      "children_ids": [
+        "I4002",
+        "I4010",
+        "I4011",
+        "I4012",
+        "I4023",
+        "I4024",
+        "I4025",
+        "I4026"
+      ],
+      "parents": [
+        {
+          "id": "I4000",
+          "name": "Pieter Jacobus CONRADIE",
+          "role": "father"
+        },
+        {
+          "id": "S4000",
+          "name": "Anna Maria CONRADIE",
+          "role": "mother"
+        }
+      ],
+      "marr_dates": [
+        "1912-03-11"
+      ],
+      "marr_places": [
+        "Kenhardt, Kaapprovinsie"
+      ],
+      "divorce_date": "",
+      "divorced": false,
+      "maiden_name": "",
+      "narrative": "doopinskrywing verwys na \"Rondabelsfontein\" Hulle het in 1942 na Bloemfontein verhuis",
+      "note": "",
+      "events": [
+        {
+          "year": "1942",
+          "type": "VERHUISING",
+          "text": "Na Bloemfontein, OVS"
+        }
+      ],
+      "occupation": "",
+      "fs_id": "",
+      "wt_id": ""
+    }
+  },
+  {
+    "tyd": "2026-07-24T21:20:10.998Z",
+    "volgorde": 2,
+    "rekord_id": "I4000",
+    "naam": "Pieter Jacobus CONRADIE",
+    "tipe": "wysiging",
+    "wysigings": {
+      "death_place": {
+        "oud": "",
+        "nuut": "Kenhardt, Kaapprovinsie"
+      },
+      "burial_place": {
+        "oud": "OVS, Petrusburg, ou begraafplaas",
+        "nuut": "Steynsputs, Kenhardt, Kaapprovinsie"
+      },
+      "occupation": {
+        "oud": "",
+        "nuut": "Boer"
+      }
+    },
+    "rekord_na": {
+      "id": "I4000",
+      "ref": "4000",
+      "name": "Pieter Jacobus CONRADIE",
+      "given": "Pieter Jacobus",
+      "surname": "CONRADIE",
+      "sex": "M",
+      "family_code": "c2d5e1f8g1",
+      "branch": "c2",
+      "branch_path": [
+        "b1",
+        "c2",
+        "c2d5",
+        "c2d5e1",
+        "c2d5e1f8",
+        "c2d5e1f8g1"
+      ],
+      "generation": 6,
+      "uncertain": false,
+      "nickname": "",
+      "birth_date": "1860-11-17",
+      "birth_year": 1860,
+      "birth_place": "",
+      "birth_circa": false,
+      "death_date": "1936-03-21",
+      "death_year": 1936,
+      "death_place": "Kenhardt, Kaapprovinsie",
+      "burial_place": "Steynsputs, Kenhardt, Kaapprovinsie",
+      "baptism_date": "",
+      "baptism_place": "",
+      "is_spouse": false,
+      "spouses": [
+        {
+          "id": "S4000",
+          "name": "Anna Maria CONRADIE",
+          "birth_date": "1864-08-11",
+          "birth_year": 1864,
+          "divorce_date": "",
+          "divorced": false
+        }
+      ],
+      "children_ids": [
+        "I4001",
+        "I4027",
+        "I4028",
+        "I4029",
+        "I4030",
+        "I4031",
+        "I4039",
+        "I4040",
+        "I4045",
+        "I4055"
+      ],
+      "parents": [
+        {
+          "id": "I3999",
+          "name": "Cornelius Johannes CONRADIE",
+          "role": "father"
+        },
+        {
+          "id": "S3999",
+          "name": "Emmerentia Jacomina * SPIES",
+          "role": "mother"
+        }
+      ],
+      "marr_dates": [
+        "1883-08-06"
+      ],
+      "marr_places": [
+        "Kenhardt, Kaapkolonie"
+      ],
+      "divorce_date": "",
+      "divorced": false,
+      "maiden_name": "",
+      "narrative": "Met sy troue was hy \"veeboer\" van Richmond, en sy afkomstig van Richmond. Hulle het op die plaas \"Rondawels\", (die eerste doopregisters verwys na \"Rondabelfontein\") by Richmond geboer, en het later na Kenhardt distrik getrek. Die kinders het hom as \"Oupa Steynsput\" geken.\"veeboer\" van Richmond, en sy afkomstig van Richmond. Hulle het op die plaas \"Rondawels\", (die eerste doopregisters verwys na \"Rondabelfontein\") by Richmond geboer, en het later na Kenhardt distrik getrek. Die kinders het hom as \"Oupa Steynsput\" geken.",
+      "note": "Huweliksdatum nie bevestig nie — geraamde waarde (c. 1883) bereken uit vroegste kind se geboortejaar (1884).",
+      "occupation": "Boer"
+    }
+  },
+  {
+    "tyd": "2026-07-24T21:20:10.998Z",
+    "volgorde": 3,
+    "rekord_id": "I4000",
+    "naam": "Pieter Jacobus CONRADIE",
+    "tipe": "huwelik-wysiging",
+    "wysigings": {
+      "marr_dates[0]": {
+        "oud": "~1883",
+        "nuut": "1883-08-06"
+      },
+      "marr_places[0]": {
+        "oud": "",
+        "nuut": "Kenhardt, Kaapkolonie"
+      }
+    },
+    "rekord_na": {
+      "id": "I4000",
+      "ref": "4000",
+      "name": "Pieter Jacobus CONRADIE",
+      "given": "Pieter Jacobus",
+      "surname": "CONRADIE",
+      "sex": "M",
+      "family_code": "c2d5e1f8g1",
+      "branch": "c2",
+      "branch_path": [
+        "b1",
+        "c2",
+        "c2d5",
+        "c2d5e1",
+        "c2d5e1f8",
+        "c2d5e1f8g1"
+      ],
+      "generation": 6,
+      "uncertain": false,
+      "nickname": "",
+      "birth_date": "1860-11-17",
+      "birth_year": 1860,
+      "birth_place": "",
+      "birth_circa": false,
+      "death_date": "1936-03-21",
+      "death_year": 1936,
+      "death_place": "Kenhardt, Kaapprovinsie",
+      "burial_place": "Steynsputs, Kenhardt, Kaapprovinsie",
+      "baptism_date": "",
+      "baptism_place": "",
+      "is_spouse": false,
+      "spouses": [
+        {
+          "id": "S4000",
+          "name": "Anna Maria CONRADIE",
+          "birth_date": "1864-08-11",
+          "birth_year": 1864,
+          "divorce_date": "",
+          "divorced": false
+        }
+      ],
+      "children_ids": [
+        "I4001",
+        "I4027",
+        "I4028",
+        "I4029",
+        "I4030",
+        "I4031",
+        "I4039",
+        "I4040",
+        "I4045",
+        "I4055"
+      ],
+      "parents": [
+        {
+          "id": "I3999",
+          "name": "Cornelius Johannes CONRADIE",
+          "role": "father"
+        },
+        {
+          "id": "S3999",
+          "name": "Emmerentia Jacomina * SPIES",
+          "role": "mother"
+        }
+      ],
+      "marr_dates": [
+        "1883-08-06"
+      ],
+      "marr_places": [
+        "Kenhardt, Kaapkolonie"
+      ],
+      "divorce_date": "",
+      "divorced": false,
+      "maiden_name": "",
+      "narrative": "Met sy troue was hy \"veeboer\" van Richmond, en sy afkomstig van Richmond. Hulle het op die plaas \"Rondawels\", (die eerste doopregisters verwys na \"Rondabelfontein\") by Richmond geboer, en het later na Kenhardt distrik getrek. Die kinders het hom as \"Oupa Steynsput\" geken.\"veeboer\" van Richmond, en sy afkomstig van Richmond. Hulle het op die plaas \"Rondawels\", (die eerste doopregisters verwys na \"Rondabelfontein\") by Richmond geboer, en het later na Kenhardt distrik getrek. Die kinders het hom as \"Oupa Steynsput\" geken.",
+      "note": "Huweliksdatum nie bevestig nie — geraamde waarde (c. 1883) bereken uit vroegste kind se geboortejaar (1884).",
+      "occupation": "Boer"
+    }
+  },
+  {
+    "tyd": "2026-07-24T21:20:10.998Z",
+    "volgorde": 4,
+    "rekord_id": "I4011",
+    "naam": "Anna Maria CONRADIE",
+    "tipe": "wysiging",
+    "wysigings": {
+      "events": {
+        "oud": [
+          {
+            "year": "1933",
+            "type": "MATRIEK",
+            "text": "Matrikuleer aan Kakamas Hoërskool"
+          },
+          {
+            "year": "1940",
+            "type": "VERHUISING",
+            "text": "Na Neilersdrif naby Keimoes"
+          },
+          {
+            "year": "1941",
+            "type": "KIND_ANDER_VAN",
+            "text": "Mariaan"
+          },
+          {
+            "year": "1941",
+            "type": "KIND_ANDER_VAN",
+            "text": "Mariaan"
+          },
+          {
+            "year": "1943",
+            "type": "KIND_ANDER_VAN",
+            "text": "Charlotte Sonia"
+          },
+          {
+            "year": "1954",
+            "type": "VERHUISING",
+            "text": "Na Heidelberg Tvl"
+          },
+          {
+            "year": "1955",
+            "type": "KIND_ANDER_VAN",
+            "text": "Andries"
+          }
+        ],
+        "nuut": [
+          {
+            "year": "1933",
+            "type": "MATRIEK",
+            "text": "Matrikuleer aan Kakamas Hoërskool"
+          },
+          {
+            "year": "1940",
+            "type": "VERHUISING",
+            "text": "Na Neilersdrif naby Keimoes"
+          },
+          {
+            "year": "1941",
+            "type": "KIND_ANDER_VAN",
+            "text": "Mariaan"
+          },
+          {
+            "year": "1941",
+            "type": "KIND_ANDER_VAN",
+            "text": "Mariaan"
+          },
+          {
+            "year": "1943",
+            "type": "KIND_ANDER_VAN",
+            "text": "Charlotte Sonia"
+          },
+          {
+            "year": "1943",
+            "type": "KIND_ANDER_VAN",
+            "text": "Charlotte Sonia"
+          },
+          {
+            "year": "1943",
+            "type": "KIND_ANDER_VAN",
+            "text": "Charlotte Sonia",
+            "ander_van": "de Vries"
+          },
+          {
+            "year": "1954",
+            "type": "VERHUISING",
+            "text": "Na Heidelberg Tvl"
+          },
+          {
+            "year": "1955",
+            "type": "KIND_ANDER_VAN",
+            "text": "Andries"
+          },
+          {
+            "year": "1955",
+            "type": "KIND_ANDER_VAN",
+            "text": "Andries",
+            "ander_van": "de Vries"
+          },
+          {
+            "year": "1977",
+            "type": "VERHUISING",
+            "text": "Na Tweeling, OVS"
+          }
+        ]
+      },
+      "fs_id": {
+        "oud": "",
+        "nuut": "LBWK-154"
+      }
+    },
+    "rekord_na": {
+      "id": "I4011",
+      "ref": "4011",
+      "name": "Anna Maria CONRADIE",
+      "given": "Anna Maria",
+      "surname": "CONRADIE",
+      "sex": "F",
+      "family_code": "c2d5e1f8g1h1i3",
+      "branch": "c2",
+      "branch_path": [
+        "b1",
+        "c2",
+        "c2d5",
+        "c2d5e1",
+        "c2d5e1f8",
+        "c2d5e1f8g1",
+        "c2d5e1f8g1h1",
+        "c2d5e1f8g1h1i3"
+      ],
+      "generation": 8,
+      "uncertain": false,
+      "nickname": "Annatjie",
+      "birth_date": "1916-06-04",
+      "birth_year": 1916,
+      "birth_place": "Kenhardt, Kaapprovinsie",
+      "birth_circa": false,
+      "death_date": "2005-08-02",
+      "death_year": 1993,
+      "death_place": "Springs, Gauteng",
+      "burial_place": "Springs, Gauteng",
+      "baptism_date": "",
+      "baptism_place": "",
+      "is_spouse": false,
+      "spouses": [
+        {
+          "id": "S4011",
+          "name": "Hermanus MacDonald DE VRIES",
+          "birth_date": "1908-03-22",
+          "birth_year": null,
+          "divorce_date": "",
+          "divorced": false
+        }
+      ],
+      "children_ids": [],
+      "parents": [
+        {
+          "id": "I4001",
+          "name": "Cornelius Johannes CONRADIE",
+          "role": "father"
+        },
+        {
+          "id": "S4001",
+          "name": "Maria Magdalena Elizabeth LACOCK",
+          "role": "mother"
+        }
+      ],
+      "marr_dates": [
+        "1940-09-01"
+      ],
+      "marr_places": [
+        "Johannesburg. Transvaal"
+      ],
+      "divorce_date": "",
+      "divorced": false,
+      "maiden_name": "",
+      "narrative": "",
+      "note": "Sy het haar opleiding as verpleegsuster in Bloemfontein ondergaan reeds voor haar troue. Sy was lank werksaam as Suster in Kakamas Hospitaal (Ongeveer 1940 tot 1954). Sy kwalifiseer as Kraamsuster (in Port Elizabeth) gedurende hierdie periode.\nIn 1954 koop haar man, Mac, 'n suiwelplaas in Heidelberg, Tvl en hulle verhuis na Transvaal. Sy is verpleegsuster en kraamsuster by AG Visser-hospitaal in Heidelberg. Die gesin se seun word hier gebore.",
+      "occupation": "Verpleegkundige (verpleegsuster), boervrou, sakevrou",
+      "district": "",
+      "events": [
+        {
+          "year": "1933",
+          "type": "MATRIEK",
+          "text": "Matrikuleer aan Kakamas Hoërskool"
+        },
+        {
+          "year": "1940",
+          "type": "VERHUISING",
+          "text": "Na Neilersdrif naby Keimoes"
+        },
+        {
+          "year": "1941",
+          "type": "KIND_ANDER_VAN",
+          "text": "Mariaan"
+        },
+        {
+          "year": "1941",
+          "type": "KIND_ANDER_VAN",
+          "text": "Mariaan"
+        },
+        {
+          "year": "1943",
+          "type": "KIND_ANDER_VAN",
+          "text": "Charlotte Sonia"
+        },
+        {
+          "year": "1943",
+          "type": "KIND_ANDER_VAN",
+          "text": "Charlotte Sonia"
+        },
+        {
+          "year": "1943",
+          "type": "KIND_ANDER_VAN",
+          "text": "Charlotte Sonia",
+          "ander_van": "de Vries"
+        },
+        {
+          "year": "1954",
+          "type": "VERHUISING",
+          "text": "Na Heidelberg Tvl"
+        },
+        {
+          "year": "1955",
+          "type": "KIND_ANDER_VAN",
+          "text": "Andries"
+        },
+        {
+          "year": "1955",
+          "type": "KIND_ANDER_VAN",
+          "text": "Andries",
+          "ander_van": "de Vries"
+        },
+        {
+          "year": "1977",
+          "type": "VERHUISING",
+          "text": "Na Tweeling, OVS"
+        }
+      ],
+      "fs_id": "LBWK-154",
+      "wt_id": ""
+    }
+  },
+  {
+    "tyd": "2026-07-25T05:49:40.178Z",
+    "volgorde": 1,
+    "rekord_id": "I4011",
+    "naam": "Anna Maria CONRADIE",
+    "tipe": "wysiging",
+    "wysigings": {
+      "events": {
+        "oud": [
+          {
+            "year": "1933",
+            "type": "MATRIEK",
+            "text": "Matrikuleer aan Kakamas Hoërskool"
+          },
+          {
+            "year": "1940",
+            "type": "VERHUISING",
+            "text": "Na Neilersdrif naby Keimoes"
+          },
+          {
+            "year": "1941",
+            "type": "KIND_ANDER_VAN",
+            "text": "Mariaan"
+          },
+          {
+            "year": "1941",
+            "type": "KIND_ANDER_VAN",
+            "text": "Mariaan"
+          },
+          {
+            "year": "1943",
+            "type": "KIND_ANDER_VAN",
+            "text": "Charlotte Sonia"
+          },
+          {
+            "year": "1954",
+            "type": "VERHUISING",
+            "text": "Na Heidelberg Tvl"
+          },
+          {
+            "year": "1955",
+            "type": "KIND_ANDER_VAN",
+            "text": "Andries"
+          }
+        ],
+        "nuut": [
+          {
+            "year": "1933",
+            "type": "MATRIEK",
+            "text": "Matrikuleer aan Kakamas Hoërskool"
+          },
+          {
+            "year": "1940",
+            "type": "VERHUISING",
+            "text": "Na Neilersdrif naby Keimoes"
+          },
+          {
+            "year": "1941",
+            "type": "KIND_ANDER_VAN",
+            "text": "Mariaan"
+          },
+          {
+            "year": "1954",
+            "type": "VERHUISING",
+            "text": "Na Heidelberg Tvl"
+          }
+        ]
+      }
+    },
+    "rekord_na": {
+      "id": "I4011",
+      "ref": "4011",
+      "name": "Anna Maria CONRADIE",
+      "given": "Anna Maria",
+      "surname": "CONRADIE",
+      "sex": "F",
+      "family_code": "c2d5e1f8g1h1i3",
+      "branch": "c2",
+      "branch_path": [
+        "b1",
+        "c2",
+        "c2d5",
+        "c2d5e1",
+        "c2d5e1f8",
+        "c2d5e1f8g1",
+        "c2d5e1f8g1h1",
+        "c2d5e1f8g1h1i3"
+      ],
+      "generation": 8,
+      "uncertain": false,
+      "nickname": "Annatjie",
+      "birth_date": "1916-06-04",
+      "birth_year": 1916,
+      "birth_place": "Kenhardt, Kaapprovinsie",
+      "birth_circa": false,
+      "death_date": "2005-08-02",
+      "death_year": 1993,
+      "death_place": "Springs, Gauteng",
+      "burial_place": "Springs, Gauteng",
+      "baptism_date": "",
+      "baptism_place": "",
+      "is_spouse": false,
+      "spouses": [
+        {
+          "id": "S4011",
+          "name": "Hermanus MacDonald DE VRIES",
+          "birth_date": "1908-03-22",
+          "birth_year": null,
+          "divorce_date": "",
+          "divorced": false
+        }
+      ],
+      "children_ids": [],
+      "parents": [
+        {
+          "id": "I4001",
+          "name": "Cornelius Johannes CONRADIE",
+          "role": "father"
+        },
+        {
+          "id": "S4001",
+          "name": "Maria Magdalena Elizabeth LACOCK",
+          "role": "mother"
+        }
+      ],
+      "marr_dates": [
+        "1940-09-01"
+      ],
+      "marr_places": [
+        "Johannesburg. Transvaal"
+      ],
+      "divorce_date": "",
+      "divorced": false,
+      "maiden_name": "",
+      "narrative": "",
+      "note": "Sy het haar opleiding as verpleegsuster in Bloemfontein ondergaan reeds voor haar troue. Sy was lank werksaam as Suster in Kakamas Hospitaal (Ongeveer 1940 tot 1954). Sy kwalifiseer as Kraamsuster (in Port Elizabeth) gedurende hierdie periode.\nIn 1954 koop haar man, Mac, 'n suiwelplaas in Heidelberg, Tvl en hulle verhuis na Transvaal. Sy is verpleegsuster en kraamsuster by AG Visser-hospitaal in Heidelberg. Die gesin se seun word hier gebore.",
+      "occupation": "Verpleegkundige (verpleegsuster), boervrou, sakevrou",
+      "district": "",
+      "events": [
+        {
+          "year": "1933",
+          "type": "MATRIEK",
+          "text": "Matrikuleer aan Kakamas Hoërskool"
+        },
+        {
+          "year": "1940",
+          "type": "VERHUISING",
+          "text": "Na Neilersdrif naby Keimoes"
+        },
+        {
+          "year": "1941",
+          "type": "KIND_ANDER_VAN",
+          "text": "Mariaan"
+        },
+        {
+          "year": "1954",
+          "type": "VERHUISING",
+          "text": "Na Heidelberg Tvl"
+        }
+      ],
+      "fs_id": "",
+      "wt_id": ""
+    }
+  },
+  {
+    "tyd": "2026-07-25T07:37:23.386Z",
+    "volgorde": 1,
+    "rekord_id": "I4011",
+    "naam": "Anna Maria CONRADIE",
+    "tipe": "wysiging",
+    "wysigings": {
+      "events": {
+        "oud": [
+          {
+            "year": "1933",
+            "type": "MATRIEK",
+            "text": "Matrikuleer aan Kakamas Hoërskool"
+          },
+          {
+            "year": "1940",
+            "type": "VERHUISING",
+            "text": "Na Neilersdrif naby Keimoes"
+          },
+          {
+            "year": "1941",
+            "type": "KIND_ANDER_VAN",
+            "text": "Mariaan"
+          },
+          {
+            "year": "1954",
+            "type": "VERHUISING",
+            "text": "Na Heidelberg Tvl"
+          }
+        ],
+        "nuut": [
+          {
+            "year": "1933",
+            "type": "MATRIEK",
+            "text": "Matrikuleer aan Kakamas Hoërskool"
+          },
+          {
+            "year": "1940",
+            "type": "VERHUISING",
+            "text": "Na Neilersdrif naby Keimoes"
+          },
+          {
+            "year": "1941",
+            "type": "KIND_ANDER_VAN",
+            "text": "Mariaan",
+            "ander_van": "de Vries"
+          },
+          {
+            "year": "1954",
+            "type": "VERHUISING",
+            "text": "Na Heidelberg Tvl"
+          }
+        ]
+      },
+      "fs_id": {
+        "oud": "",
+        "nuut": "LBWK-154"
+      }
+    },
+    "rekord_na": {
+      "id": "I4011",
+      "ref": "4011",
+      "name": "Anna Maria CONRADIE",
+      "given": "Anna Maria",
+      "surname": "CONRADIE",
+      "sex": "F",
+      "family_code": "c2d5e1f8g1h1i3",
+      "branch": "c2",
+      "branch_path": [
+        "b1",
+        "c2",
+        "c2d5",
+        "c2d5e1",
+        "c2d5e1f8",
+        "c2d5e1f8g1",
+        "c2d5e1f8g1h1",
+        "c2d5e1f8g1h1i3"
+      ],
+      "generation": 8,
+      "uncertain": false,
+      "nickname": "Annatjie",
+      "birth_date": "1916-06-04",
+      "birth_year": 1916,
+      "birth_place": "Kenhardt, Kaapprovinsie",
+      "birth_circa": false,
+      "death_date": "2005-08-02",
+      "death_year": 1993,
+      "death_place": "Springs, Gauteng",
+      "burial_place": "Springs, Gauteng",
+      "baptism_date": "",
+      "baptism_place": "",
+      "is_spouse": false,
+      "spouses": [
+        {
+          "id": "S4011",
+          "name": "Hermanus MacDonald DE VRIES",
+          "birth_date": "1908-03-22",
+          "birth_year": null,
+          "divorce_date": "",
+          "divorced": false
+        }
+      ],
+      "children_ids": [],
+      "parents": [
+        {
+          "id": "I4001",
+          "name": "Cornelius Johannes CONRADIE",
+          "role": "father"
+        },
+        {
+          "id": "S4001",
+          "name": "Maria Magdalena Elizabeth LACOCK",
+          "role": "mother"
+        }
+      ],
+      "marr_dates": [
+        "1940-09-01"
+      ],
+      "marr_places": [
+        "Johannesburg. Transvaal"
+      ],
+      "divorce_date": "",
+      "divorced": false,
+      "maiden_name": "",
+      "narrative": "",
+      "note": "Sy het haar opleiding as verpleegsuster in Bloemfontein ondergaan reeds voor haar troue. Sy was lank werksaam as Suster in Kakamas Hospitaal (Ongeveer 1940 tot 1954). Sy kwalifiseer as Kraamsuster (in Port Elizabeth) gedurende hierdie periode.\nIn 1954 koop haar man, Mac, 'n suiwelplaas in Heidelberg, Tvl en hulle verhuis na Transvaal. Sy is verpleegsuster en kraamsuster by AG Visser-hospitaal in Heidelberg. Die gesin se seun word hier gebore.",
+      "occupation": "Verpleegkundige (verpleegsuster), boervrou, sakevrou",
+      "district": "",
+      "events": [
+        {
+          "year": "1933",
+          "type": "MATRIEK",
+          "text": "Matrikuleer aan Kakamas Hoërskool"
+        },
+        {
+          "year": "1940",
+          "type": "VERHUISING",
+          "text": "Na Neilersdrif naby Keimoes"
+        },
+        {
+          "year": "1941",
+          "type": "KIND_ANDER_VAN",
+          "text": "Mariaan",
+          "ander_van": "de Vries"
+        },
+        {
+          "year": "1954",
+          "type": "VERHUISING",
+          "text": "Na Heidelberg Tvl"
+        }
+      ],
+      "fs_id": "LBWK-154"
+    }
+  },
+  {
+    "tyd": "2026-07-25T07:37:23.386Z",
+    "volgorde": 2,
+    "rekord_id": "I4012",
+    "naam": "Wilhelmus Jacobus CONRADIE",
+    "tipe": "wysiging",
+    "wysigings": {
+      "fs_id": {
+        "oud": "",
+        "nuut": "LBWK-1ZS"
+      }
+    },
+    "rekord_na": {
+      "id": "I4012",
+      "ref": "4012",
+      "name": "Wilhelmus Jacobus CONRADIE",
+      "given": "Wilhelmus Jacobus",
+      "surname": "CONRADIE",
+      "sex": "M",
+      "family_code": "c2d5e1f8g1h1i4",
+      "branch": "c2",
+      "branch_path": [
+        "b1",
+        "c2",
+        "c2d5",
+        "c2d5e1",
+        "c2d5e1f8",
+        "c2d5e1f8g1",
+        "c2d5e1f8g1h1",
+        "c2d5e1f8g1h1i4"
+      ],
+      "generation": 8,
+      "uncertain": false,
+      "nickname": "Willie",
+      "birth_date": "1918-03-15",
+      "birth_year": 1918,
+      "birth_place": "Kakamas, Kaapprovinsie",
+      "birth_circa": false,
+      "death_date": "2011-08-14",
+      "death_year": 2011,
+      "death_place": "Bloemfontein",
+      "burial_place": "",
+      "baptism_date": "",
+      "baptism_place": "",
+      "is_spouse": false,
+      "spouses": [
+        {
+          "id": "S4012",
+          "name": "Susanna Johanna Petronella JACOBS",
+          "birth_date": "1919-02-08",
+          "birth_year": 1919,
+          "divorce_date": "",
+          "divorced": false
+        }
+      ],
+      "children_ids": [
+        "I4013",
+        "I4017"
+      ],
+      "parents": [
+        {
+          "id": "I4001",
+          "name": "Cornelius Johannes CONRADIE",
+          "role": "father"
+        },
+        {
+          "id": "S4001",
+          "name": "Maria Magdalena Elizabeth LACOCK",
+          "role": "mother"
+        }
+      ],
+      "marr_dates": [
+        "1946-12-21"
+      ],
+      "marr_places": [
+        ""
+      ],
+      "divorce_date": "",
+      "divorced": false,
+      "maiden_name": "",
+      "narrative": "2004: woonagtig Bloemfontein. Hy was op Jacobsdal in die skool. Begin in 1935 in Bloemfontein werk. Conradie, 'n bekende meubelfabrikant, was 'n vakleerling by \"oubaas\" Henry Goddard, 'n Skot, en het in 1945 sy eie onderneming, Conradie en Conradie, in Kerkstraat begin. Hy het later sy tegniese onderwysdiploma met korrespondensie van die Witwatersrandse Tegniese Kollege begin. Later het hy die graad B.Com. aan die destydse Universiteitskollege van die Oranje- Vrystaat (UKOVS) behaal. Sy onderneming het uitgebrei en in 1947 het hy 'n meubelfabriek in Hamilton gebou. Hy het 35 jaar lank elke jaar die departement van bosbou se houtveilings bygewoon en het in die maak van meubels van inheemse hout gespesialiseer. Van sy meubels is in die hele Suid-Afrika, die destydse Rhodesië (nou Zimbabwe), Europa en Amerika verkoop. In 1983 het hy uitgetree en alles verkoop. Daarna het hy weens asma en hooikoors \"nie weer 'n stukkie houtwerk gedoen nie\". Vanaf 1957 was hy 20 jaar lank ononderbroke stadsraadslid. Hy en sy vrou was ook twee en 'n half jaar lank burgemeesterspaar.Susan is 'n oud kindertuinonderwyseres van die Dr. Viljoen-skool. [Bron: Volksblad 12/10/2004] 2011: Sy gesondheid het ernstig verswak na longontsteking 'n paar maande voor sy dood. Sy gedenkdiens was op 17.08.2011 te Berg-en-Dal gemeente,Bfn. Sy as is in die gedenkmuur by die kerk geplaas, aangesien die ou familieblok by die Memorium begraafplaas onder water is en glad nie gebruik kan word nie. (j2 se oupa C.J. en Oom, P.J. is met hulle gades daar begrawe.)",
+      "note": "Huweliksdatum bevestig deur sy seun (Pieter Jacobus CONRADIE)",
+      "occupation": "",
+      "district": "",
+      "events": [
+        {
+          "year": "1930",
+          "type": "SKOOL",
+          "text": "Op skool in Jacobsdal"
+        },
+        {
+          "year": "1934",
+          "type": "MATRIEK",
+          "text": "Jacobsdal"
+        },
+        {
+          "year": "1935",
+          "type": "WERK",
+          "text": "Begin as vakleerling in meubelfabriek in Bloemfontein"
+        },
+        {
+          "year": "1935",
+          "type": "VERHUISING",
+          "text": "Na Bloemfontein, OVS"
+        },
+        {
+          "year": "1945",
+          "type": "WERK",
+          "text": "Begin eie onderneming, Conradie en Conradie in Kerkstraat, Bloemfontein"
+        },
+        {
+          "year": "1947",
+          "type": "WERK",
+          "text": "Bou eie meubelfabriek in Hamilton, Bloemfontein"
+        },
+        {
+          "year": "1983",
+          "type": "AFTREDE",
+          "text": "Verkoop sakebelange"
+        }
+      ],
+      "fs_id": "LBWK-1ZS",
+      "wt_id": ""
+    }
+  },
+  {
+    "tyd": "2026-07-25T07:37:23.386Z",
+    "volgorde": 3,
+    "rekord_id": "I4012",
+    "naam": "Wilhelmus Jacobus CONRADIE",
+    "tipe": "wysiging",
+    "wysigings": {
+      "events": {
+        "oud": [
+          {
+            "year": "1930",
+            "type": "SKOOL",
+            "text": "Op skool in Jacobsdal"
+          },
+          {
+            "year": "1934",
+            "type": "MATRIEK",
+            "text": "Jacobsdal"
+          },
+          {
+            "year": "1935",
+            "type": "WERK",
+            "text": "Begin as vakleerling in meubelfabriek in Bloemfontein"
+          },
+          {
+            "year": "1945",
+            "type": "WERK",
+            "text": "Begin eie onderneming, Conradie en Conradie in Kerkstraat, Bloemfontein"
+          },
+          {
+            "year": "1947",
+            "type": "WERK",
+            "text": "Bou eie meubelfabriek in Hamilton, Bloemfontein"
+          },
+          {
+            "year": "1983",
+            "type": "AFTREDE",
+            "text": "Verkoop sakebelange"
+          }
+        ],
+        "nuut": [
+          {
+            "year": "1930",
+            "type": "SKOOL",
+            "text": "Op skool in Jacobsdal"
+          },
+          {
+            "year": "1934",
+            "type": "MATRIEK",
+            "text": "Jacobsdal"
+          },
+          {
+            "year": "1935",
+            "type": "WERK",
+            "text": "Begin as vakleerling in meubelfabriek in Bloemfontein"
+          },
+          {
+            "year": "1935",
+            "type": "VERHUISING",
+            "text": "Na Bloemfontein, OVS"
+          },
+          {
+            "year": "1945",
+            "type": "WERK",
+            "text": "Begin eie onderneming, Conradie en Conradie in Kerkstraat, Bloemfontein"
+          },
+          {
+            "year": "1947",
+            "type": "WERK",
+            "text": "Bou eie meubelfabriek in Hamilton, Bloemfontein"
+          },
+          {
+            "year": "1983",
+            "type": "AFTREDE",
+            "text": "Verkoop sakebelange"
+          }
+        ]
+      },
+      "fs_id": {
+        "oud": "",
+        "nuut": "LBWK-1ZS"
+      }
+    },
+    "rekord_na": {
+      "id": "I4012",
+      "ref": "4012",
+      "name": "Wilhelmus Jacobus CONRADIE",
+      "given": "Wilhelmus Jacobus",
+      "surname": "CONRADIE",
+      "sex": "M",
+      "family_code": "c2d5e1f8g1h1i4",
+      "branch": "c2",
+      "branch_path": [
+        "b1",
+        "c2",
+        "c2d5",
+        "c2d5e1",
+        "c2d5e1f8",
+        "c2d5e1f8g1",
+        "c2d5e1f8g1h1",
+        "c2d5e1f8g1h1i4"
+      ],
+      "generation": 8,
+      "uncertain": false,
+      "nickname": "Willie",
+      "birth_date": "1918-03-15",
+      "birth_year": 1918,
+      "birth_place": "Kakamas, Kaapprovinsie",
+      "birth_circa": false,
+      "death_date": "2011-08-14",
+      "death_year": 2011,
+      "death_place": "Bloemfontein",
+      "burial_place": "",
+      "baptism_date": "",
+      "baptism_place": "",
+      "is_spouse": false,
+      "spouses": [
+        {
+          "id": "S4012",
+          "name": "Susanna Johanna Petronella JACOBS",
+          "birth_date": "1919-02-08",
+          "birth_year": 1919,
+          "divorce_date": "",
+          "divorced": false
+        }
+      ],
+      "children_ids": [
+        "I4013",
+        "I4017"
+      ],
+      "parents": [
+        {
+          "id": "I4001",
+          "name": "Cornelius Johannes CONRADIE",
+          "role": "father"
+        },
+        {
+          "id": "S4001",
+          "name": "Maria Magdalena Elizabeth LACOCK",
+          "role": "mother"
+        }
+      ],
+      "marr_dates": [
+        "1946-12-21"
+      ],
+      "marr_places": [
+        ""
+      ],
+      "divorce_date": "",
+      "divorced": false,
+      "maiden_name": "",
+      "narrative": "2004: woonagtig Bloemfontein. Hy was op Jacobsdal in die skool. Begin in 1935 in Bloemfontein werk. Conradie, 'n bekende meubelfabrikant, was 'n vakleerling by \"oubaas\" Henry Goddard, 'n Skot, en het in 1945 sy eie onderneming, Conradie en Conradie, in Kerkstraat begin. Hy het later sy tegniese onderwysdiploma met korrespondensie van die Witwatersrandse Tegniese Kollege begin. Later het hy die graad B.Com. aan die destydse Universiteitskollege van die Oranje- Vrystaat (UKOVS) behaal. Sy onderneming het uitgebrei en in 1947 het hy 'n meubelfabriek in Hamilton gebou. Hy het 35 jaar lank elke jaar die departement van bosbou se houtveilings bygewoon en het in die maak van meubels van inheemse hout gespesialiseer. Van sy meubels is in die hele Suid-Afrika, die destydse Rhodesië (nou Zimbabwe), Europa en Amerika verkoop. In 1983 het hy uitgetree en alles verkoop. Daarna het hy weens asma en hooikoors \"nie weer 'n stukkie houtwerk gedoen nie\". Vanaf 1957 was hy 20 jaar lank ononderbroke stadsraadslid. Hy en sy vrou was ook twee en 'n half jaar lank burgemeesterspaar.Susan is 'n oud kindertuinonderwyseres van die Dr. Viljoen-skool. [Bron: Volksblad 12/10/2004] 2011: Sy gesondheid het ernstig verswak na longontsteking 'n paar maande voor sy dood. Sy gedenkdiens was op 17.08.2011 te Berg-en-Dal gemeente,Bfn. Sy as is in die gedenkmuur by die kerk geplaas, aangesien die ou familieblok by die Memorium begraafplaas onder water is en glad nie gebruik kan word nie. (j2 se oupa C.J. en Oom, P.J. is met hulle gades daar begrawe.)",
+      "note": "Huweliksdatum bevestig deur sy seun (Pieter Jacobus CONRADIE)",
+      "occupation": "",
+      "district": "",
+      "events": [
+        {
+          "year": "1930",
+          "type": "SKOOL",
+          "text": "Op skool in Jacobsdal"
+        },
+        {
+          "year": "1934",
+          "type": "MATRIEK",
+          "text": "Jacobsdal"
+        },
+        {
+          "year": "1935",
+          "type": "WERK",
+          "text": "Begin as vakleerling in meubelfabriek in Bloemfontein"
+        },
+        {
+          "year": "1935",
+          "type": "VERHUISING",
+          "text": "Na Bloemfontein, OVS"
+        },
+        {
+          "year": "1945",
+          "type": "WERK",
+          "text": "Begin eie onderneming, Conradie en Conradie in Kerkstraat, Bloemfontein"
+        },
+        {
+          "year": "1947",
+          "type": "WERK",
+          "text": "Bou eie meubelfabriek in Hamilton, Bloemfontein"
+        },
+        {
+          "year": "1983",
+          "type": "AFTREDE",
+          "text": "Verkoop sakebelange"
+        }
+      ],
+      "fs_id": "LBWK-1ZS",
+      "wt_id": ""
+    }
   }
 ]

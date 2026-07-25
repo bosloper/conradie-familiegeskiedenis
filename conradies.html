@@ -4181,11 +4181,14 @@ function vmEvToggleEkstra() {
   var gekose = tipes.find(function(t) { return t.kode === (sel ? sel.value : ''); });
   var ekstraDiv = document.getElementById('vm-ev-ekstra');
   if (!ekstraDiv) return;
+  var ekstraInv = document.getElementById('vm-ev-ekstra-waarde');
   if (gekose && gekose.ekstra_veld) {
     var lbl = ekstraDiv.querySelector('label');
     if (lbl) lbl.textContent = gekose.ekstra_veld === 'ander_van' ? 'Kind se van:' : gekose.ekstra_veld === 'bestemming' ? 'Waarheen?' : gekose.ekstra_veld;
+    if (ekstraInv) ekstraInv.value = '';
     ekstraDiv.style.display = 'block';
   } else {
+    if (ekstraInv) ekstraInv.value = '';
     ekstraDiv.style.display = 'none';
   }
 }
@@ -4708,7 +4711,7 @@ function attachCorrectionListeners() {
     var html = '<div style="max-width:720px;margin:0 auto;padding:1rem;">';
     html += '<div style="display:flex;align-items:baseline;gap:0.7rem;margin-bottom:0.9rem;">';
     html += '<h2 style="color:var(--sepia-light);font-size:1.2rem;margin:0;">✏️ Admin</h2>';
-    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-11-1</span>';
+    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-11-2</span>';
     html += '</div>';
 
     // ── Proses-verduideliking (inklapbaar) ──
@@ -5246,7 +5249,7 @@ function attachCorrectionListeners() {
     // Wys vergelyking en navigeer na Stoor-blad sodat vergelyking + stoor-knoppies saam sigbaar is
     admWysVergelyking(persoon, verskille, narrVervang, narrVoegBy, ekstra, indiener, huwInfo, evVoorstelle, npLys);
     statusEl.textContent = '✅ Voorstel verwerk vir: ' + persoon.name + ' (REF ' + ref + ')';
-    if (typeof admTaakKies === 'function') setTimeout(function() { admTaakKies('taak-stoor'); }, 200);
+    if (typeof admTaakKies === 'function') setTimeout(function() { admTaakKies('taak-wysig'); }, 200);
   }
 
   // ── Wys Oud vs Nuut Vergelyking ──

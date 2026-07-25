@@ -3678,10 +3678,12 @@ function buildTydlyn(r) {
       const ikon = (_t && _t.ikon) ? _t.ikon : '📌';
       const titel = (_t && _t.naam) ? _t.naam : (ev.type || 'Ander');
       const ey = ev.year ? +ev.year : null;
-      // KIND_ANDER_VAN — wys kind se naam (of 'Kind' as leeg) + van + ouer se ouderdom
+      // Bou detail-string vir alle events
       var detail = ev.text || '';
       if (ev.type === 'KIND_ANDER_VAN') {
-        if (!detail && ev.ander_van) detail = 'Kind';
+        // As teks leeg is, gebruik 'Kind' as plaasvervanger
+        if (!detail) detail = 'Kind';
+        // Voeg van by as dit beskikbaar is
         if (ev.ander_van) detail += ' (' + ev.ander_van + ')';
         detail += ouderdom(ry, ey);
       }

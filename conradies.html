@@ -3670,9 +3670,11 @@ function buildTydlyn(r) {
     gebeure.push({ jaar: jaar(r.death_date) || r.death_year || null, ikon: '⚰', titel: 'Begrawe', detail: r.burial_place });
   }
 
+  // Event-tipes (buite if-blokke — beskikbaar vir beide events en gade-events)
+  var _evTipes = window.CONRADIE_EVENT_TIPES || [];
+
   // Persoonlike gebeurtenisse (events-veld)
   if (r.events && r.events.length) {
-    const _evTipes = window.CONRADIE_EVENT_TIPES || [];
     r.events.forEach(function(ev) {
       const _t = _evTipes.find(function(x) { return x.kode === ev.type; });
       const ikon = (_t && _t.ikon) ? _t.ikon : '📌';
@@ -3681,9 +3683,9 @@ function buildTydlyn(r) {
       // Bou detail-string vir alle events
       var detail = ev.text || '';
       if (ev.type === 'KIND_ANDER_VAN') {
-        // As teks leeg is, gebruik 'Kind' as plaasvervanger
+        // ev.text bevat die kind se naam; as leeg, gebruik 'Kind'
         if (!detail) detail = 'Kind';
-        // Voeg van by as dit beskikbaar is
+        // Voeg van by as suffix
         if (ev.ander_van) detail += ' (' + ev.ander_van + ')';
         detail += ouderdom(ry, ey);
       }
@@ -4182,13 +4184,23 @@ function vmEvToggleEkstra() {
   var ekstraDiv = document.getElementById('vm-ev-ekstra');
   if (!ekstraDiv) return;
   var ekstraInv = document.getElementById('vm-ev-ekstra-waarde');
+  var teksInv = document.getElementById('vm-ev-teks');
   if (gekose && gekose.ekstra_veld) {
     var lbl = ekstraDiv.querySelector('label');
     if (lbl) lbl.textContent = gekose.ekstra_veld === 'ander_van' ? 'Kind se van:' : gekose.ekstra_veld === 'bestemming' ? 'Waarheen?' : gekose.ekstra_veld;
     if (ekstraInv) ekstraInv.value = '';
+    // Pas plekhouer aan vir hoofteks-veld na gelang van tipe
+    if (teksInv) {
+      if (gekose.kode === 'KIND_ANDER_VAN') {
+        teksInv.placeholder = 'Kind se volle naam (bv. Anna Maria)';
+      } else {
+        teksInv.placeholder = 'bv. Aangestel as skoolhoof in Pretoria';
+      }
+    }
     ekstraDiv.style.display = 'block';
   } else {
     if (ekstraInv) ekstraInv.value = '';
+    if (teksInv) teksInv.placeholder = 'bv. Aangestel as skoolhoof in Pretoria';
     ekstraDiv.style.display = 'none';
   }
 }
@@ -4711,7 +4723,7 @@ function attachCorrectionListeners() {
     var html = '<div style="max-width:720px;margin:0 auto;padding:1rem;">';
     html += '<div style="display:flex;align-items:baseline;gap:0.7rem;margin-bottom:0.9rem;">';
     html += '<h2 style="color:var(--sepia-light);font-size:1.2rem;margin:0;">✏️ Admin</h2>';
-    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-11-2</span>';
+    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-12-0</span>';
     html += '</div>';
 
     // ── Proses-verduideliking (inklapbaar) ──

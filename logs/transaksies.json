@@ -1903,5 +1903,149 @@
       "fs_id": "LBWK-154",
       "wt_id": ""
     }
+  },
+  {
+    "tyd": "2026-07-25T15:57:13.537Z",
+    "volgorde": 1,
+    "rekord_id": "I4011",
+    "naam": "Anna Maria CONRADIE",
+    "tipe": "wysiging",
+    "wysigings": {
+      "events": {
+        "oud": [
+          {
+            "year": "1933",
+            "type": "MATRIEK",
+            "text": "Matrikuleer aan Kakamas Hoërskool"
+          },
+          {
+            "year": "1940",
+            "type": "VERHUISING",
+            "text": "Na Neilersdrif naby Keimoes"
+          },
+          {
+            "year": "1954",
+            "type": "VERHUISING",
+            "text": "Na Heidelberg Tvl"
+          },
+          {
+            "year": "1977",
+            "type": "VERHUISING",
+            "text": "Na Tweeling, OVS"
+          },
+          {
+            "year": "1999",
+            "type": "VERHUISING",
+            "text": "Na Endicott, Springs, Gauteng"
+          }
+        ],
+        "nuut": [
+          {
+            "year": "1933",
+            "type": "MATRIEK",
+            "text": "Matrikuleer aan Kakamas Hoërskool"
+          },
+          {
+            "year": "1954",
+            "type": "VERHUISING",
+            "text": "Na Heidelberg Tvl"
+          },
+          {
+            "year": "1999",
+            "type": "VERHUISING",
+            "text": "Na Endicott, Springs, Gauteng"
+          }
+        ]
+      }
+    },
+    "rekord_na": {
+      "id": "I4011",
+      "ref": "4011",
+      "name": "Anna Maria CONRADIE",
+      "given": "Anna Maria",
+      "surname": "CONRADIE",
+      "sex": "F",
+      "family_code": "c2d5e1f8g1h1i3",
+      "branch": "c2",
+      "branch_path": [
+        "b1",
+        "c2",
+        "c2d5",
+        "c2d5e1",
+        "c2d5e1f8",
+        "c2d5e1f8g1",
+        "c2d5e1f8g1h1",
+        "c2d5e1f8g1h1i3"
+      ],
+      "generation": 8,
+      "uncertain": false,
+      "nickname": "Annatjie",
+      "birth_date": "1916-06-04",
+      "birth_year": 1916,
+      "birth_place": "Kenhardt, Kaapprovinsie",
+      "birth_circa": false,
+      "death_date": "2005-08-02",
+      "death_year": 1993,
+      "death_place": "Springs, Gauteng",
+      "burial_place": "Springs, Gauteng",
+      "baptism_date": "",
+      "baptism_place": "",
+      "is_spouse": false,
+      "spouses": [
+        {
+          "id": "S4011",
+          "name": "Hermanus MacDonald DE VRIES",
+          "birth_date": "1908-03-22",
+          "birth_year": null,
+          "divorce_date": "",
+          "divorced": false
+        }
+      ],
+      "children_ids": [],
+      "parents": [
+        {
+          "id": "I4001",
+          "name": "Cornelius Johannes CONRADIE",
+          "role": "father"
+        },
+        {
+          "id": "S4001",
+          "name": "Maria Magdalena Elizabeth LACOCK",
+          "role": "mother"
+        }
+      ],
+      "marr_dates": [
+        "1940-09-01"
+      ],
+      "marr_places": [
+        "Johannesburg. Transvaal"
+      ],
+      "divorce_date": "",
+      "divorced": false,
+      "maiden_name": "",
+      "narrative": "",
+      "note": "Sy het haar opleiding as verpleegsuster in Bloemfontein ondergaan reeds voor haar troue. Sy was lank werksaam as Suster in Kakamas Hospitaal (Ongeveer 1940 tot 1954). Sy kwalifiseer as Kraamsuster (in Port Elizabeth) gedurende hierdie periode.\nIn 1954 koop haar man, Mac, 'n suiwelplaas in Heidelberg, Tvl en hulle verhuis na Transvaal. Sy is verpleegsuster en kraamsuster by AG Visser-hospitaal in Heidelberg. Die gesin se seun word hier gebore.",
+      "occupation": "Verpleegkundige (verpleegsuster), boervrou, sakevrou",
+      "district": "",
+      "events": [
+        {
+          "year": "1933",
+          "type": "MATRIEK",
+          "text": "Matrikuleer aan Kakamas Hoërskool"
+        },
+        {
+          "year": "1954",
+          "type": "VERHUISING",
+          "text": "Na Heidelberg Tvl"
+        },
+        {
+          "year": "1999",
+          "type": "VERHUISING",
+          "text": "Na Endicott, Springs, Gauteng"
+        }
+      ],
+      "fs_id": "LBWK-154",
+      "wt_id": ""
+    }
   }
 ]

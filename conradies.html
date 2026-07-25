@@ -5523,6 +5523,7 @@ function attachCorrectionListeners() {
     // Events toepas — stoor kopie voor wysiging vir admOrig-vergelyking
     var eventsVoor = JSON.parse(JSON.stringify(persoon.events || []));
     var evCbs = document.querySelectorAll('.adm-vgl-event:checked');
+    var vveeIndekse = []; // versamel VVEE-indekse vir omgekeerde verwydering
     evCbs.forEach(function(cb) {
       var aksie  = cb.getAttribute('data-ev-aksie');
       var indeks = parseInt(cb.getAttribute('data-ev-indeks'));
@@ -5550,7 +5551,14 @@ function attachCorrectionListeners() {
         if (ekstra && tipe === 'VERHUISING') wysigEv.bestemming = ekstra;
         persoon.events[indeks] = wysigEv;
         toegepas++;
-      } else if (aksie === 'VVEE' && !isNaN(indeks) && persoon.events[indeks]) {
+      } else if (aksie === 'VVEE' && !isNaN(indeks)) {
+        vveeIndekse.push(indeks); // versamel vir later
+      }
+    });
+    // Verwyder VVEE-events in omgekeerde indeks-volgorde (voorkom indeks-verskuiwing)
+    vveeIndekse.sort(function(a, b) { return b - a; });
+    vveeIndekse.forEach(function(indeks) {
+      if (persoon.events && persoon.events[indeks]) {
         persoon.events.splice(indeks, 1);
         toegepas++;
       }

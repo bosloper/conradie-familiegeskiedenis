@@ -5229,5 +5229,293 @@
       "wt_id": "",
       "huwelik": "Pieter van Aarde DE WET"
     }
+  },
+  {
+    "tyd": "2026-07-26T19:31:55.613Z",
+    "volgorde": 1,
+    "rekord_id": "S7289",
+    "naam": "Pieter van Aarde DE WET",
+    "tipe": "huwelik-wysiging",
+    "wysigings": {
+      "marr_dates[0]": {
+        "oud": "",
+        "nuut": "1957-02-23"
+      },
+      "marr_places[0]": {
+        "oud": "",
+        "nuut": "Bloemfontein"
+      }
+    },
+    "rekord_na": {
+      "id": "S7289",
+      "ref": "7289",
+      "name": "Pieter van Aardt DE WET",
+      "given": "Pieter van Aardt",
+      "surname": "DE WET",
+      "sex": "",
+      "family_code": "",
+      "branch": "",
+      "generation": 0,
+      "birth_date": "1912-10-23",
+      "birth_year": null,
+      "birth_place": "",
+      "death_date": "1984-07-24",
+      "death_year": null,
+      "death_place": "Bloemfontein, OVS",
+      "burial_place": "",
+      "baptism_date": "",
+      "baptism_place": "",
+      "birth_circa": false,
+      "nickname": "Pieter; De Wet",
+      "maiden_name": "",
+      "is_spouse": true,
+      "uncertain": false,
+      "spouses": [
+        {
+          "id": "I4010",
+          "name": "Elizabeth Fredrieka CONRADIE",
+          "birth_date": "",
+          "birth_year": null,
+          "divorce_date": "",
+          "divorced": false
+        }
+      ],
+      "children_ids": [],
+      "parents": [],
+      "marr_dates": [
+        "1957-02-23"
+      ],
+      "marr_places": [
+        "Bloemfontein"
+      ],
+      "narrative": "Getroud met Pieter van Aarde DE WET.",
+      "note": "",
+      "occupation": "",
+      "events": [],
+      "fs_id": "G46Q-DWC",
+      "wt_id": ""
+    }
+  },
+  {
+    "tyd": "2026-07-26T19:31:55.613Z",
+    "volgorde": 2,
+    "rekord_id": "S7289",
+    "naam": "Pieter van Aardt DE WET",
+    "tipe": "wysiging",
+    "wysigings": {
+      "given": {
+        "oud": "",
+        "nuut": "Pieter van Aardt"
+      },
+      "surname": {
+        "oud": "Pieter van Aarde DE WET",
+        "nuut": "DE WET"
+      },
+      "nickname": {
+        "oud": "",
+        "nuut": "Pieter; De Wet"
+      },
+      "birth_date": {
+        "oud": "",
+        "nuut": "1912-10-23"
+      },
+      "death_date": {
+        "oud": "",
+        "nuut": "1984-07-24"
+      },
+      "death_place": {
+        "oud": "",
+        "nuut": "Bloemfontein, OVS"
+      },
+      "fs_id": {
+        "oud": "",
+        "nuut": "G46Q-DWC"
+      }
+    },
+    "rekord_na": {
+      "id": "S7289",
+      "ref": "7289",
+      "name": "Pieter van Aardt DE WET",
+      "given": "Pieter van Aardt",
+      "surname": "DE WET",
+      "sex": "",
+      "family_code": "",
+      "branch": "",
+      "generation": 0,
+      "birth_date": "1912-10-23",
+      "birth_year": null,
+      "birth_place": "",
+      "death_date": "1984-07-24",
+      "death_year": null,
+      "death_place": "Bloemfontein, OVS",
+      "burial_place": "",
+      "baptism_date": "",
+      "baptism_place": "",
+      "birth_circa": false,
+      "nickname": "Pieter; De Wet",
+      "maiden_name": "",
+      "is_spouse": true,
+      "uncertain": false,
+      "spouses": [
+        {
+          "id": "I4010",
+          "name": "Elizabeth Fredrieka CONRADIE",
+          "birth_date": "",
+          "birth_year": null,
+          "divorce_date": "",
+          "divorced": false
+        }
+      ],
+      "children_ids": [],
+      "parents": [],
+      "marr_dates": [
+        "1957-02-23"
+      ],
+      "marr_places": [
+        "Bloemfontein"
+      ],
+      "narrative": "Getroud met Pieter van Aarde DE WET.",
+      "note": "",
+      "occupation": "",
+      "events": [],
+      "fs_id": "G46Q-DWC",
+      "wt_id": ""
+    }
+  },
+  {
+    "tyd": "2026-07-26T19:31:55.613Z",
+    "volgorde": 3,
+    "rekord_id": "I4002",
+    "naam": "Pieter Jacobus CONRADIE",
+    "tipe": "wysiging",
+    "wysigings": {
+      "events": {
+        "oud": [
+          {
+            "year": "1933",
+            "type": "WERK",
+            "text": "Word aangestel as onderwyser. (Soek nog inligting)"
+          },
+          {
+            "year": "1949",
+            "type": "VERHUISING",
+            "text": "Aanvaat onderwyspos",
+            "bestemming": "Bloemfontein, OVS"
+          }
+        ],
+        "nuut": [
+          {
+            "year": "1933",
+            "type": "WERK",
+            "text": "Word aangestel as onderwyser. (Soek nog inligting)"
+          },
+          {
+            "year": "1949",
+            "type": "VERHUISING",
+            "text": "Aanvaat onderwyspos",
+            "bestemming": "Bloemfontein, OVS"
+          },
+          {
+            "year": "1949",
+            "type": "VERHUISING",
+            "text": "Aanvaar onderwyspos",
+            "bestemming": "Bloemfontein, OVS"
+          }
+        ]
+      }
+    },
+    "rekord_na": {
+      "id": "I4002",
+      "ref": "4002",
+      "name": "Pieter Jacobus CONRADIE",
+      "given": "Pieter Jacobus",
+      "surname": "CONRADIE",
+      "sex": "M",
+      "family_code": "c2d5e1f8g1h1i1",
+      "branch": "c2",
+      "branch_path": [
+        "b1",
+        "c2",
+        "c2d5",
+        "c2d5e1",
+        "c2d5e1f8",
+        "c2d5e1f8g1",
+        "c2d5e1f8g1h1",
+        "c2d5e1f8g1h1i1"
+      ],
+      "generation": 8,
+      "uncertain": false,
+      "nickname": "Pieter, Piet",
+      "birth_date": "1913-02-10",
+      "birth_year": 1913,
+      "birth_place": "Kenhardt, Kaapprovinsie",
+      "birth_circa": false,
+      "death_date": "2003-03-17",
+      "death_year": 2001,
+      "death_place": "Bloemfontein, OVS",
+      "burial_place": "Bloemfontein, OVS",
+      "baptism_date": "",
+      "baptism_place": "",
+      "is_spouse": false,
+      "spouses": [
+        {
+          "id": "S4002",
+          "name": "Cornelia Gertruida Susanna STADLER",
+          "birth_date": "1908-04-20",
+          "birth_year": 1908,
+          "divorce_date": "",
+          "divorced": false
+        }
+      ],
+      "children_ids": [
+        "I4003",
+        "I4009"
+      ],
+      "parents": [
+        {
+          "id": "I4001",
+          "name": "Cornelius Johannes CONRADIE",
+          "role": "father"
+        },
+        {
+          "id": "S4001",
+          "name": "Maria Magdalena Elizabeth LACOCK",
+          "role": "mother"
+        }
+      ],
+      "marr_dates": [
+        "1940-03-25"
+      ],
+      "marr_places": [
+        "Kakamas, Kaapprovinsie"
+      ],
+      "divorce_date": "",
+      "divorced": false,
+      "maiden_name": "",
+      "narrative": "Gee 45 jr onderw., woon in Bfn. sedert 1949, 1978:tree af af onderh. Shannon H.S., 2002:in aftree-oord Westerbloem.",
+      "note": "Huweliksdatum nie bevestig nie — geraamde waarde (c. 1940) bereken uit vroegste kind se geboortejaar (1941).",
+      "events": [
+        {
+          "year": "1933",
+          "type": "WERK",
+          "text": "Word aangestel as onderwyser. (Soek nog inligting)"
+        },
+        {
+          "year": "1949",
+          "type": "VERHUISING",
+          "text": "Aanvaat onderwyspos",
+          "bestemming": "Bloemfontein, OVS"
+        },
+        {
+          "year": "1949",
+          "type": "VERHUISING",
+          "text": "Aanvaar onderwyspos",
+          "bestemming": "Bloemfontein, OVS"
+        }
+      ],
+      "occupation": "Onderwyser, later Adjunk-Hoof",
+      "fs_id": "GBFX-N9N",
+      "wt_id": ""
+    }
   }
 ]

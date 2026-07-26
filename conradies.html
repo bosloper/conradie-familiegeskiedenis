@@ -4039,6 +4039,7 @@ function vulVoorstelModal(id) {
   var r = indexById[id];
   if (!r) return;
   vmEvVoorstelle = []; // Reset events-voorstelle vir nuwe persoon
+  vmEvWysigIndeks = null; // Reset hangende wysiging-indeks
 
   // Opdateer kop
   var naamEl = document.getElementById('vm-persoon-naam');
@@ -4163,6 +4164,7 @@ function sluitVoorstelModal() {
 // ── EVENTS VOORSTEL FUNKSIES ──
 // Globale lys van events-voorstelle vir hierdie persoon
 var vmEvVoorstelle = []; // [{aksie:'NUUT'|'WYSIG'|'VVEE', indeks, jaar, tipe, teks}]
+var vmEvWysigIndeks = null; // indeks van event tans in wysiging (null = nuwe event)
 
 function vmEvTipeBouSelect() {
   var sel = document.getElementById('vm-ev-tipe');
@@ -4224,7 +4226,13 @@ function vmEvVoegBy() {
   if (fout) fout.style.display = 'none';
   var ekstraInv = document.getElementById('vm-ev-ekstra-waarde');
   var ekstraWaarde = ekstraInv ? ekstraInv.value.trim() : '';
-  vmEvVoorstelle.push({ aksie: 'NUUT', jaar: jaar || '', tipe: tipe, teks: teks, ekstra: ekstraWaarde });
+  var isWysig = (vmEvWysigIndeks !== null);
+  if (isWysig) {
+    vmEvVoorstelle.push({ aksie: 'WYSIG', indeks: vmEvWysigIndeks, jaar: jaar || '', tipe: tipe, teks: teks, ekstra: ekstraWaarde });
+    vmEvWysigIndeks = null; // reset
+  } else {
+    vmEvVoorstelle.push({ aksie: 'NUUT', jaar: jaar || '', tipe: tipe, teks: teks, ekstra: ekstraWaarde });
+  }
   // Reset invoervelde
   var evJaar = document.getElementById('vm-ev-jaar');
   var evTeks = document.getElementById('vm-ev-teks');
@@ -4239,7 +4247,8 @@ function vmEvVoegBy() {
     var _tObj = _tLys.find(function(x) { return x.kode === tipe; });
     var _tNaam = (_tObj && _tObj.naam) ? _tObj.naam : tipe;
     var _ekstraStr = ekstraWaarde ? ' (' + ekstraWaarde + ')' : '';
-    nuutDiv.textContent = '✅ Nuut: ' + (jaar || '?') + ' | ' + _tNaam + ' — ' + teks + _ekstraStr;
+    var _voorvoesel = isWysig ? '✏️ Gewysig: ' : '✅ Nuut: ';
+    nuutDiv.textContent = _voorvoesel + (jaar || '?') + ' | ' + _tNaam + ' — ' + teks + _ekstraStr;
     lys.appendChild(nuutDiv);
   }
 }
@@ -4262,8 +4271,8 @@ function vmEvWysig(idx) {
     ekstraInvW.value = (ev.type === 'KIND_ANDER_VAN' && ev.ander_van) ? ev.ander_van :
                        (ev.type === 'VERHUISING' && ev.bestemming) ? ev.bestemming : '';
   }
-  // Verander + knoppie na "Stoor wysiging"
-  vmEvVoorstelle.push({ aksie: 'WYSIG', indeks: idx, jaar: ev.year || '', tipe: ev.type || '', teks: ev.text || '', ekstra: ekstraInvW ? ekstraInvW.value : '' });
+  // Stoor indeks — vmEvVoegBy sal WYSIG stoot (nie NUUT nie) wanneer gebruiker bevestig
+  vmEvWysigIndeks = idx;
   // Wys wysig-merker langs die item
   var items = document.querySelectorAll('.vm-ev-item');
   if (items[idx]) {
@@ -4730,7 +4739,7 @@ function attachCorrectionListeners() {
     var html = '<div style="max-width:720px;margin:0 auto;padding:1rem;">';
     html += '<div style="display:flex;align-items:baseline;gap:0.7rem;margin-bottom:0.9rem;">';
     html += '<h2 style="color:var(--sepia-light);font-size:1.2rem;margin:0;">✏️ Admin</h2>';
-    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-13-0</span>';
+    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-13-1</span>';
     html += '</div>';
 
     // ── Proses-verduideliking (inklapbaar) ──

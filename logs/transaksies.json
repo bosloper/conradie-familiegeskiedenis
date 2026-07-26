@@ -4372,5 +4372,862 @@
       "fs_id": "GZLS-KS6",
       "wt_id": ""
     }
+  },
+  {
+    "tyd": "2026-07-26T18:16:35.098Z",
+    "volgorde": 1,
+    "rekord_id": "I4011",
+    "naam": "Anna Maria CONRADIE",
+    "tipe": "wysiging",
+    "wysigings": {
+      "events": {
+        "oud": [
+          {
+            "year": "1933",
+            "type": "MATRIEK",
+            "text": "Matrikuleer aan Kakamas Hoërskool"
+          },
+          {
+            "year": "1940",
+            "type": "VERHUISING",
+            "text": "Na Neilersdrif naby Keimoes"
+          },
+          {
+            "year": "1941",
+            "type": "KIND_ANDER_VAN",
+            "text": "Mariaan",
+            "ander_van": "de Vries"
+          },
+          {
+            "year": "1943",
+            "type": "KIND_ANDER_VAN",
+            "text": "Charlotte Sonia",
+            "ander_van": "de Vries"
+          },
+          {
+            "year": "1954",
+            "type": "VERHUISING",
+            "text": "Na Heidelberg, Tvl"
+          },
+          {
+            "year": "1955",
+            "type": "KIND_ANDER_VAN",
+            "text": "Andries Petrus",
+            "ander_van": "de Vries"
+          },
+          {
+            "year": "1969",
+            "type": "VERHUISING",
+            "text": "Na Greylingstad"
+          },
+          {
+            "year": "1969",
+            "type": "WERK",
+            "text": "Administratiewe bestuurder van die gesin se onderneming in Greylingstad"
+          },
+          {
+            "year": "1969",
+            "type": "VERHUISING",
+            "text": "Koop vulstasie en werkswinkel",
+            "bestemming": "Greylingstad, Tvl"
+          },
+          {
+            "year": "1977",
+            "type": "VERHUISING",
+            "text": "Na Tweeling, OVS"
+          },
+          {
+            "year": "1977",
+            "type": "VERHUISING",
+            "text": "Nuwe besigheidsbelange",
+            "bestemming": "Tweeling, OVS"
+          },
+          {
+            "year": "1997",
+            "type": "VERHUISING",
+            "text": "Na oudste dogter",
+            "bestemming": "Endicott, Springs, Gauteng"
+          },
+          {
+            "year": "1997",
+            "type": "VERHUISING",
+            "text": "Na oudste dogter",
+            "bestemming": "Endicott, Springs, Gauteng"
+          },
+          {
+            "year": "1999",
+            "type": "VERHUISING",
+            "text": "Na Endicott, Springs, Gauteng"
+          }
+        ],
+        "nuut": [
+          {
+            "year": "1933",
+            "type": "MATRIEK",
+            "text": "Matrikuleer aan Kakamas Hoërskool"
+          },
+          {
+            "year": "1940",
+            "type": "VERHUISING",
+            "text": "Na Neilersdrif naby Keimoes"
+          },
+          {
+            "year": "1940",
+            "type": "VERHUISING",
+            "text": "Eerste huis",
+            "bestemming": "Neilersdrif (naby Keimoes), Kaapprovinsie"
+          },
+          {
+            "year": "1941",
+            "type": "KIND_ANDER_VAN",
+            "text": "Mariaan",
+            "ander_van": "de Vries"
+          },
+          {
+            "year": "1954",
+            "type": "VERHUISING",
+            "text": "Na Heidelberg, Tvl"
+          },
+          {
+            "year": "1954",
+            "type": "VERHUISING",
+            "text": "Na Heidelberg, Tvl"
+          },
+          {
+            "year": "1955",
+            "type": "KIND_ANDER_VAN",
+            "text": "Andries Petrus",
+            "ander_van": "de Vries"
+          },
+          {
+            "year": "1969",
+            "type": "VERHUISING",
+            "text": "Na Greylingstad"
+          },
+          {
+            "year": "1969",
+            "type": "VERHUISING",
+            "text": "Koop vulstasie en werkswinkel",
+            "bestemming": "Greylingstad, Tvl"
+          },
+          {
+            "year": "1969",
+            "type": "VERHUISING",
+            "text": "Koop vulstasie en werkswinkel",
+            "bestemming": "Greylingstad, Tvl"
+          },
+          {
+            "year": "1997",
+            "type": "VERHUISING",
+            "text": "Na oudste dogter",
+            "bestemming": "Endicott, Springs, Gauteng"
+          },
+          {
+            "year": "1997",
+            "type": "VERHUISING",
+            "text": "Na oudste dogter",
+            "bestemming": "Endicott, Springs, Gauteng"
+          },
+          {
+            "year": "1999",
+            "type": "VERHUISING",
+            "text": "Na Endicott, Springs, Gauteng"
+          }
+        ]
+      }
+    },
+    "rekord_na": {
+      "id": "I4011",
+      "ref": "4011",
+      "name": "Anna Maria CONRADIE",
+      "given": "Anna Maria",
+      "surname": "CONRADIE",
+      "sex": "F",
+      "family_code": "c2d5e1f8g1h1i3",
+      "branch": "c2",
+      "branch_path": [
+        "b1",
+        "c2",
+        "c2d5",
+        "c2d5e1",
+        "c2d5e1f8",
+        "c2d5e1f8g1",
+        "c2d5e1f8g1h1",
+        "c2d5e1f8g1h1i3"
+      ],
+      "generation": 8,
+      "uncertain": false,
+      "nickname": "Annatjie",
+      "birth_date": "1916-06-04",
+      "birth_year": 1916,
+      "birth_place": "Kenhardt, Kaapprovinsie",
+      "birth_circa": false,
+      "death_date": "2005-08-02",
+      "death_year": 1993,
+      "death_place": "Springs, Gauteng",
+      "burial_place": "Springs, Gauteng",
+      "baptism_date": "",
+      "baptism_place": "",
+      "is_spouse": false,
+      "spouses": [
+        {
+          "id": "S4011",
+          "name": "Hermanus MacDonald DE VRIES",
+          "birth_date": "1908-03-22",
+          "birth_year": null,
+          "divorce_date": "",
+          "divorced": false
+        }
+      ],
+      "children_ids": [],
+      "parents": [
+        {
+          "id": "I4001",
+          "name": "Cornelius Johannes CONRADIE",
+          "role": "father"
+        },
+        {
+          "id": "S4001",
+          "name": "Maria Magdalena Elizabeth LACOCK",
+          "role": "mother"
+        }
+      ],
+      "marr_dates": [
+        "1940-09-01"
+      ],
+      "marr_places": [
+        "Johannesburg. Transvaal"
+      ],
+      "divorce_date": "",
+      "divorced": false,
+      "maiden_name": "",
+      "narrative": "",
+      "note": "Sy het haar opleiding as verpleegsuster in Bloemfontein ondergaan reeds voor haar troue. Sy was lank werksaam as Suster in Kakamas Hospitaal (Ongeveer 1940 tot 1954). Sy kwalifiseer as Kraamsuster (in Port Elizabeth) gedurende hierdie periode.\nIn 1954 koop haar man, Mac, 'n suiwelplaas in Heidelberg, Tvl en hulle verhuis na Transvaal. Sy is verpleegsuster en kraamsuster by AG Visser-hospitaal in Heidelberg. Die gesin se seun word hier gebore.",
+      "occupation": "Verpleegkundige (verpleegsuster), boervrou, sakevrou",
+      "district": "",
+      "events": [
+        {
+          "year": "1933",
+          "type": "MATRIEK",
+          "text": "Matrikuleer aan Kakamas Hoërskool"
+        },
+        {
+          "year": "1940",
+          "type": "VERHUISING",
+          "text": "Na Neilersdrif naby Keimoes"
+        },
+        {
+          "year": "1940",
+          "type": "VERHUISING",
+          "text": "Eerste huis",
+          "bestemming": "Neilersdrif (naby Keimoes), Kaapprovinsie"
+        },
+        {
+          "year": "1941",
+          "type": "KIND_ANDER_VAN",
+          "text": "Mariaan",
+          "ander_van": "de Vries"
+        },
+        {
+          "year": "1954",
+          "type": "VERHUISING",
+          "text": "Na Heidelberg, Tvl"
+        },
+        {
+          "year": "1954",
+          "type": "VERHUISING",
+          "text": "Na Heidelberg, Tvl"
+        },
+        {
+          "year": "1955",
+          "type": "KIND_ANDER_VAN",
+          "text": "Andries Petrus",
+          "ander_van": "de Vries"
+        },
+        {
+          "year": "1969",
+          "type": "VERHUISING",
+          "text": "Na Greylingstad"
+        },
+        {
+          "year": "1969",
+          "type": "VERHUISING",
+          "text": "Koop vulstasie en werkswinkel",
+          "bestemming": "Greylingstad, Tvl"
+        },
+        {
+          "year": "1969",
+          "type": "VERHUISING",
+          "text": "Koop vulstasie en werkswinkel",
+          "bestemming": "Greylingstad, Tvl"
+        },
+        {
+          "year": "1997",
+          "type": "VERHUISING",
+          "text": "Na oudste dogter",
+          "bestemming": "Endicott, Springs, Gauteng"
+        },
+        {
+          "year": "1997",
+          "type": "VERHUISING",
+          "text": "Na oudste dogter",
+          "bestemming": "Endicott, Springs, Gauteng"
+        },
+        {
+          "year": "1999",
+          "type": "VERHUISING",
+          "text": "Na Endicott, Springs, Gauteng"
+        }
+      ],
+      "fs_id": "LBWK-154",
+      "wt_id": ""
+    }
+  },
+  {
+    "tyd": "2026-07-26T18:16:35.098Z",
+    "volgorde": 2,
+    "rekord_id": "I4002",
+    "naam": "Pieter Jacobus CONRADIE",
+    "tipe": "huwelik-wysiging",
+    "wysigings": {
+      "marr_dates[0]": {
+        "oud": "~1940",
+        "nuut": "1940-03-25"
+      },
+      "marr_places[0]": {
+        "oud": "",
+        "nuut": "Kakamas, Kaapprovinsie"
+      }
+    },
+    "rekord_na": {
+      "id": "I4002",
+      "ref": "4002",
+      "name": "Pieter Jacobus CONRADIE",
+      "given": "Pieter Jacobus",
+      "surname": "CONRADIE",
+      "sex": "M",
+      "family_code": "c2d5e1f8g1h1i1",
+      "branch": "c2",
+      "branch_path": [
+        "b1",
+        "c2",
+        "c2d5",
+        "c2d5e1",
+        "c2d5e1f8",
+        "c2d5e1f8g1",
+        "c2d5e1f8g1h1",
+        "c2d5e1f8g1h1i1"
+      ],
+      "generation": 8,
+      "uncertain": false,
+      "nickname": "Pieter, Piet",
+      "birth_date": "1913-02-10",
+      "birth_year": 1913,
+      "birth_place": "Kenhardt, Kaapprovinsie",
+      "birth_circa": false,
+      "death_date": "2003-03-17",
+      "death_year": 2001,
+      "death_place": "Bloemfontein, OVS",
+      "burial_place": "Bloemfontein, OVS",
+      "baptism_date": "",
+      "baptism_place": "",
+      "is_spouse": false,
+      "spouses": [
+        {
+          "id": "S4002",
+          "name": "Cornelia Gertruida Susanna STADLER",
+          "birth_date": "1908-04-20",
+          "birth_year": 1908,
+          "divorce_date": "",
+          "divorced": false
+        }
+      ],
+      "children_ids": [
+        "I4003",
+        "I4009"
+      ],
+      "parents": [
+        {
+          "id": "I4001",
+          "name": "Cornelius Johannes CONRADIE",
+          "role": "father"
+        },
+        {
+          "id": "S4001",
+          "name": "Maria Magdalena Elizabeth LACOCK",
+          "role": "mother"
+        }
+      ],
+      "marr_dates": [
+        "1940-03-25"
+      ],
+      "marr_places": [
+        "Kakamas, Kaapprovinsie"
+      ],
+      "divorce_date": "",
+      "divorced": false,
+      "maiden_name": "",
+      "narrative": "Gee 45 jr onderw., woon in Bfn. sedert 1949, 1978:tree af af onderh. Shannon H.S., 2002:in aftree-oord Westerbloem.",
+      "note": "Huweliksdatum nie bevestig nie — geraamde waarde (c. 1940) bereken uit vroegste kind se geboortejaar (1941).",
+      "events": [
+        {
+          "year": "1933",
+          "type": "WERK",
+          "text": "Word aangestel as onderwyser. (Soek nog inligting)"
+        },
+        {
+          "year": "1949",
+          "type": "VERHUISING",
+          "text": "Aanvaat onderwyspos",
+          "bestemming": "Bloemfontein, OVS"
+        }
+      ],
+      "occupation": "Onderwyser, later Adjunk-Hoof",
+      "fs_id": "GBFX-N9N",
+      "wt_id": ""
+    }
+  },
+  {
+    "tyd": "2026-07-26T18:16:35.098Z",
+    "volgorde": 3,
+    "rekord_id": "I4002",
+    "naam": "Pieter Jacobus CONRADIE",
+    "tipe": "wysiging",
+    "wysigings": {
+      "nickname": {
+        "oud": "",
+        "nuut": "Pieter, Piet"
+      },
+      "birth_place": {
+        "oud": "",
+        "nuut": "Kenhardt, Kaapprovinsie"
+      },
+      "death_date": {
+        "oud": "",
+        "nuut": "2003-03-17"
+      },
+      "death_place": {
+        "oud": "",
+        "nuut": "Bloemfontein, OVS"
+      },
+      "burial_place": {
+        "oud": "",
+        "nuut": "Bloemfontein, OVS"
+      },
+      "occupation": {
+        "oud": "",
+        "nuut": "Onderwyser, later Adjunk-Hoof"
+      },
+      "events": {
+        "oud": [],
+        "nuut": [
+          {
+            "year": "1933",
+            "type": "WERK",
+            "text": "Word aangestel as onderwyser. (Soek nog inligting)"
+          },
+          {
+            "year": "1949",
+            "type": "VERHUISING",
+            "text": "Aanvaat onderwyspos",
+            "bestemming": "Bloemfontein, OVS"
+          }
+        ]
+      },
+      "fs_id": {
+        "oud": "",
+        "nuut": "GBFX-N9N"
+      }
+    },
+    "rekord_na": {
+      "id": "I4002",
+      "ref": "4002",
+      "name": "Pieter Jacobus CONRADIE",
+      "given": "Pieter Jacobus",
+      "surname": "CONRADIE",
+      "sex": "M",
+      "family_code": "c2d5e1f8g1h1i1",
+      "branch": "c2",
+      "branch_path": [
+        "b1",
+        "c2",
+        "c2d5",
+        "c2d5e1",
+        "c2d5e1f8",
+        "c2d5e1f8g1",
+        "c2d5e1f8g1h1",
+        "c2d5e1f8g1h1i1"
+      ],
+      "generation": 8,
+      "uncertain": false,
+      "nickname": "Pieter, Piet",
+      "birth_date": "1913-02-10",
+      "birth_year": 1913,
+      "birth_place": "Kenhardt, Kaapprovinsie",
+      "birth_circa": false,
+      "death_date": "2003-03-17",
+      "death_year": 2001,
+      "death_place": "Bloemfontein, OVS",
+      "burial_place": "Bloemfontein, OVS",
+      "baptism_date": "",
+      "baptism_place": "",
+      "is_spouse": false,
+      "spouses": [
+        {
+          "id": "S4002",
+          "name": "Cornelia Gertruida Susanna STADLER",
+          "birth_date": "1908-04-20",
+          "birth_year": 1908,
+          "divorce_date": "",
+          "divorced": false
+        }
+      ],
+      "children_ids": [
+        "I4003",
+        "I4009"
+      ],
+      "parents": [
+        {
+          "id": "I4001",
+          "name": "Cornelius Johannes CONRADIE",
+          "role": "father"
+        },
+        {
+          "id": "S4001",
+          "name": "Maria Magdalena Elizabeth LACOCK",
+          "role": "mother"
+        }
+      ],
+      "marr_dates": [
+        "1940-03-25"
+      ],
+      "marr_places": [
+        "Kakamas, Kaapprovinsie"
+      ],
+      "divorce_date": "",
+      "divorced": false,
+      "maiden_name": "",
+      "narrative": "Gee 45 jr onderw., woon in Bfn. sedert 1949, 1978:tree af af onderh. Shannon H.S., 2002:in aftree-oord Westerbloem.",
+      "note": "Huweliksdatum nie bevestig nie — geraamde waarde (c. 1940) bereken uit vroegste kind se geboortejaar (1941).",
+      "events": [
+        {
+          "year": "1933",
+          "type": "WERK",
+          "text": "Word aangestel as onderwyser. (Soek nog inligting)"
+        },
+        {
+          "year": "1949",
+          "type": "VERHUISING",
+          "text": "Aanvaat onderwyspos",
+          "bestemming": "Bloemfontein, OVS"
+        }
+      ],
+      "occupation": "Onderwyser, later Adjunk-Hoof",
+      "fs_id": "GBFX-N9N",
+      "wt_id": ""
+    }
+  },
+  {
+    "tyd": "2026-07-26T18:16:35.098Z",
+    "volgorde": 4,
+    "rekord_id": "I4010",
+    "naam": "Elizabeth Fredrieka CONRADIE",
+    "tipe": "huwelik-wysiging",
+    "wysigings": {
+      "marr_dates[0]": {
+        "oud": "",
+        "nuut": "1937-04-18"
+      },
+      "marr_places[0]": {
+        "oud": "",
+        "nuut": "Kakamas"
+      }
+    },
+    "rekord_na": {
+      "id": "I4010",
+      "ref": "4010",
+      "name": "Elizabeth Fredrieka CONRADIE",
+      "given": "Elizabeth Fredrieka",
+      "surname": "CONRADIE",
+      "sex": "F",
+      "family_code": "c2d5e1f8g1h1i2",
+      "branch": "c2",
+      "branch_path": [
+        "b1",
+        "c2",
+        "c2d5",
+        "c2d5e1",
+        "c2d5e1f8",
+        "c2d5e1f8g1",
+        "c2d5e1f8g1h1",
+        "c2d5e1f8g1h1i2"
+      ],
+      "generation": 8,
+      "uncertain": false,
+      "nickname": "Bessa, Bes",
+      "birth_date": "1914-10-11",
+      "birth_year": 1914,
+      "birth_place": "Kenhardt, Kaapprovinsie",
+      "birth_circa": false,
+      "death_date": "1997-07-25",
+      "death_year": 1997,
+      "death_place": "",
+      "burial_place": "",
+      "baptism_date": "",
+      "baptism_place": "",
+      "is_spouse": false,
+      "spouses": [
+        {
+          "id": "S4010",
+          "name": "Izak Albertus KOTZE",
+          "birth_date": "",
+          "birth_year": null,
+          "divorce_date": "",
+          "divorced": false
+        },
+        {
+          "id": "S7289",
+          "name": "Pieter van Aarde DE WET",
+          "birth_date": "",
+          "birth_year": null,
+          "divorce_date": "",
+          "divorced": false
+        }
+      ],
+      "children_ids": [],
+      "parents": [
+        {
+          "id": "I4001",
+          "name": "Cornelius Johannes CONRADIE",
+          "role": "father"
+        },
+        {
+          "id": "S4001",
+          "name": "Maria Magdalena Elizabeth LACOCK",
+          "role": "mother"
+        }
+      ],
+      "marr_dates": [
+        "1937-04-18",
+        "1957-02-23"
+      ],
+      "marr_places": [
+        "Kakamas",
+        "Bloemfontein, OVS"
+      ],
+      "divorce_date": "",
+      "divorced": false,
+      "maiden_name": "",
+      "narrative": " Getroud met Pieter van Aarde DE WET.",
+      "note": "",
+      "occupation": "",
+      "events": [],
+      "fs_id": "LBWK-YGM",
+      "wt_id": "",
+      "huwelik": "Pieter van Aarde DE WET"
+    }
+  },
+  {
+    "tyd": "2026-07-26T18:16:35.098Z",
+    "volgorde": 5,
+    "rekord_id": "I4010",
+    "naam": "Elizabeth Fredrieka CONRADIE",
+    "tipe": "wysiging",
+    "wysigings": {
+      "nickname": {
+        "oud": "",
+        "nuut": "Bessa, Bes"
+      },
+      "birth_place": {
+        "oud": "",
+        "nuut": "Kenhardt, Kaapprovinsie"
+      },
+      "death_date": {
+        "oud": "1997-07-20",
+        "nuut": "1997-07-25"
+      },
+      "fs_id": {
+        "oud": "",
+        "nuut": "LBWK-YGM"
+      }
+    },
+    "rekord_na": {
+      "id": "I4010",
+      "ref": "4010",
+      "name": "Elizabeth Fredrieka CONRADIE",
+      "given": "Elizabeth Fredrieka",
+      "surname": "CONRADIE",
+      "sex": "F",
+      "family_code": "c2d5e1f8g1h1i2",
+      "branch": "c2",
+      "branch_path": [
+        "b1",
+        "c2",
+        "c2d5",
+        "c2d5e1",
+        "c2d5e1f8",
+        "c2d5e1f8g1",
+        "c2d5e1f8g1h1",
+        "c2d5e1f8g1h1i2"
+      ],
+      "generation": 8,
+      "uncertain": false,
+      "nickname": "Bessa, Bes",
+      "birth_date": "1914-10-11",
+      "birth_year": 1914,
+      "birth_place": "Kenhardt, Kaapprovinsie",
+      "birth_circa": false,
+      "death_date": "1997-07-25",
+      "death_year": 1997,
+      "death_place": "",
+      "burial_place": "",
+      "baptism_date": "",
+      "baptism_place": "",
+      "is_spouse": false,
+      "spouses": [
+        {
+          "id": "S4010",
+          "name": "Izak Albertus KOTZE",
+          "birth_date": "",
+          "birth_year": null,
+          "divorce_date": "",
+          "divorced": false
+        },
+        {
+          "id": "S7289",
+          "name": "Pieter van Aarde DE WET",
+          "birth_date": "",
+          "birth_year": null,
+          "divorce_date": "",
+          "divorced": false
+        }
+      ],
+      "children_ids": [],
+      "parents": [
+        {
+          "id": "I4001",
+          "name": "Cornelius Johannes CONRADIE",
+          "role": "father"
+        },
+        {
+          "id": "S4001",
+          "name": "Maria Magdalena Elizabeth LACOCK",
+          "role": "mother"
+        }
+      ],
+      "marr_dates": [
+        "1937-04-18",
+        "1957-02-23"
+      ],
+      "marr_places": [
+        "Kakamas",
+        "Bloemfontein, OVS"
+      ],
+      "divorce_date": "",
+      "divorced": false,
+      "maiden_name": "",
+      "narrative": " Getroud met Pieter van Aarde DE WET.",
+      "note": "",
+      "occupation": "",
+      "events": [],
+      "fs_id": "LBWK-YGM",
+      "wt_id": "",
+      "huwelik": "Pieter van Aarde DE WET"
+    }
+  },
+  {
+    "tyd": "2026-07-26T18:16:35.098Z",
+    "volgorde": 6,
+    "rekord_id": "I4010",
+    "naam": "Elizabeth Fredrieka CONRADIE",
+    "tipe": "nuwe_huwelik_gade",
+    "wysigings": {
+      "huwelik": {
+        "nuut": "Pieter van Aarde DE WET"
+      }
+    },
+    "rekord_na": {
+      "id": "I4010",
+      "ref": "4010",
+      "name": "Elizabeth Fredrieka CONRADIE",
+      "given": "Elizabeth Fredrieka",
+      "surname": "CONRADIE",
+      "sex": "F",
+      "family_code": "c2d5e1f8g1h1i2",
+      "branch": "c2",
+      "branch_path": [
+        "b1",
+        "c2",
+        "c2d5",
+        "c2d5e1",
+        "c2d5e1f8",
+        "c2d5e1f8g1",
+        "c2d5e1f8g1h1",
+        "c2d5e1f8g1h1i2"
+      ],
+      "generation": 8,
+      "uncertain": false,
+      "nickname": "Bessa, Bes",
+      "birth_date": "1914-10-11",
+      "birth_year": 1914,
+      "birth_place": "Kenhardt, Kaapprovinsie",
+      "birth_circa": false,
+      "death_date": "1997-07-25",
+      "death_year": 1997,
+      "death_place": "",
+      "burial_place": "",
+      "baptism_date": "",
+      "baptism_place": "",
+      "is_spouse": false,
+      "spouses": [
+        {
+          "id": "S4010",
+          "name": "Izak Albertus KOTZE",
+          "birth_date": "",
+          "birth_year": null,
+          "divorce_date": "",
+          "divorced": false
+        },
+        {
+          "id": "S7289",
+          "name": "Pieter van Aarde DE WET",
+          "birth_date": "",
+          "birth_year": null,
+          "divorce_date": "",
+          "divorced": false
+        }
+      ],
+      "children_ids": [],
+      "parents": [
+        {
+          "id": "I4001",
+          "name": "Cornelius Johannes CONRADIE",
+          "role": "father"
+        },
+        {
+          "id": "S4001",
+          "name": "Maria Magdalena Elizabeth LACOCK",
+          "role": "mother"
+        }
+      ],
+      "marr_dates": [
+        "1937-04-18",
+        "1957-02-23"
+      ],
+      "marr_places": [
+        "Kakamas",
+        "Bloemfontein, OVS"
+      ],
+      "divorce_date": "",
+      "divorced": false,
+      "maiden_name": "",
+      "narrative": " Getroud met Pieter van Aarde DE WET.",
+      "note": "",
+      "occupation": "",
+      "events": [],
+      "fs_id": "LBWK-YGM",
+      "wt_id": "",
+      "huwelik": "Pieter van Aarde DE WET"
+    }
   }
 ]

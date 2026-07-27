@@ -2626,8 +2626,8 @@ function applyFilters() {
       const dp = (r.death_place||'').toLowerCase();
       const bup = (r.burial_place||'').toLowerCase();
       const mps = (r.marr_places||[]).map(p => (p||'').toLowerCase()).join(' ');
-      const verh = (r.events||[]).filter(e => e.type === 'VERHUISING' && e.bestemming)
-                    .map(e => e.bestemming.toLowerCase()).join(' ');
+      const verh = (r.events||[]).filter(e => e.type === 'VERHUISING')
+                    .map(e => ((e.bestemming||'') + ' ' + (e.text||'')).toLowerCase()).join(' ');
       if (!bp.includes(pq) && !dp.includes(pq) && !bup.includes(pq) && !mps.includes(pq) && !verh.includes(pq)) return false;
     }
     if (q) {
@@ -4199,7 +4199,7 @@ function vmEvToggleEkstra() {
   if (gekose && gekose.ekstra_veld) {
     var lbl = ekstraDiv.querySelector('label');
     if (lbl) lbl.textContent = gekose.ekstra_veld === 'ander_van' ? 'Kind se van:' : gekose.ekstra_veld === 'bestemming' ? 'Waarheen?' : gekose.ekstra_veld;
-    if (ekstraInv) ekstraInv.value = '';
+    if (ekstraInv) { ekstraInv.value = ''; ekstraInv.placeholder = gekose.ekstra_veld === 'ander_van' ? 'bv. Van der Berg' : gekose.ekstra_veld === 'bestemming' ? 'Dorp of distrik' : ''; }
     // Pas plekhouer aan vir hoofteks-veld na gelang van tipe
     if (teksInv) {
       if (gekose.kode === 'KIND_ANDER_VAN') {
@@ -4743,19 +4743,27 @@ function attachCorrectionListeners() {
     var html = '<div style="max-width:720px;margin:0 auto;padding:1rem;">';
     html += '<div style="display:flex;align-items:baseline;gap:0.7rem;margin-bottom:0.9rem;">';
     html += '<h2 style="color:var(--sepia-light);font-size:1.2rem;margin:0;">✏️ Admin</h2>';
-    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-13-2</span>';
+    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-13-3</span>';
     html += '</div>';
 
-    // ── Proses-verduideliking (inklapbaar) ──
-    html += '<details style="background:#1a1208;border:1px solid #8b691433;border-radius:6px;padding:0.6rem 0.9rem;margin-bottom:0.9rem;">';
-    html += '<summary style="color:#8b6914;font-size:0.85rem;cursor:pointer;list-style:none;">📋 Hoe werk die proses? <span style="font-size:0.75rem;color:#6a5a40;">(tik om te wys)</span></summary>';
-    html += '<ol style="color:#e8dfc8;font-size:0.83rem;line-height:1.8;padding-left:1.3rem;margin:0.5rem 0 0.3rem 0;">';
+    // ── Publiek-inligtingspaneel (standaard oop) ──
+    html += '<details open style="background:#1a1208;border:1px solid #8b691455;border-radius:6px;padding:0.6rem 0.9rem;margin-bottom:0.9rem;">';
+    html += '<summary style="color:#c49a3a;font-size:0.88rem;font-weight:bold;cursor:pointer;list-style:none;">📖 Oor hierdie databasis</summary>';
+    html += '<div style="color:#e8dfc8;font-size:0.82rem;line-height:1.7;margin-top:0.5rem;">';
+    html += '<p style="margin:0 0 0.5rem 0;">Die <strong style="color:#c49a3a">Conradie Stamboom</strong> is \'n lewende genealogiese databasis van alle bekende afstammelinge van stamvader <strong>Friedrich Henrich Conradie</strong> (gebore 1668, Marburg, Duitsland). Tans bevat dit meer as 11 000 rekords.</p>';
+    html += '<p style="margin:0 0 0.5rem 0;">Gebruik die <strong style="color:#c49a3a">Soek-tab</strong> om name, plekke of familiekodes te soek. Klik enige naam om die volledige rekord met tydlyn te sien.</p>';
+    html += '<p style="margin:0 0 0.4rem 0;"><strong style="color:#8fc88f;">Weet jy iets wat hier ontbreek?</strong> Klik die <strong style="color:#c49a3a">✏️ Stel voor</strong>-knoppie op enige persoon se rekord om \'n wysiging of aanvulling voor te stel. Jou bydrae word aan die databasis-bestuurder gestuur vir goedkeuring.</p>';
+    html += '</div>';
+    html += '<details style="margin-top:0.6rem;background:#120e04;border:1px solid #8b691422;border-radius:4px;padding:0.4rem 0.7rem;">';
+    html += '<summary style="color:#8b6914;font-size:0.80rem;cursor:pointer;list-style:none;">🔧 Hoe werk die proses? <span style="font-size:0.73rem;color:#6a5a40;">(vir Admin)</span></summary>';
+    html += '<ol style="color:#c8b898;font-size:0.80rem;line-height:1.8;padding-left:1.3rem;margin:0.4rem 0 0.2rem 0;">';
     html += '<li>Familielid klik <strong style="color:#c49a3a">✏️ Stel voor</strong> op enige persoon (Soek-tab).</li>';
     html += '<li>Stuur via <strong style="color:#25D366">WhatsApp</strong> of e-pos.</li>';
     html += '<li>Admin plak hier onder "Verwerk Voorstel" en keur goed.</li>';
     html += '<li>Vir nuwe rekords gebruik "Nuwe Kind" of "Nuwe Huwelik".</li>';
     html += '<li>Wysigings word veilig gestoor totdat jy "Stoor na GitHub" gebruik.</li>';
     html += '</ol></details>';
+    html += '</details>';
 
     // ── Aanmelding ──
     if (!adminOntsluit) {
@@ -4771,24 +4779,39 @@ function attachCorrectionListeners() {
     }
 
     if (adminOntsluit) {
-      // ── Taak-kiesknoppies ──
-      var take = [
+      // ── Taak-kiesknoppies: Groep 1 — Voorstelverwerking ──
+      var takeVoorstel = [
         { id:'taak-voorstel', ikoon:'📋', naam:'Verwerk Voorstel', kleur:'#c49a3a' },
         { id:'taak-wysig',    ikoon:'🔍', naam:'Soek & Wysig',     kleur:'#8b6914' },
-        { id:'taak-nuut',     ikoon:'➕', naam:'Nuwe Rekord',      kleur:'#3a5a6a' },
-        { id:'taak-stoor',    ikoon:'☁️', naam:'Stoor',            kleur:'#4a7a4a' },
-        { id:'taak-duptoets',  ikoon:'🔍', naam:'Duplikaattoets',   kleur:'#7a4a8a' },
-        { id:'taak-merge',     ikoon:'🔀', naam:'Samesmelting',      kleur:'#8a4a2a' },
-        { id:'taak-datum',     ikoon:'📅', naam:'Datumnormalisering', kleur:'#3a6a8a' }
+        { id:'taak-nuut',     ikoon:'➕', naam:'Nuwe Rekord',      kleur:'#3a5a6a' }
       ];
-      html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-bottom:1rem;">';
-      take.forEach(function(t) {
-        html += '<button onclick="admTaakKies(\'' + t.id + '\')" id="btn-' + t.id + '" ' +
-          'style="padding:0.6rem 0.5rem;background:#1a1208;color:' + t.kleur + ';' +
-          'border:1px solid ' + t.kleur + '44;border-radius:6px;cursor:pointer;font-size:0.88rem;text-align:left;">' +
+      html += '<div style="background:#1a1508;border:1px solid #8b691430;border-radius:6px;padding:0.5rem;margin-bottom:0.5rem;">';
+      html += '<div style="color:#8b6914;font-size:0.73rem;letter-spacing:0.06em;margin-bottom:0.4rem;">VOORSTELVERWERKING</div>';
+      html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.4rem;">';
+      takeVoorstel.forEach(function(t) {
+        html += '<button onclick="admTaakKies(\'" + t.id + "\')" id="btn-' + t.id + '" ' +
+          'style="padding:0.6rem 0.5rem;background:#0e0c04;color:' + t.kleur + ';' +
+          'border:1px solid ' + t.kleur + '44;border-radius:5px;cursor:pointer;font-size:0.88rem;text-align:left;">' +
           t.ikoon + ' ' + t.naam + '</button>';
       });
-      html += '</div>';
+      html += '</div></div>';
+      // ── Taak-kiesknoppies: Groep 2 — Databasis-administrasie ──
+      var takeAdmin = [
+        { id:'taak-stoor',    ikoon:'☁️', naam:'Stoor',             kleur:'#4a7a4a' },
+        { id:'taak-duptoets', ikoon:'🔎', naam:'Duplikaattoets',    kleur:'#7a4a8a' },
+        { id:'taak-merge',    ikoon:'🔀', naam:'Samesmelting',       kleur:'#8a4a2a' },
+        { id:'taak-datum',    ikoon:'📅', naam:'Datumnormalisering', kleur:'#3a6a8a' }
+      ];
+      html += '<div style="background:#0e150e;border:1px solid #2d4a2d;border-radius:6px;padding:0.5rem;margin-bottom:1rem;">';
+      html += '<div style="color:#4a7a4a;font-size:0.73rem;letter-spacing:0.06em;margin-bottom:0.4rem;">DATABASIS-ADMINISTRASIE</div>';
+      html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.4rem;">';
+      takeAdmin.forEach(function(t) {
+        html += '<button onclick="admTaakKies(\'" + t.id + "\')" id="btn-' + t.id + '" ' +
+          'style="padding:0.6rem 0.5rem;background:#080e08;color:' + t.kleur + ';' +
+          'border:1px solid ' + t.kleur + '44;border-radius:5px;cursor:pointer;font-size:0.88rem;text-align:left;">' +
+          t.ikoon + ' ' + t.naam + '</button>';
+      });
+      html += '</div></div>';
 
       // ── Status & Hangende teller ──
       html += '<div id="adm-status" style="color:var(--sepia-light);font-size:0.85rem;min-height:1.1rem;margin-bottom:0.6rem;"></div>';
@@ -4800,7 +4823,8 @@ function attachCorrectionListeners() {
       html += '<textarea id="adm-plak" rows="6" placeholder="Plak boodskap hier…" ' +
         'style="width:100%;box-sizing:border-box;padding:0.5rem;background:#0d0a05;color:#e8dfc8;' +
         'border:1px solid #3d3020;border-radius:4px;font-size:0.83rem;resize:vertical;"></textarea>';
-      html += '<div style="display:flex;gap:0.5rem;margin-top:0.4rem;">';
+      html += '<div style="display:flex;gap:0.5rem;margin-top:0.4rem;flex-wrap:wrap;">';
+      html += '<button id="adm-plak-klembord" style="padding:0.4rem 0.8rem;background:#2a3a2a;color:#8fc88f;border:1px solid #3a5a3a;border-radius:4px;cursor:pointer;font-size:0.83rem;" title="Plak vanaf klembord">📋 Plak</button>';
       html += '<button id="adm-plak-btn" style="padding:0.4rem 1rem;background:#c49a3a;color:#1a1208;border:none;border-radius:4px;cursor:pointer;font-size:0.88rem;font-weight:bold;">🔍 Verwerk</button>';
       html += '<button id="adm-plak-reset" style="padding:0.4rem 0.8rem;background:#3d3020;color:#e8dfc8;border:none;border-radius:4px;cursor:pointer;font-size:0.83rem;">✖ Skoon</button>';
       html += '</div>';
@@ -4901,12 +4925,6 @@ function attachCorrectionListeners() {
       html += '<div id="adm-patch-log-inhoud"><div style="color:#7a6a50;font-size:0.83rem;font-style:italic;">Laai...</div></div>';
       html += '</div>';
       html += _afd('☁️', 'Stoor na GitHub', '#4a7a4a');
-      html += '<div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.8rem;">';
-      html += '<button id="adm-wa-btn" style="padding:0.4rem 0.9rem;background:#25D366;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:0.85rem;">📱 WhatsApp</button>';
-      html += '<button id="adm-wa-web-btn" style="padding:0.4rem 0.9rem;background:#128C7E;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:0.85rem;">🌐 WA Web</button>';
-      html += '<button id="adm-email-btn" style="padding:0.4rem 0.9rem;background:#c49a3a;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:0.85rem;">✉️ E-pos</button>';
-      html += '<button id="adm-laai-btn" style="padding:0.4rem 0.9rem;background:#3d3020;color:#e8dfc8;border:none;border-radius:4px;cursor:pointer;font-size:0.85rem;">⬇️ JSON af</button>';
-      html += '</div>';
       html += '<div style="padding:0.8rem;background:#0e1208;border:1px solid #5a7a3a;border-radius:6px;margin-bottom:0.6rem;">';
       html += '<div style="color:#8ab08a;font-size:0.85rem;font-weight:bold;margin-bottom:0.4rem;">\u2193 Handmatige Merge-werkstroom</div>';
       html += '<div style="color:#8a9a7a;font-size:0.80rem;margin-bottom:0.6rem;line-height:1.5;">';
@@ -5017,6 +5035,21 @@ function attachCorrectionListeners() {
     var plakBtn = document.getElementById('adm-plak-btn');
     var plakReset = document.getElementById('adm-plak-reset');
     if (plakBtn) plakBtn.addEventListener('click', admVerwerk);
+    var plakKlembord = document.getElementById('adm-plak-klembord');
+    if (plakKlembord) plakKlembord.addEventListener('click', function() {
+      if (navigator.clipboard && navigator.clipboard.readText) {
+        navigator.clipboard.readText().then(function(teks) {
+          var ta = document.getElementById('adm-plak');
+          if (ta) { ta.value = teks; ta.focus(); }
+          document.getElementById('adm-plak-status').textContent = '✅ Geplak';
+          setTimeout(function() { document.getElementById('adm-plak-status').textContent = ''; }, 2000);
+        }).catch(function() {
+          document.getElementById('adm-plak-status').textContent = '⚠️ Klembord nie beskikbaar — plak handmatig (hou-in lank tik op teksveld).';
+        });
+      } else {
+        document.getElementById('adm-plak-status').textContent = '⚠️ Klembord nie beskikbaar — plak handmatig.';
+      }
+    });
     if (plakReset) plakReset.addEventListener('click', function() {
       document.getElementById('adm-plak').value = '';
       document.getElementById('adm-plak-status').textContent = '';

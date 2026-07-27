@@ -4031,17 +4031,21 @@ let correctionPersonId = null;
 // ── VOORSTEL MODAL ──────────────────────────────────────────
 // Velde wat in die drie-kolom tabel verskyn (label, rekord-sleutel, placeholder)
 var VM_VELDE = [
-  ['Voornaam',           'given',        'Nuwe voornaam'],
-  ['Van',                'surname',      'Nuwe van'],
-  ['Bynaam / Noemnaam',  'nickname',     'bv. Boetie, Griet'],
-  ['Geboortedatum',      'birth_date',   'bv. 1845-03-12'],
-  ['Geboorteplek',       'birth_place',  'Dorp of distrik'],
-  ['Sterfdatum',         'death_date',   'bv. 1912-07-04'],
-  ['Sterfplek',          'death_place',  'Dorp of distrik'],
-  ['Begraafplek',        'burial_place', 'Kerkhof / dorp'],
-  ['Beroep',             'occupation',   'bv. Boer, Onderwyser'],
-  ['FamilySearch ID',    'fs_id',        'bv. GCKG-TR5'],
-  ['WikiTree ID',        'wt_id',        'bv. Conradie-123'],
+  ['Voornaam',           'given',          'Nuwe voornaam'],
+  ['Van',                'surname',        'Nuwe van'],
+  ['Bynaam / Noemnaam',  'nickname',       'bv. Boetie, Griet'],
+  ['Geboortedatum',      'birth_date',     'bv. 1845-03-12'],
+  ['Geboortejaar',       'birth_year',     'bv. 1845'],
+  ['Geboorteplek',       'birth_place',    'Dorp of distrik'],
+  ['Doopdatum',          'baptism_date',   'bv. 1845-04-02'],
+  ['Doopplek',           'baptism_place',  'bv. NG Kerk Paarl'],
+  ['Sterfdatum',         'death_date',     'bv. 1912-07-04'],
+  ['Sterfjaar',          'death_year',     'bv. 1912'],
+  ['Sterfplek',          'death_place',    'Dorp of distrik'],
+  ['Begraafplek',        'burial_place',   'Kerkhof / dorp'],
+  ['Beroep',             'occupation',     'bv. Boer, Onderwyser'],
+  ['FamilySearch ID',    'fs_id',          'bv. GCKG-TR5'],
+  ['WikiTree ID',        'wt_id',          'bv. Conradie-123'],
 ];
 
 function vulVoorstelModal(id) {
@@ -4351,11 +4355,12 @@ function vmBouBoodskap(nuutPersAppart) {
     var val = get('vmi-' + sleutel);
     if (val) {
       var sleutelMap = {
-        given:'VOORNAAM', surname:'VAN', nickname:'BYNAAM',
-        birth_date:'GEBOORTEDATUM', birth_place:'GEBOORTEPLEK',
-        death_date:'STERFDATUM',    death_place:'STERFPLEK',
+        given:'VOORNAAM',          surname:'VAN',            nickname:'BYNAAM',
+        birth_date:'GEBOORTEDATUM', birth_year:'GEBOORTEJAAR', birth_place:'GEBOORTEPLEK',
+        baptism_date:'DOOPDATUM',  baptism_place:'DOOPPLEK',
+        death_date:'STERFDATUM',   death_year:'STERFJAAR',   death_place:'STERFPLEK',
         burial_place:'BEGRAAFPLEK', occupation:'BEROEP',
-        fs_id:'FS_ID',              wt_id:'WT_ID'
+        fs_id:'FS_ID',             wt_id:'WT_ID'
       };
       lyne.push((sleutelMap[sleutel] || sleutel.toUpperCase()) + ': ' + val);
     }
@@ -4749,7 +4754,7 @@ function attachCorrectionListeners() {
     var html = '<div style="max-width:720px;margin:0 auto;padding:1rem;">';
     html += '<div style="display:flex;align-items:baseline;gap:0.7rem;margin-bottom:0.9rem;">';
     html += '<h2 style="color:var(--sepia-light);font-size:1.2rem;margin:0;">✏️ Admin</h2>';
-    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-13-3</span>';
+    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-13-4</span>';
     html += '</div>';
 
     // ── Publiek-inligtingspaneel (standaard oop) ──
@@ -4803,10 +4808,11 @@ function attachCorrectionListeners() {
       html += '</div></div>';
       // ── Taak-kiesknoppies: Groep 2 — Databasis-administrasie ──
       var takeAdmin = [
-        { id:'taak-stoor',    ikoon:'☁️', naam:'Stoor',             kleur:'#4a7a4a' },
-        { id:'taak-duptoets', ikoon:'🔎', naam:'Duplikaattoets',    kleur:'#7a4a8a' },
-        { id:'taak-merge',    ikoon:'🔀', naam:'Samesmelting',       kleur:'#8a4a2a' },
-        { id:'taak-datum',    ikoon:'📅', naam:'Datumnormalisering', kleur:'#3a6a8a' }
+        { id:'taak-stoor',      ikoon:'☁️', naam:'Stoor',             kleur:'#4a7a4a' },
+        { id:'taak-duptoets',   ikoon:'🔎', naam:'Duplikaattoets',    kleur:'#7a4a8a' },
+        { id:'taak-merge',      ikoon:'🔀', naam:'Samesmelting',       kleur:'#8a4a2a' },
+        { id:'taak-datum',      ikoon:'📅', naam:'Datumnormalisering', kleur:'#3a6a8a' },
+        { id:'taak-datumtoets', ikoon:'🗓️', naam:'Datumtoets',         kleur:'#5a8a6a' }
       ];
       html += '<div style="background:#0e150e;border:1px solid #2d4a2d;border-radius:6px;padding:0.5rem;margin-bottom:1rem;">';
       html += '<div style="color:#4a7a4a;font-size:0.73rem;letter-spacing:0.06em;margin-bottom:0.4rem;">DATABASIS-ADMINISTRASIE</div>';
@@ -5010,6 +5016,19 @@ function attachCorrectionListeners() {
       html += '</div>';
       html += '</div>'; // end taak-datum
 
+      // ── PANEEL: Datumkonsekwentheid-verslag ──
+      html += '<div id="taak-datumtoets" class="adm-taak" style="display:none;">';
+      html += '<div style="padding:0.7rem 0.9rem;background:#041a0e;border:1px solid #3a8a5a44;border-radius:6px;margin-bottom:0.7rem;">';
+      html += '<div style="color:#50b870;font-size:0.85rem;font-weight:bold;margin-bottom:0.4rem;">🗓️ Datumkonsekwentheid-verslag</div>';
+      html += '<div style="color:#5a8a6a;font-size:0.80rem;margin-bottom:0.7rem;">Skandeer alle rekords vir logies-onmoontlike of inkonsekwente datums. Geen data word gewysig nie.</div>';
+      html += '<div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.6rem;">';
+      html += '<button onclick="admDatumKonsekwentheid()" style="padding:0.45rem 1rem;background:#0a2018;color:#70d890;border:1px solid #3a8a5a;border-radius:4px;cursor:pointer;font-size:0.85rem;font-weight:bold;">🔍 Genereer Verslag</button>';
+      html += '<button onclick="admDatumKonsekwentheidCsv()" id="btn-datumtoets-csv" style="display:none;padding:0.45rem 0.9rem;background:#0a1a10;color:#70c890;border:1px solid #3a6a4a;border-radius:4px;cursor:pointer;font-size:0.84rem;">⬇️ Laai CSV af</button>';
+      html += '</div>';
+      html += '<div id="adm-datumtoets-uitset" style="margin-top:0.3rem;font-size:0.80rem;"></div>';
+      html += '</div>';
+      html += '</div>'; // end taak-datumtoets
+
     }
 
     html += '</div>'; // end wrapper
@@ -5153,8 +5172,12 @@ function attachCorrectionListeners() {
     'ALIAS':         'nickname',
     'BYNAAM/ALIAS':  'nickname',
     'GEBOORTEDATUM': 'birth_date',
+    'GEBOORTEJAAR':  'birth_year',
     'GEBOORTEPLEK':  'birth_place',
+    'DOOPDATUM':     'baptism_date',
+    'DOOPPLEK':      'baptism_place',
     'STERFDATUM':    'death_date',
+    'STERFJAAR':     'death_year',
     'STERFPLEK':     'death_place',
     'BEGRAAFPLEK':   'burial_place',
     'BEROEP':        'occupation',
@@ -7112,6 +7135,197 @@ function attachCorrectionListeners() {
   };
 
   // ── Einde: Datumnormalisering ──
+
+  // ── Datumkonsekwentheid-verslag ──
+  window.admDatumKonsekwentheid = function admDatumKonsekwentheid() {
+    var uitset = document.getElementById('adm-datumtoets-uitset');
+    var csvKnop = document.getElementById('btn-datumtoets-csv');
+    if (uitset) uitset.innerHTML = '<span style="color:#8a9a8a;">Besig om te skandeer...</span>';
+
+    var data = (typeof CONRADIE_DATA !== 'undefined') ? CONRADIE_DATA : window.CONRADIE_DATA;
+    if (!data) { if (uitset) uitset.innerHTML = '<span style="color:#e05050;">Databasis nie gelaai nie.</span>'; return; }
+
+    // Bou ID-indeks vir ouer-opsoek
+    var indeks = {};
+    data.forEach(function(p) { if (p && p.id) indeks[p.id] = p; });
+
+    // Helper: haal jaar uit datumstring (ISO of ~YYYY)
+    function jaarUit(d) {
+      if (!d) return null;
+      var s = String(d).trim();
+      var m = s.match(/(\d{4})/);
+      return m ? parseInt(m[1], 10) : null;
+    }
+
+    // Helper: haal volledige datum as vergelykbare getal (YYYYMMDD)
+    function datumGetal(d) {
+      if (!d) return null;
+      var s = String(d).trim().replace(/^~/, '');
+      // ISO: YYYY-MM-DD of YYYY-MM of YYYY
+      var m3 = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      if (m3) return parseInt(m3[1] + m3[2] + m3[3], 10);
+      var m2 = s.match(/^(\d{4})-(\d{2})$/);
+      if (m2) return parseInt(m2[1] + m2[2] + '01', 10);
+      var m1 = s.match(/^(\d{4})$/);
+      if (m1) return parseInt(m1[1] + '0101', 10);
+      return null;
+    }
+
+    var bevindinge = []; // { kode, id, naam, beskrywing, oud1, oud2 }
+
+    data.forEach(function(p) {
+      if (!p || !p.id) return;
+      if (p.merged_into) return; // oorgeslaan saamgesmelte rekords
+
+      var gb = datumGetal(p.birth_date);
+      var gs = datumGetal(p.death_date);
+      var gd = datumGetal(p.baptism_date);
+      var gj_b = jaarUit(p.birth_date);
+      var gj_s = jaarUit(p.death_date);
+
+      // A: death_year ≠ jaar uit death_date
+      if (p.death_year && p.death_date) {
+        var djaar = jaarUit(p.death_date);
+        if (djaar !== null && parseInt(p.death_year, 10) !== djaar) {
+          bevindinge.push({ kode:'A', id:p.id, naam:p.name,
+            beskrywing:'death_year (' + p.death_year + ') ≠ jaar uit death_date (' + djaar + ')',
+            oud1: String(p.death_year), oud2: String(p.death_date) });
+        }
+      }
+
+      // B: birth_year ≠ jaar uit birth_date
+      if (p.birth_year && p.birth_date) {
+        var bjaar = jaarUit(p.birth_date);
+        if (bjaar !== null && parseInt(p.birth_year, 10) !== bjaar) {
+          bevindinge.push({ kode:'B', id:p.id, naam:p.name,
+            beskrywing:'birth_year (' + p.birth_year + ') ≠ jaar uit birth_date (' + bjaar + ')',
+            oud1: String(p.birth_year), oud2: String(p.birth_date) });
+        }
+      }
+
+      // C: troudatum voor geboortedatum
+      if (gb && p.marr_dates && p.marr_dates.length) {
+        p.marr_dates.forEach(function(md, i) {
+          if (!md) return;
+          var gm = datumGetal(md);
+          if (gm && gm < gb) {
+            bevindinge.push({ kode:'C', id:p.id, naam:p.name,
+              beskrywing:'Troudatum[' + i + '] (' + md + ') voor geboortedatum (' + p.birth_date + ')',
+              oud1: md, oud2: p.birth_date });
+          }
+        });
+      }
+
+      // D: sterfdatum voor geboortedatum
+      if (gb && gs && gs < gb) {
+        bevindinge.push({ kode:'D', id:p.id, naam:p.name,
+          beskrywing:'Sterfdatum (' + p.death_date + ') voor geboortedatum (' + p.birth_date + ')',
+          oud1: p.death_date, oud2: p.birth_date });
+      }
+
+      // E: doopdatum voor geboortedatum
+      if (gb && gd && gd < gb) {
+        bevindinge.push({ kode:'E', id:p.id, naam:p.name,
+          beskrywing:'Doopdatum (' + p.baptism_date + ') voor geboortedatum (' + p.birth_date + ')',
+          oud1: p.baptism_date, oud2: p.birth_date });
+      }
+
+      // F: kind gebore ná ouer se sterfdatum (minstens 10 maande speling)
+      if (gb && p.parents && p.parents.length) {
+        p.parents.forEach(function(ouer) {
+          if (!ouer || !ouer.id) return;
+          var or = indeks[ouer.id];
+          if (!or || !or.death_date) return;
+          var os = datumGetal(or.death_date);
+          // Speling: 10 maande = ~300 dae → as datumgetalverskil > 300 is fout
+          // Vereenvoudig: gb > os + 1 (kind gebore méér as 1 jaar ná ouer se dood)
+          if (os && gb > os + 10000) { // meer as 1 jaar (YYYYMMDD formaat)
+            bevindinge.push({ kode:'F', id:p.id, naam:p.name,
+              beskrywing:'Gebore (' + p.birth_date + ') meer as 1 jaar ná ouer ' + ouer.name + ' (' + or.death_date + ') se dood',
+              oud1: p.birth_date, oud2: or.death_date });
+          }
+        });
+      }
+    });
+
+    window._datumToetsLys = bevindinge;
+
+    var kodeKleure = { A:'#b8d070', B:'#b8d070', C:'#e09050', D:'#e05050', E:'#d0a050', F:'#e07070' };
+    var kodeTekste = {
+      A: 'death_year vs death_date',
+      B: 'birth_year vs birth_date',
+      C: 'Troudatum voor geboorte',
+      D: 'Sterfdatum voor geboorte',
+      E: 'Doopdatum voor geboorte',
+      F: 'Kind ná ouer se dood'
+    };
+
+    // Tel per kode
+    var tellings = { A:0, B:0, C:0, D:0, E:0, F:0 };
+    bevindinge.forEach(function(b) { if (tellings[b.kode] !== undefined) tellings[b.kode]++; });
+
+    var nuH = '';
+    nuH += '<div style="margin-bottom:0.6rem;">';
+    nuH += '<b style="color:#70d890;">Totaal: ' + bevindinge.length + ' bevindinge</b>';
+    nuH += '<span style="color:#5a8a6a;margin-left:0.8rem;font-size:0.78rem;">(' + data.filter(function(p){return p&&p.id&&!p.merged_into;}).length + ' rekords geskandeer)</span>';
+    nuH += '</div>';
+
+    // Opsomming per kode
+    nuH += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.3rem 0.6rem;margin-bottom:0.8rem;">';
+    ['A','B','C','D','E','F'].forEach(function(k) {
+      nuH += '<div style="background:#0a180e;border:1px solid #2a4a2a;border-radius:3px;padding:0.25rem 0.4rem;">';
+      nuH += '<span style="color:' + kodeKleure[k] + ';font-weight:bold;">' + k + '</span>';
+      nuH += '<span style="color:#8a9a8a;font-size:0.77rem;"> ' + kodeTekste[k] + '</span>';
+      nuH += '<span style="color:#70d890;float:right;font-weight:bold;">' + tellings[k] + '</span>';
+      nuH += '</div>';
+    });
+    nuH += '</div>';
+
+    if (bevindinge.length === 0) {
+      nuH += '<p style="color:#70d890;">✅ Geen datumkonsekwentheid-probleme gevind nie.</p>';
+    } else {
+      // Tabel van bevindinge
+      nuH += '<div style="overflow-x:auto;">';
+      nuH += '<table style="width:100%;border-collapse:collapse;font-size:0.77rem;">';
+      nuH += '<thead><tr style="background:#0a2010;color:#5ab870;">';
+      nuH += '<th style="padding:0.25rem 0.4rem;text-align:left;border-bottom:1px solid #2a5a2a;">Kode</th>';
+      nuH += '<th style="padding:0.25rem 0.4rem;text-align:left;border-bottom:1px solid #2a5a2a;">ID</th>';
+      nuH += '<th style="padding:0.25rem 0.4rem;text-align:left;border-bottom:1px solid #2a5a2a;">Naam</th>';
+      nuH += '<th style="padding:0.25rem 0.4rem;text-align:left;border-bottom:1px solid #2a5a2a;">Probleem</th>';
+      nuH += '</tr></thead><tbody>';
+      bevindinge.forEach(function(b, i) {
+        var agtergrond = (i % 2 === 0) ? '#050e08' : '#071208';
+        nuH += '<tr style="background:' + agtergrond + ';">';
+        nuH += '<td style="padding:0.2rem 0.4rem;color:' + (kodeKleure[b.kode]||'#8a9a8a') + ';font-weight:bold;">' + b.kode + '</td>';
+        nuH += '<td style="padding:0.2rem 0.4rem;color:#6a9a7a;">' + b.id + '</td>';
+        nuH += '<td style="padding:0.2rem 0.4rem;color:#8a9a8a;">' + (b.naam || '') + '</td>';
+        nuH += '<td style="padding:0.2rem 0.4rem;color:#7a8a7a;">' + b.beskrywing + '</td>';
+        nuH += '</tr>';
+      });
+      nuH += '</tbody></table>';
+      nuH += '</div>';
+    }
+
+    if (uitset) uitset.innerHTML = nuH;
+    if (csvKnop) csvKnop.style.display = bevindinge.length > 0 ? 'inline-block' : 'none';
+  };
+
+  window.admDatumKonsekwentheidCsv = function admDatumKonsekwentheidCsv() {
+    var lys = window._datumToetsLys;
+    if (!lys || lys.length === 0) { alert('Genereer eers die verslag.'); return; }
+    var rye = ['Kode,ID,Naam,Beskrywing,Waarde1,Waarde2'];
+    lys.forEach(function(b) {
+      function esc(s) { return '"' + String(s || '').replace(/"/g, '""') + '"'; }
+      rye.push([esc(b.kode), esc(b.id), esc(b.naam), esc(b.beskrywing), esc(b.oud1), esc(b.oud2)].join(','));
+    });
+    var blob = new Blob([rye.join('\n')], { type: 'text/csv' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'datumkonsekwentheid.csv';
+    a.click();
+  };
+
+  // ── Einde: Datumkonsekwentheid ──
 
   // Op-aanvraag verslag: skandeer alle I én S-rekords, bou HTML-tabel + CSV-aflaai
   window.admDupVerslag = function admDupVerslag() {

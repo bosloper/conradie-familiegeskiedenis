@@ -4754,7 +4754,7 @@ function attachCorrectionListeners() {
     var html = '<div style="max-width:720px;margin:0 auto;padding:1rem;">';
     html += '<div style="display:flex;align-items:baseline;gap:0.7rem;margin-bottom:0.9rem;">';
     html += '<h2 style="color:var(--sepia-light);font-size:1.2rem;margin:0;">✏️ Admin</h2>';
-    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-13-4</span>';
+    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-13-5</span>';
     html += '</div>';
 
     // ── Publiek-inligtingspaneel (standaard oop) ──
@@ -4869,7 +4869,8 @@ function attachCorrectionListeners() {
       html += _veld('adm-death-place', 'Sterfplek',         'text');
       html += _veld('adm-burial',      'Begraafplek',       'text');
       html += _veld('adm-occupation',  'Beroep',            'text');
-      html += _veld('adm-note',        'Nota / Narratief',  'textarea');
+      html += _veld('adm-note',        'Nota',              'textarea');
+      html += _veld('adm-narrative',   'Narratief / Aantekening', 'textarea');
       html += _veld('adm-fs-id',       'FamilySearch ID',   'text', 'bv. LZNY-ABC');
       html += _veld('adm-wt-id',       'WikiTree ID',       'text', 'bv. Conradie-123');
       html += '<div style="margin-top:0.6rem;">';
@@ -5848,6 +5849,7 @@ function attachCorrectionListeners() {
     set('adm-occupation',  p.occupation);
     set('adm-district',    p.district);
     set('adm-note',        p.note);
+    set('adm-narrative',   p.narrative);
     set('adm-fs-id',       p.fs_id);
     set('adm-wt-id',       p.wt_id);
 
@@ -5864,6 +5866,7 @@ function attachCorrectionListeners() {
       occupation:  p.occupation  || '',
       events:      JSON.parse(JSON.stringify(p.events || [])),
       note:        p.note        || '',
+      narrative:   p.narrative   || '',
       fs_id:       p.fs_id       || '',
       wt_id:       p.wt_id       || ''
     };
@@ -5932,6 +5935,7 @@ function attachCorrectionListeners() {
       occupation:  orig.occupation   !== undefined ? orig.occupation   : (p.occupation   || ''),
       events:      orig.events       !== undefined ? orig.events       : (p.events       || []),
       note:        orig.note         !== undefined ? orig.note         : (p.note         || ''),
+      narrative:   orig.narrative    !== undefined ? orig.narrative    : (p.narrative    || ''),
       fs_id:       orig.fs_id        !== undefined ? orig.fs_id        : (p.fs_id        || ''),
       wt_id:       orig.wt_id        !== undefined ? orig.wt_id        : (p.wt_id        || '')
     };
@@ -5953,6 +5957,7 @@ function attachCorrectionListeners() {
     p.occupation  = _g('adm-occupation',  p.occupation);
     p.events      = p.events || [];
     p.note        = get('adm-note');       // Leë waarde toegelaat (nota mag verwyder word)
+    p.narrative   = get('adm-narrative'); // Leë waarde toegelaat (narratief mag verwyder word)
     p.fs_id       = get('adm-fs-id')  || p.fs_id  || '';
     p.wt_id       = get('adm-wt-id')  || p.wt_id  || '';
 
@@ -6001,7 +6006,8 @@ function attachCorrectionListeners() {
       birth_place: p.birth_place || '', death_date: p.death_date || '',
       death_place: p.death_place || '', burial_place: p.burial_place || '',
       occupation: p.occupation || '', events: p.events || [],
-      note: p.note || '', fs_id: p.fs_id || '', wt_id: p.wt_id || ''
+      note: p.note || '', narrative: p.narrative || '',
+      fs_id: p.fs_id || '', wt_id: p.wt_id || ''
     };
     var wysigings = {};
     Object.keys(voor).forEach(function(k) {

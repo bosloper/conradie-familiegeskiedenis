@@ -6388,5 +6388,360 @@
       "fs_id": "LBWK-154",
       "wt_id": ""
     }
+  },
+  {
+    "tyd": "2026-07-27T21:41:32.024Z",
+    "volgorde": 1,
+    "rekord_id": "I4011",
+    "naam": "Anna Maria CONRADIE",
+    "tipe": "wysiging",
+    "wysigings": {
+      "burial_place": {
+        "oud": "Veras, nis by NG Gemeente Casseldale, Springs, Gauteng",
+        "nuut": "Veras, nis by NG Gemeente Springs-Oos"
+      }
+    },
+    "rekord_na": {
+      "id": "I4011",
+      "ref": "4011",
+      "name": "Anna Maria CONRADIE",
+      "given": "Anna Maria",
+      "surname": "CONRADIE",
+      "sex": "F",
+      "family_code": "c2d5e1f8g1h1i3",
+      "branch": "c2",
+      "branch_path": [
+        "b1",
+        "c2",
+        "c2d5",
+        "c2d5e1",
+        "c2d5e1f8",
+        "c2d5e1f8g1",
+        "c2d5e1f8g1h1",
+        "c2d5e1f8g1h1i3"
+      ],
+      "generation": 8,
+      "uncertain": false,
+      "nickname": "Annatjie",
+      "birth_date": "1916-06-04",
+      "birth_year": 1916,
+      "birth_place": "Kenhardt, Kaapprovinsie",
+      "birth_circa": false,
+      "death_date": "2005-08-02",
+      "death_year": 1993,
+      "death_place": "Springs, Gauteng",
+      "burial_place": "Veras, nis by NG Gemeente Springs-Oos",
+      "baptism_date": "",
+      "baptism_place": "",
+      "is_spouse": false,
+      "spouses": [
+        {
+          "id": "S4011",
+          "name": "Hermanus MacDonald DE VRIES",
+          "birth_date": "1908-03-22",
+          "birth_year": null,
+          "divorce_date": "",
+          "divorced": false
+        }
+      ],
+      "children_ids": [],
+      "parents": [
+        {
+          "id": "I4001",
+          "name": "Cornelius Johannes CONRADIE",
+          "role": "father"
+        },
+        {
+          "id": "S4001",
+          "name": "Maria Magdalena Elizabeth LACOCK",
+          "role": "mother"
+        }
+      ],
+      "marr_dates": [
+        "1940-09-01"
+      ],
+      "marr_places": [
+        "Johannesburg. Transvaal"
+      ],
+      "divorce_date": "",
+      "divorced": false,
+      "maiden_name": "",
+      "narrative": "",
+      "note": "Sy het haar opleiding as verpleegsuster in Bloemfontein ondergaan reeds voor haar troue. Sy was lank werksaam as Suster in Kakamas Hospitaal (Ongeveer 1940 tot 1954). Sy kwalifiseer as Kraamsuster (in Port Elizabeth) gedurende hierdie periode.\nIn 1954 koop haar man, Mac, 'n suiwelplaas in Heidelberg, Tvl en hulle verhuis na Transvaal. Sy is verpleegsuster en kraamsuster by AG Visser-hospitaal in Heidelberg. Die gesin se seun word hier gebore.\nMac koop 'n vulstasie en werkswinkel in Greylingstad in 1969 en hul verhuis daarheen",
+      "occupation": "Verpleegkundige (verpleegsuster), boervrou, sakevrou",
+      "district": "",
+      "events": [
+        {
+          "year": "1933",
+          "type": "MATRIEK",
+          "text": "Matrikuleer aan Kakamas Hoërskool"
+        },
+        {
+          "year": "1940",
+          "type": "VERHUISING",
+          "text": "Eerste huis",
+          "bestemming": "Neilersdrif (naby Keimoes), Kaapprovinsie"
+        },
+        {
+          "year": "1941",
+          "type": "KIND_ANDER_VAN",
+          "text": "Mariaan",
+          "ander_van": "de Vries"
+        },
+        {
+          "year": "1943",
+          "type": "KIND_ANDER_VAN",
+          "text": "Charlotte Sonia",
+          "ander_van": "de Vries"
+        },
+        {
+          "year": "1955",
+          "type": "KIND_ANDER_VAN",
+          "text": "Andries Petrus",
+          "ander_van": "de Vries"
+        },
+        {
+          "year": "1969",
+          "type": "VERHUISING",
+          "text": "Koop vulstasie en werkswinkel",
+          "bestemming": "Greylingstad, Tvl"
+        },
+        {
+          "year": "1969",
+          "type": "WERK",
+          "text": "Administratiewe Bestuurder by familiebesigheid in Greylingstad"
+        },
+        {
+          "year": "1977",
+          "type": "VERHUISING",
+          "text": "Koop Patente-medisynewinkel",
+          "bestemming": "Tweeling, OVS"
+        },
+        {
+          "year": "1977",
+          "type": "WERK",
+          "text": "Eienaar en bestuurder van eie onderneming"
+        },
+        {
+          "year": "1997",
+          "type": "VERHUISING",
+          "text": "Na oudste dogter",
+          "bestemming": "Endicott, Springs, Gauteng"
+        }
+      ],
+      "fs_id": "LBWK-154",
+      "wt_id": ""
+    }
+  },
+  {
+    "tyd": "2026-07-27T21:41:32.024Z",
+    "volgorde": 2,
+    "rekord_id": "I4001",
+    "naam": "Cornelius Johannes CONRADIE",
+    "tipe": "wysiging",
+    "wysigings": {
+      "burial_place": {
+        "oud": "",
+        "nuut": "Memorium Begraafplaas, Bloemfontein"
+      },
+      "occupation": {
+        "oud": "",
+        "nuut": "Boer"
+      }
+    },
+    "rekord_na": {
+      "id": "I4001",
+      "ref": "4001",
+      "name": "Cornelius Johannes CONRADIE",
+      "given": "Cornelius Johannes",
+      "surname": "CONRADIE",
+      "sex": "M",
+      "family_code": "c2d5e1f8g1h1",
+      "branch": "c2",
+      "branch_path": [
+        "b1",
+        "c2",
+        "c2d5",
+        "c2d5e1",
+        "c2d5e1f8",
+        "c2d5e1f8g1",
+        "c2d5e1f8g1h1"
+      ],
+      "generation": 7,
+      "uncertain": false,
+      "nickname": "",
+      "birth_date": "1884-07-05",
+      "birth_year": 1884,
+      "birth_place": "",
+      "birth_circa": false,
+      "death_date": "1974-12-07",
+      "death_year": 1974,
+      "death_place": "Bloemfontein",
+      "burial_place": "Memorium Begraafplaas, Bloemfontein",
+      "baptism_date": "",
+      "baptism_place": "",
+      "is_spouse": false,
+      "spouses": [
+        {
+          "id": "S4001",
+          "name": "Maria Magdalena Elizabeth LACOCK",
+          "birth_date": "1890-01-06",
+          "birth_year": 1890,
+          "divorce_date": "",
+          "divorced": false
+        }
+      ],
+      "children_ids": [
+        "I4002",
+        "I4010",
+        "I4011",
+        "I4012",
+        "I4023",
+        "I4024",
+        "I4025",
+        "I4026"
+      ],
+      "parents": [
+        {
+          "id": "I4000",
+          "name": "Pieter Jacobus CONRADIE",
+          "role": "father"
+        },
+        {
+          "id": "S4000",
+          "name": "Anna Maria CONRADIE",
+          "role": "mother"
+        }
+      ],
+      "marr_dates": [
+        "1912-03-11"
+      ],
+      "marr_places": [
+        "Kenhardt, Kaapprovinsie"
+      ],
+      "divorce_date": "",
+      "divorced": false,
+      "maiden_name": "",
+      "narrative": "doopinskrywing verwys na \"Rondabelsfontein\" Hulle het in 1942 na Bloemfontein verhuis",
+      "note": "",
+      "events": [
+        {
+          "year": "1942",
+          "type": "VERHUISING",
+          "text": "Tree af op kleinhoewe in die Bloemspruit - Shannon omgewing",
+          "bestemming": "Bloemfontein, OVS"
+        }
+      ],
+      "occupation": "Boer",
+      "fs_id": "GBFF-WP6",
+      "wt_id": ""
+    }
+  },
+  {
+    "tyd": "2026-07-27T21:41:32.024Z",
+    "volgorde": 3,
+    "rekord_id": "I4001",
+    "naam": "Cornelius Johannes CONRADIE",
+    "tipe": "wysiging",
+    "wysigings": {
+      "events": {
+        "oud": [],
+        "nuut": [
+          {
+            "year": "1942",
+            "type": "VERHUISING",
+            "text": "Tree af op kleinhoewe in die Bloemspruit - Shannon omgewing",
+            "bestemming": "Bloemfontein, OVS"
+          }
+        ]
+      }
+    },
+    "rekord_na": {
+      "id": "I4001",
+      "ref": "4001",
+      "name": "Cornelius Johannes CONRADIE",
+      "given": "Cornelius Johannes",
+      "surname": "CONRADIE",
+      "sex": "M",
+      "family_code": "c2d5e1f8g1h1",
+      "branch": "c2",
+      "branch_path": [
+        "b1",
+        "c2",
+        "c2d5",
+        "c2d5e1",
+        "c2d5e1f8",
+        "c2d5e1f8g1",
+        "c2d5e1f8g1h1"
+      ],
+      "generation": 7,
+      "uncertain": false,
+      "nickname": "",
+      "birth_date": "1884-07-05",
+      "birth_year": 1884,
+      "birth_place": "",
+      "birth_circa": false,
+      "death_date": "1974-12-07",
+      "death_year": 1974,
+      "death_place": "Bloemfontein",
+      "burial_place": "Memorium Begraafplaas, Bloemfontein",
+      "baptism_date": "",
+      "baptism_place": "",
+      "is_spouse": false,
+      "spouses": [
+        {
+          "id": "S4001",
+          "name": "Maria Magdalena Elizabeth LACOCK",
+          "birth_date": "1890-01-06",
+          "birth_year": 1890,
+          "divorce_date": "",
+          "divorced": false
+        }
+      ],
+      "children_ids": [
+        "I4002",
+        "I4010",
+        "I4011",
+        "I4012",
+        "I4023",
+        "I4024",
+        "I4025",
+        "I4026"
+      ],
+      "parents": [
+        {
+          "id": "I4000",
+          "name": "Pieter Jacobus CONRADIE",
+          "role": "father"
+        },
+        {
+          "id": "S4000",
+          "name": "Anna Maria CONRADIE",
+          "role": "mother"
+        }
+      ],
+      "marr_dates": [
+        "1912-03-11"
+      ],
+      "marr_places": [
+        "Kenhardt, Kaapprovinsie"
+      ],
+      "divorce_date": "",
+      "divorced": false,
+      "maiden_name": "",
+      "narrative": "doopinskrywing verwys na \"Rondabelsfontein\" Hulle het in 1942 na Bloemfontein verhuis",
+      "note": "",
+      "events": [
+        {
+          "year": "1942",
+          "type": "VERHUISING",
+          "text": "Tree af op kleinhoewe in die Bloemspruit - Shannon omgewing",
+          "bestemming": "Bloemfontein, OVS"
+        }
+      ],
+      "occupation": "Boer",
+      "fs_id": "GBFF-WP6",
+      "wt_id": ""
+    }
   }
 ]

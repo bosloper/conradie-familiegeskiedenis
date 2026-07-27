@@ -1991,9 +1991,15 @@ body.druk-aktief #druk-skerp {
   <div class="corr-section-label">Geboorte &amp; Dood</div>
   <div class="corr-grid">
     <div class="corr-field"><label>Geboortedatum</label><input id="corr-birth-date" type="text" placeholder="bv. 12 MAR 1845"></div>
+    <div class="corr-field"><label>Geboortejaar</label><input id="corr-birth-year" type="text" placeholder="bv. 1845"></div>
     <div class="corr-field"><label>Geboorteplek</label><input id="corr-birth-place" type="text" placeholder="—"></div>
     <div class="corr-field"><label>Sterfdatum</label><input id="corr-death-date" type="text" placeholder="—"></div>
+    <div class="corr-field"><label>Sterfjaar</label><input id="corr-death-year" type="text" placeholder="bv. 1920"></div>
     <div class="corr-field"><label>Sterfplek</label><input id="corr-death-place" type="text" placeholder="—"></div>
+  </div>
+  <div class="corr-grid">
+    <div class="corr-field"><label>Doopdatum</label><input id="corr-baptism-date" type="text" placeholder="bv. 1845-04-02"></div>
+    <div class="corr-field"><label>Doopplek</label><input id="corr-baptism-place" type="text" placeholder="—"></div>
   </div>
 
   <div class="corr-section-label">Begraafplaas · Beroep · Distrik</div>
@@ -4789,7 +4795,7 @@ function attachCorrectionListeners() {
       html += '<div style="color:#8b6914;font-size:0.73rem;letter-spacing:0.06em;margin-bottom:0.4rem;">VOORSTELVERWERKING</div>';
       html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.4rem;">';
       takeVoorstel.forEach(function(t) {
-        html += '<button onclick="admTaakKies(\'" + t.id + "\')" id="btn-' + t.id + '" ' +
+        html += '<button onclick="admTaakKies(\'' + t.id + '\')" id="btn-' + t.id + '" ' +
           'style="padding:0.6rem 0.5rem;background:#0e0c04;color:' + t.kleur + ';' +
           'border:1px solid ' + t.kleur + '44;border-radius:5px;cursor:pointer;font-size:0.88rem;text-align:left;">' +
           t.ikoon + ' ' + t.naam + '</button>';
@@ -4806,7 +4812,7 @@ function attachCorrectionListeners() {
       html += '<div style="color:#4a7a4a;font-size:0.73rem;letter-spacing:0.06em;margin-bottom:0.4rem;">DATABASIS-ADMINISTRASIE</div>';
       html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.4rem;">';
       takeAdmin.forEach(function(t) {
-        html += '<button onclick="admTaakKies(\'" + t.id + "\')" id="btn-' + t.id + '" ' +
+        html += '<button onclick="admTaakKies(\'' + t.id + '\')" id="btn-' + t.id + '" ' +
           'style="padding:0.6rem 0.5rem;background:#080e08;color:' + t.kleur + ';' +
           'border:1px solid ' + t.kleur + '44;border-radius:5px;cursor:pointer;font-size:0.88rem;text-align:left;">' +
           t.ikoon + ' ' + t.naam + '</button>';

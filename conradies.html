@@ -3703,12 +3703,16 @@ function buildTydlyn(r) {
     r.spouses.forEach(function(sp) {
       var gade = indexById[sp.id];
       if (!gade || !gade.events || !gade.events.length) return;
+      // Bepaal gade se sterfjaar vir filter
+      var gadeSterf = gade.death_date ? jaar(gade.death_date) : (gade.death_year ? +gade.death_year : null);
       gade.events.forEach(function(ev) {
         var _t = _evTipes.find(function(x) { return x.kode === ev.type; });
         if (!_t || !_t.printbaar) return;
+        // Slaan oor as event na gade se dood val
+        var ey = ev.year ? +ev.year : null;
+        if (gadeSterf && ey && ey > gadeSterf) return;
         var ikon = _t.ikon || '📌';
         var titel = _t.naam || (ev.type || 'Ander');
-        var ey = ev.year ? +ev.year : null;
         var evTeks = (ev.text || '').trim();
         var detail = '';
         if (ev.type === 'KIND_ANDER_VAN') {
@@ -4739,7 +4743,7 @@ function attachCorrectionListeners() {
     var html = '<div style="max-width:720px;margin:0 auto;padding:1rem;">';
     html += '<div style="display:flex;align-items:baseline;gap:0.7rem;margin-bottom:0.9rem;">';
     html += '<h2 style="color:var(--sepia-light);font-size:1.2rem;margin:0;">✏️ Admin</h2>';
-    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-13-1</span>';
+    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-13-2</span>';
     html += '</div>';
 
     // ── Proses-verduideliking (inklapbaar) ──

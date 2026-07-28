@@ -394,6 +394,15 @@ main {
   letter-spacing: 0.03em;
   opacity: 0.75;
 }
+.vg-ster {
+  position: absolute; top: 0.35rem; right: 0.35rem;
+  background: none; border: none; cursor: pointer;
+  font-size: 1rem; line-height: 1; padding: 0.1rem 0.2rem;
+  opacity: 0.25; transition: opacity 0.15s;
+}
+.vg-ster.gemerk { opacity: 1; }
+.vg-ster:hover { opacity: 0.75; }
+.person-card { position: relative; }
 
 /* ── DETAIL PANEL ── */
 #detail-panel {
@@ -887,6 +896,18 @@ body.druk-aktief #druk-skerp {
     0%,100% { opacity:1; } 50% { opacity:0.4; }
   }
   .soek-wenk { display: block; }
+}
+/* Soek-tab puls — aktief slegs op stamvader-tab */
+@keyframes soek-tab-puls {
+  0%,100% { color:#7a6848; background:none; box-shadow:none; }
+  50% { color:#7aba7a; background:rgba(90,154,90,0.13); box-shadow:0 0 8px rgba(90,154,90,0.25); }
+}
+body.stamvader-aktief .tab-btn[data-tab="search"] {
+  animation: soek-tab-puls 2.2s ease-in-out 5;
+}
+/* Volle skerm wanneer filters toe (mobiel) */
+@media (max-width: 768px) {
+  body:not(.filters-oop) main { min-height: calc(100vh - 130px); margin-top: 0; }
 }
 /* ── TAB SWITCHER ── */
 .tab-bar {
@@ -1918,6 +1939,16 @@ body.druk-aktief #druk-skerp {
     </div>
 
     <div class="filter-section">
+      <label class="section-label">Gunstelinge</label>
+      <label style="display:flex;align-items:center;gap:0.4rem;cursor:pointer;font-size:0.82rem;color:var(--ink);">
+        <input type="checkbox" id="toggle-gunstelinge"> ⭐ Wys slegs gunstelinge
+      </label>
+      <div style="font-size:0.72rem;color:var(--muted);margin-top:0.3rem;line-height:1.35;">
+        Gunstelinge word op hierdie toestel gestoor. Indien jou blaaier se kasgeheue skoongemaak word, sal alle gunstelinge nie meer gemerk wees nie.
+      </div>
+    </div>
+
+    <div class="filter-section">
       <label class="section-label">Sorteer op</label>
       <select class="sort-select" id="sort-select">
         <option value="code">Familiekode (A–Z)</option>
@@ -1929,12 +1960,13 @@ body.druk-aktief #druk-skerp {
     </div>
 
     <button class="reset-btn" id="reset-btn">↺ Stel filters terug</button>
+    <button id="soek-nou-btn" onclick="document.getElementById('filter-toggle-btn').click()" style="display:none;width:100%;margin-top:0.5rem;padding:0.7rem;background:#3a6a3a;color:#c8e8c8;border:none;border-radius:5px;font-family:'Josefin Sans',sans-serif;font-size:0.78rem;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;font-weight:600;">🔍 Soek Nou</button>
   </aside>
 
   <!-- MAIN -->
   <main>
     <div id="soek-wenk" class="soek-wenk">
-      🔍 Gebruik die <strong>Filters &amp; Soek</strong>-balk hierbo om te soek op naam, kode, geboortejaar of plek.
+      🔍 Druk <strong>Filters &amp; Soek</strong> hierbo om enige persoon te vind — op naam, kode, plek of geboortejaar.
     </div>
     <div class="result-bar">
       <span id="result-count"><strong>–</strong> persone</span>
@@ -2453,6 +2485,7 @@ let state = {
   yearMin: null, yearMax: null,
   showSpouses: false,
   onlyNarrative: false,
+  onlyGunstelinge: false,
   sort: 'birth_asc',
   onlyRef: false,
   page: 1,
@@ -2585,6 +2618,9 @@ function attachListeners() {
   document.getElementById('toggle-narrative').addEventListener('change', e => {
     state.onlyNarrative = e.target.checked; state.page = 1; applyFilters();
   });
+  document.getElementById('toggle-gunstelinge').addEventListener('change', e => {
+    state.onlyGunstelinge = e.target.checked; state.page = 1; applyFilters();
+  });
   document.getElementById('toggle-only-ref').addEventListener('change', e => {
     state.onlyRef = e.target.checked; state.page = 1; applyFilters();
   });
@@ -2626,6 +2662,7 @@ function applyFilters() {
     if (state.yearMin && r.birth_year && r.birth_year < state.yearMin) return false;
     if (state.yearMax && r.birth_year && r.birth_year > state.yearMax) return false;
     if (state.onlyNarrative && !r.narrative) return false;
+    if (state.onlyGunstelinge && vgLees().indexOf(r.id) < 0) return false;
     if (state.placeSearch) {
       const pq = state.placeSearch;
       const bp = (r.birth_place||'').toLowerCase();
@@ -2707,6 +2744,18 @@ function renderPage() {
   }
 }
 
+// ── GUNSTELINGE ──
+var VG_SLEUTEL = 'conradie_gunstelinge';
+function vgLees() { try { return JSON.parse(localStorage.getItem(VG_SLEUTEL) || '[]'); } catch(e) { return []; } }
+function vgStoor(lys) { localStorage.setItem(VG_SLEUTEL, JSON.stringify(lys)); }
+function vgToggle(id) {
+  var lys = vgLees();
+  var i = lys.indexOf(id);
+  if (i >= 0) lys.splice(i, 1); else lys.push(id);
+  vgStoor(lys);
+  return lys.indexOf(id) >= 0;
+}
+
 function makeCard(r) {
   const card = document.createElement('div');
   card.className = 'person-card' + (r.is_spouse ? ' spouse-card' : '');
@@ -2734,6 +2783,20 @@ function makeCard(r) {
     </div>
   `;
   card.addEventListener('click', () => openPanel(r.id));
+  // Gunsteling-ster
+  var gemerk = vgLees().indexOf(r.id) >= 0;
+  var ster = document.createElement('button');
+  ster.className = 'vg-ster' + (gemerk ? ' gemerk' : '');
+  ster.title = gemerk ? 'Verwyder gunsteling' : 'Merk as gunsteling';
+  ster.textContent = '⭐';
+  ster.addEventListener('click', function(e) {
+    e.stopPropagation();
+    var nuutGemerk = vgToggle(r.id);
+    ster.classList.toggle('gemerk', nuutGemerk);
+    ster.title = nuutGemerk ? 'Verwyder gunsteling' : 'Merk as gunsteling';
+    if (state.onlyGunstelinge) { state.page = 1; applyFilters(); }
+  });
+  card.appendChild(ster);
   return card;
 }
 
@@ -3846,7 +3909,7 @@ function escHtml(s) {
 
 function resetFilters() {
   state = { search:'', placeSearch:'', branches:new Set(), genMin:1, genMax:11,
-    yearMin:null, yearMax:null, showSpouses:false, onlyNarrative:false, sort:'birth_asc', onlyRef:false, famType:'all', page:1 };
+    yearMin:null, yearMax:null, showSpouses:false, onlyNarrative:false, onlyGunstelinge:false, sort:'birth_asc', onlyRef:false, famType:'all', page:1 };
   document.getElementById('search-input').value = '';
   document.getElementById('search-clear').classList.remove('visible');
   document.getElementById('place-input').value = '';
@@ -3860,6 +3923,7 @@ function resetFilters() {
   state.famType = 'all'; state.showSpouses = false;
   document.getElementById('toggle-narrative').checked = false;
   document.getElementById('toggle-only-ref').checked = false;
+  document.getElementById('toggle-gunstelinge').checked = false;
   document.getElementById('sort-select').value = 'birth_asc';
   document.querySelectorAll('.branch-btn').forEach(b => b.classList.remove('active'));
   applyFilters();
@@ -3880,6 +3944,8 @@ function switchTab(tabName) {
   if (page) page.style.display = '';
   if (tabName === 'admin') { if (typeof buildAdminUI === 'function') buildAdminUI(); }
   if (tabName === 'stats') { if (typeof bouStats === 'function') bouStats(); }
+  // Puls-klas: soek-tab word uitgelig slegs op stamvader-skerm
+  document.body.classList.toggle('stamvader-aktief', tabName === 'stamvader');
 }
 
 // Registreer tab-knoppe na alle inhoud gelaai is
@@ -4754,7 +4820,7 @@ function attachCorrectionListeners() {
     var html = '<div style="max-width:720px;margin:0 auto;padding:1rem;">';
     html += '<div style="display:flex;align-items:baseline;gap:0.7rem;margin-bottom:0.9rem;">';
     html += '<h2 style="color:var(--sepia-light);font-size:1.2rem;margin:0;">✏️ Admin</h2>';
-    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-13-5</span>';
+    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-14-3</span>';
     html += '</div>';
 
     // ── Publiek-inligtingspaneel (standaard oop) ──
@@ -7299,9 +7365,17 @@ function attachCorrectionListeners() {
       nuH += '<th style="padding:0.25rem 0.4rem;text-align:left;border-bottom:1px solid #2a5a2a;">Naam</th>';
       nuH += '<th style="padding:0.25rem 0.4rem;text-align:left;border-bottom:1px solid #2a5a2a;">Probleem</th>';
       nuH += '</tr></thead><tbody>';
+      // Filterknoppies per kode
+      nuH += '<div id="dt-filter-bar" style="display:flex;flex-wrap:wrap;gap:0.3rem;margin-bottom:0.5rem;">';
+      nuH += '<button onclick="admDatumFilter(null)" id="dt-f-al" style="padding:0.2rem 0.55rem;border-radius:3px;border:1px solid #3a6a4a;background:#0a2018;color:#70d890;font-size:0.76rem;cursor:pointer;font-weight:bold;">Alles (' + bevindinge.length + ')</button>';
+      ['A','B','C','D','E','F'].forEach(function(k) {
+        if (tellings[k] === 0) return;
+        nuH += '<button onclick="admDatumFilter(&quot;' + k + '&quot;)" id="dt-f-' + k + '" style="padding:0.2rem 0.55rem;border-radius:3px;border:1px solid #2a4a2a;background:#050e08;color:' + kodeKleure[k] + ';font-size:0.76rem;cursor:pointer;">' + k + ' (' + tellings[k] + ')</button>';
+      });
+      nuH += '</div>';
       bevindinge.forEach(function(b, i) {
         var agtergrond = (i % 2 === 0) ? '#050e08' : '#071208';
-        nuH += '<tr style="background:' + agtergrond + ';">';
+        nuH += '<tr data-kode="' + b.kode + '" style="background:' + agtergrond + ';">';
         nuH += '<td style="padding:0.2rem 0.4rem;color:' + (kodeKleure[b.kode]||'#8a9a8a') + ';font-weight:bold;">' + b.kode + '</td>';
         nuH += '<td style="padding:0.2rem 0.4rem;color:#6a9a7a;">' + b.id + '</td>';
         nuH += '<td style="padding:0.2rem 0.4rem;color:#8a9a8a;">' + (b.naam || '') + '</td>';
@@ -7329,6 +7403,22 @@ function attachCorrectionListeners() {
     a.href = URL.createObjectURL(blob);
     a.download = 'datumkonsekwentheid.csv';
     a.click();
+  };
+
+  // Filter datumtoets-tabel per kode
+  window.admDatumFilter = function admDatumFilter(kode) {
+    var rye = document.querySelectorAll('#dt-tabel tbody tr');
+    rye.forEach(function(r) {
+      r.style.display = (!kode || r.getAttribute('data-kode') === kode) ? '' : 'none';
+    });
+    // Merk aktiewe knop
+    var knoppies = document.querySelectorAll('#dt-filter-bar button');
+    knoppies.forEach(function(b) {
+      var aktief = (!kode && b.id === 'dt-f-al') || (kode && b.id === 'dt-f-' + kode);
+      b.style.fontWeight = aktief ? 'bold' : 'normal';
+      b.style.borderColor = aktief ? '#5a9a5a' : '#2a4a2a';
+      b.style.background = aktief ? '#0a2018' : '#050e08';
+    });
   };
 
   // ── Einde: Datumkonsekwentheid ──
@@ -8449,6 +8539,8 @@ function attachCorrectionListeners() {
 
   // ── Haak in by tab-switching ──
   document.addEventListener('DOMContentLoaded', function() {
+    // Soek-tab puls: begin op stamvader-skerm
+    document.body.classList.add('stamvader-aktief');
     document.querySelectorAll('.tab-btn').forEach(function(btn) {
       btn.addEventListener('click', function() {
         if (btn.getAttribute('data-tab') === 'admin') {
@@ -8470,6 +8562,8 @@ function attachCorrectionListeners() {
     btn.classList.toggle('open', open);
     btn.setAttribute('aria-expanded', open);
     document.body.classList.toggle('filters-oop', open);
+    var soekNou = document.getElementById('soek-nou-btn');
+    if (soekNou) soekNou.style.display = open ? 'block' : 'none';
   });
 })();
 </script>

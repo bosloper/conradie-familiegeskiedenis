@@ -3774,12 +3774,16 @@ function buildTydlyn(r) {
       if (!gade || !gade.events || !gade.events.length) return;
       // Bepaal gade se sterfjaar vir filter
       var gadeSterf = gade.death_date ? jaar(gade.death_date) : (gade.death_year ? +gade.death_year : null);
+      // Bepaal hoof-persoon se sterfjaar vir filter
+      var selfSterf = r.death_date ? jaar(r.death_date) : (r.death_year ? +r.death_year : null);
       gade.events.forEach(function(ev) {
         var _t = _evTipes.find(function(x) { return x.kode === ev.type; });
         if (!_t || !_t.printbaar) return;
-        // Slaan oor as event na gade se dood val
         var ey = ev.year ? +ev.year : null;
+        // Slaan oor as event na gade se dood val
         if (gadeSterf && ey && ey > gadeSterf) return;
+        // Slaan oor as event na hoof-persoon se dood val
+        if (selfSterf && ey && ey > selfSterf) return;
         var ikon = _t.ikon || '📌';
         var titel = _t.naam || (ev.type || 'Ander');
         var evTeks = (ev.text || '').trim();
@@ -4820,7 +4824,7 @@ function attachCorrectionListeners() {
     var html = '<div style="max-width:720px;margin:0 auto;padding:1rem;">';
     html += '<div style="display:flex;align-items:baseline;gap:0.7rem;margin-bottom:0.9rem;">';
     html += '<h2 style="color:var(--sepia-light);font-size:1.2rem;margin:0;">✏️ Admin</h2>';
-    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-14-3</span>';
+    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-14-4</span>';
     html += '</div>';
 
     // ── Publiek-inligtingspaneel (standaard oop) ──
@@ -4932,6 +4936,7 @@ function attachCorrectionListeners() {
       html += _veld('adm-birth-date',  'Geboortedatum',     'text', 'bv. 1845-03-12');
       html += _veld('adm-birth-place', 'Geboorteplek',      'text');
       html += _veld('adm-death-date',  'Sterfdatum',        'text', 'bv. 1912-07-04');
+      html += _veld('adm-death-year',  'Sterfjaar',         'text', 'bv. 1912');
       html += _veld('adm-death-place', 'Sterfplek',         'text');
       html += _veld('adm-burial',      'Begraafplek',       'text');
       html += _veld('adm-occupation',  'Beroep',            'text');
@@ -5910,6 +5915,7 @@ function attachCorrectionListeners() {
     set('adm-birth-date',  p.birth_date);
     set('adm-birth-place', p.birth_place);
     set('adm-death-date',  p.death_date);
+    set('adm-death-year',  p.death_year != null ? String(p.death_year) : '');
     set('adm-death-place', p.death_place);
     set('adm-burial',      p.burial_place);
     set('adm-occupation',  p.occupation);
@@ -5927,6 +5933,7 @@ function attachCorrectionListeners() {
       birth_date:  p.birth_date  || '',
       birth_place: p.birth_place || '',
       death_date:  p.death_date  || '',
+      death_year:  p.death_year  != null ? String(p.death_year) : '',
       death_place: p.death_place || '',
       burial_place:p.burial_place|| '',
       occupation:  p.occupation  || '',
@@ -5996,6 +6003,7 @@ function attachCorrectionListeners() {
       birth_date:  orig.birth_date   !== undefined ? orig.birth_date   : (p.birth_date   || ''),
       birth_place: orig.birth_place  !== undefined ? orig.birth_place  : (p.birth_place  || ''),
       death_date:  orig.death_date   !== undefined ? orig.death_date   : (p.death_date   || ''),
+      death_year:  orig.death_year   !== undefined ? orig.death_year   : (p.death_year   != null ? String(p.death_year) : ''),
       death_place: orig.death_place  !== undefined ? orig.death_place  : (p.death_place  || ''),
       burial_place:orig.burial_place !== undefined ? orig.burial_place : (p.burial_place || ''),
       occupation:  orig.occupation   !== undefined ? orig.occupation   : (p.occupation   || ''),
@@ -6018,6 +6026,8 @@ function attachCorrectionListeners() {
     p.birth_date  = _g('adm-birth-date',  p.birth_date);
     p.birth_place = _g('adm-birth-place', p.birth_place);
     p.death_date  = _g('adm-death-date',  p.death_date);
+    var _dy = get('adm-death-year').trim();
+    p.death_year  = _dy !== '' ? (isNaN(+_dy) ? _dy : +_dy) : (p.death_year || null);
     p.death_place = _g('adm-death-place', p.death_place);
     p.burial_place= _g('adm-burial',      p.burial_place);
     p.occupation  = _g('adm-occupation',  p.occupation);
@@ -6070,6 +6080,7 @@ function attachCorrectionListeners() {
       given: p.given || '', surname: p.surname || '',
       nickname: p.nickname || '', birth_date: p.birth_date || '',
       birth_place: p.birth_place || '', death_date: p.death_date || '',
+      death_year: p.death_year != null ? p.death_year : '',
       death_place: p.death_place || '', burial_place: p.burial_place || '',
       occupation: p.occupation || '', events: p.events || [],
       note: p.note || '', narrative: p.narrative || '',

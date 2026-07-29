@@ -2873,8 +2873,11 @@ function openPanel(id) {
     el.addEventListener('click', () => openPanel(el.dataset.id));
   });
   // Bind WikiTree vergelyking-knoppie
-  document.querySelectorAll('.wt-vergelyk-btn[data-wtpersid]').forEach(function(btn) {
-    btn.addEventListener('click', function() { wtVergelyk(btn.dataset.wtpersid, btn.dataset.wtid); });
+  document.querySelectorAll('.wt-vergelyk-btn[data-wtrek]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      try { wtVergelyk(JSON.parse(btn.dataset.wtrek)); }
+      catch(e) { alert('Fout met WikiTree data: ' + e.message); }
+    });
   });
   correctionPersonId = id;
   attachCorrectionListeners();
@@ -3215,11 +3218,21 @@ function buildPanelHTML(r) {
     'display:inline-flex;align-items:center;gap:0.4rem;background:#5a8a3c;color:#fff;border-radius:16px;' +
     'padding:0.35rem 0.9rem;font-size:0.82rem;text-decoration:none;font-family:inherit;">🌳 WikiTree</a>'
   );
-  if (r.wt_id) eksSk.push(
-    '<button class="wt-vergelyk-btn" data-wtpersid="' + r.id + '" data-wtid="' + escHtml(r.wt_id) + '" style="' +
-    'display:inline-flex;align-items:center;gap:0.4rem;background:#7a5c2a;color:#f5edd8;border:none;border-radius:16px;' +
-    'padding:0.35rem 0.9rem;font-size:0.82rem;cursor:pointer;font-family:inherit;">⚖️ Vergelyk</button>'
-  );
+  if (r.wt_id) {
+    var _wtRek = {
+      id: r.id, name: r.name||'', wt_id: r.wt_id,
+      birth_date: r.birth_date||(r.birth_year?String(r.birth_year):''),
+      birth_place: r.birth_place||'', death_date: r.death_date||(r.death_year?String(r.death_year):''),
+      death_place: r.death_place||'',
+      spouses_n: (r.spouses||[]).map(function(s){return s.name||'';}).join('; '),
+      children_n: r.children_ids ? String(r.children_ids.length) : '0'
+    };
+    eksSk.push(
+      '<button class="wt-vergelyk-btn" data-wtrek="' + escHtml(JSON.stringify(_wtRek)) + '" style="' +
+      'display:inline-flex;align-items:center;gap:0.4rem;background:#7a5c2a;color:#f5edd8;border:none;border-radius:16px;' +
+      'padding:0.35rem 0.9rem;font-size:0.82rem;cursor:pointer;font-family:inherit;">⚖️ Vergelyk</button>'
+    );
+  }
   if (eksSk.length) {
     parts.push('<div style="margin-top:0.8rem;text-align:center;display:flex;gap:0.5rem;justify-content:center;flex-wrap:wrap">' + eksSk.join('') + '</div>');
   }
@@ -3315,17 +3328,13 @@ function deelPersoon(id) {
 }
 
 // ── WIKITREE VERGELYKING ──
-function wtVergelyk(id, wtIdDirek) {
-  var r = window.indexById && window.indexById[id];
-  // Gebruik wt_id direk van knoppie — betroubaar ongeag JSON-kas
-  var wtId = wtIdDirek || (r && r.wt_id) || '';
-  if (!wtId) {
+function wtVergelyk(rek) {
+  // rek is 'n objek met alle nodige velde (van data-wtrek attribuut)
+  var r = rek || {};
+  if (!r.wt_id) {
     alert('WikiTree ID nie gevind vir hierdie rekord nie.');
     return;
   }
-  // r gebruik vir Stamboom-kolom; wtId vir API-aanroep
-  if (!r) r = { id: id, name: id };
-  r = Object.assign({}, r, { wt_id: wtId });
   var modal = document.getElementById('wt-modal');
   var inhoud = document.getElementById('wt-modal-inhoud');
   if (!modal || !inhoud) { alert('wtVergelyk: modal-element nie gevind nie'); return; }
@@ -3388,12 +3397,15 @@ function wtBouVergelyking(r, wt) {
       '</tr>';
   }
 
-  var plaaslikGade = (r.spouses || []).map(function(s) { return s.name || ''; }).join('; ');
+  // Gebruik voorbereide velde van data-wtrek (spouses_n, children_n) indien beskikbaar
+  var plaaslikGade = r.spouses_n !== undefined ? r.spouses_n :
+    (r.spouses || []).map(function(s) { return s.name || ''; }).join('; ');
   var wtGade = wt.Spouses ? Object.values(wt.Spouses).map(function(s) { return (s.FirstName || '') + ' ' + (s.LastNameAtBirth || ''); }).join('; ') : '';
-  var plaaslikKinders = r.children_ids ? String(r.children_ids.length) : '0';
+  var plaaslikKinders = r.children_n !== undefined ? r.children_n :
+    (r.children_ids ? String(r.children_ids.length) : '0');
   var wtKinders = wt.Children ? String(Object.keys(wt.Children).length) : '0';
-  var plaaslikGebDatum = r.birth_date || (r.birth_year ? String(r.birth_year) : '');
-  var plaaslikSterfDatum = r.death_date || (r.death_year ? String(r.death_year) : '');
+  var plaaslikGebDatum = r.birth_date || '';
+  var plaaslikSterfDatum = r.death_date || '';
 
   var html = '<table style="width:100%;border-collapse:collapse;font-size:0.84rem;">';
   html += '<thead><tr style="background:var(--forest);color:var(--parchment);">' +

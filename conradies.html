@@ -3763,7 +3763,22 @@ function buildTydlyn(r) {
       } else {
         detail = evTeks;
       }
-      gebeure.push({ jaar: ey, ikon: ikon, titel: titel, detail: detail });
+      // Soek kind se rekord as KIND_ANDER_VAN (via naam + van + ouer-verwantskap)
+      var kavLink = undefined;
+      if (ev.type === 'KIND_ANDER_VAN' && ev.text && ev.ander_van) {
+        var kavNaam = ev.text.toLowerCase();
+        var kavVan = ev.ander_van.toLowerCase();
+        var kavRek = CONRADIE_DATA.find(function(k) {
+          if (!k.parents || !k.parents.length) return false;
+          if ((k.given||'').toLowerCase().indexOf(kavNaam) < 0) return false;
+          if ((k.surname||'').toLowerCase().indexOf(kavVan) < 0) return false;
+          return k.parents.some(function(par) {
+            return par.id === r.id || r.spouses.some(function(sp) { return sp.id === par.id; });
+          });
+        });
+        if (kavRek) kavLink = kavRek.id;
+      }
+      gebeure.push({ jaar: ey, ikon: ikon, titel: titel, detail: detail, linkId: kavLink });
     });
   }
 
@@ -3798,7 +3813,22 @@ function buildTydlyn(r) {
         } else {
           detail = evTeks;
         }
-        gebeure.push({ jaar: ey, ikon: ikon, titel: titel, detail: detail });
+        // Soek kind se rekord as KIND_ANDER_VAN (via naam + van + gade se ouer-verwantskap)
+        var kavLink2 = undefined;
+        if (ev.type === 'KIND_ANDER_VAN' && ev.text && ev.ander_van) {
+          var kavNaam2 = ev.text.toLowerCase();
+          var kavVan2 = ev.ander_van.toLowerCase();
+          var kavRek2 = CONRADIE_DATA.find(function(k) {
+            if (!k.parents || !k.parents.length) return false;
+            if ((k.given||'').toLowerCase().indexOf(kavNaam2) < 0) return false;
+            if ((k.surname||'').toLowerCase().indexOf(kavVan2) < 0) return false;
+            return k.parents.some(function(par) {
+              return par.id === gade.id || r.spouses.some(function(sp) { return sp.id === par.id; });
+            });
+          });
+          if (kavRek2) kavLink2 = kavRek2.id;
+        }
+        gebeure.push({ jaar: ey, ikon: ikon, titel: titel, detail: detail, linkId: kavLink2 });
       });
     });
   }
@@ -4824,7 +4854,7 @@ function attachCorrectionListeners() {
     var html = '<div style="max-width:720px;margin:0 auto;padding:1rem;">';
     html += '<div style="display:flex;align-items:baseline;gap:0.7rem;margin-bottom:0.9rem;">';
     html += '<h2 style="color:var(--sepia-light);font-size:1.2rem;margin:0;">✏️ Admin</h2>';
-    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-14-4</span>';
+    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-15-0</span>';
     html += '</div>';
 
     // ── Publiek-inligtingspaneel (standaard oop) ──
@@ -7368,15 +7398,7 @@ function attachCorrectionListeners() {
       nuH += '<p style="color:#70d890;">✅ Geen datumkonsekwentheid-probleme gevind nie.</p>';
     } else {
       // Tabel van bevindinge
-      nuH += '<div style="overflow-x:auto;">';
-      nuH += '<table style="width:100%;border-collapse:collapse;font-size:0.77rem;">';
-      nuH += '<thead><tr style="background:#0a2010;color:#5ab870;">';
-      nuH += '<th style="padding:0.25rem 0.4rem;text-align:left;border-bottom:1px solid #2a5a2a;">Kode</th>';
-      nuH += '<th style="padding:0.25rem 0.4rem;text-align:left;border-bottom:1px solid #2a5a2a;">ID</th>';
-      nuH += '<th style="padding:0.25rem 0.4rem;text-align:left;border-bottom:1px solid #2a5a2a;">Naam</th>';
-      nuH += '<th style="padding:0.25rem 0.4rem;text-align:left;border-bottom:1px solid #2a5a2a;">Probleem</th>';
-      nuH += '</tr></thead><tbody>';
-      // Filterknoppies per kode
+      // Filterknoppies per kode — bo die tabel, buite <table>
       nuH += '<div id="dt-filter-bar" style="display:flex;flex-wrap:wrap;gap:0.3rem;margin-bottom:0.5rem;">';
       nuH += '<button onclick="admDatumFilter(null)" id="dt-f-al" style="padding:0.2rem 0.55rem;border-radius:3px;border:1px solid #3a6a4a;background:#0a2018;color:#70d890;font-size:0.76rem;cursor:pointer;font-weight:bold;">Alles (' + bevindinge.length + ')</button>';
       ['A','B','C','D','E','F'].forEach(function(k) {
@@ -7384,6 +7406,14 @@ function attachCorrectionListeners() {
         nuH += '<button onclick="admDatumFilter(&quot;' + k + '&quot;)" id="dt-f-' + k + '" style="padding:0.2rem 0.55rem;border-radius:3px;border:1px solid #2a4a2a;background:#050e08;color:' + kodeKleure[k] + ';font-size:0.76rem;cursor:pointer;">' + k + ' (' + tellings[k] + ')</button>';
       });
       nuH += '</div>';
+      nuH += '<div style="overflow-x:auto;">';
+      nuH += '<table id="dt-tabel" style="width:100%;border-collapse:collapse;font-size:0.77rem;">';
+      nuH += '<thead><tr style="background:#0a2010;color:#5ab870;">';
+      nuH += '<th style="padding:0.25rem 0.4rem;text-align:left;border-bottom:1px solid #2a5a2a;">Kode</th>';
+      nuH += '<th style="padding:0.25rem 0.4rem;text-align:left;border-bottom:1px solid #2a5a2a;">ID</th>';
+      nuH += '<th style="padding:0.25rem 0.4rem;text-align:left;border-bottom:1px solid #2a5a2a;">Naam</th>';
+      nuH += '<th style="padding:0.25rem 0.4rem;text-align:left;border-bottom:1px solid #2a5a2a;">Probleem</th>';
+      nuH += '</tr></thead><tbody>';
       bevindinge.forEach(function(b, i) {
         var agtergrond = (i % 2 === 0) ? '#050e08' : '#071208';
         nuH += '<tr data-kode="' + b.kode + '" style="background:' + agtergrond + ';">';

@@ -1986,6 +1986,8 @@ body.stamvader-aktief .tab-btn[data-tab="search"] {
     <button id="vv-sluit" onclick="sluitVoorvaderModal()">✕</button>
     <h2>🧬 Voorvaderketting</h2>
     <div id="vv-inhoud"></div>
+  </div>
+</div>
 
 <!-- WikiTree vergelyking-modal -->
 <div id="wt-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:3000;overflow-y:auto;padding:1rem;">
@@ -1993,8 +1995,6 @@ body.stamvader-aktief .tab-btn[data-tab="search"] {
     <button onclick="document.getElementById('wt-modal').style.display='none'" style="position:absolute;top:0.6rem;right:0.8rem;background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--ink);">✕</button>
     <h3 style="margin:0 0 0.8rem;color:var(--forest);">🌳 WikiTree Vergelyking</h3>
     <div id="wt-modal-inhoud" style="font-size:0.88rem;"></div>
-  </div>
-</div>
   </div>
 </div>
 <div id="detail-panel">
@@ -3320,25 +3320,45 @@ function wtVergelyk(id) {
   inhoud.innerHTML = '<p style="color:#7a6a4a;">⏳ WikiTree data word gelaai…</p>';
   modal.style.display = 'block';
 
-  var proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(
-    'https://api.wikitree.com/api.php?action=getPerson&key=' + encodeURIComponent(r.wt_id) +
-    '&fields=Id,Name,FirstName,LastNameAtBirth,BirthDate,DeathDate,BirthLocation,DeathLocation,Spouses,Children,Gender&format=json'
-  );
-
-  fetch(proxyUrl)
-    .then(function(res) { return res.json(); })
-    .then(function(data) {
-      // WikiTree terugvoer: array[0].person
-      var wt = (Array.isArray(data) && data[0] && data[0].person) ? data[0].person : null;
-      if (!wt) {
-        inhoud.innerHTML = '<p style="color:#c00;">⚠️ Geen data ontvang nie. Kontroleer WikiTree ID: <strong>' + escHtml(r.wt_id) + '</strong></p>';
-        return;
-      }
-      inhoud.innerHTML = wtBouVergelyking(r, wt);
-    })
-    .catch(function(err) {
-      inhoud.innerHTML = '<p style="color:#c00;">⚠️ Verbinding met WikiTree het misluk. Probeer later weer.</p>' +
-        '<p style="font-size:0.78rem;color:#999;">' + escHtml(String(err)) + '</p>';
+  var wtApiUrl = 'https://api.wikitree.com/api.php?action=getPerson&key=' + encodeURIComponent(r.wt_id) +
+    '&fields=Id,Name,FirstName,LastNameAtBirth,BirthDate,DeathDate,BirthLocation,DeathLocation,Spouses,Children,Gender&format=json';
+  // Probeer eers sonder proxy (WikiTree ondersteun CORS vir sekere versoeke)
+  // As dit misluk, probeer corsproxy.io as terugval
+  function wtHaalData(url) {
+    return fetch(url).then(function(res) {
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return res.json();
+    });
+  }
+  function wtVerwerk(data) {
+    var wt = null;
+    if (Array.isArray(data) && data[0]) {
+      wt = data[0].person || data[0];
+    } else if (data && data.person) {
+      wt = data.person;
+    }
+    // Kyk of die persoon-objek die verwagte velde het
+    if (!wt || (!wt.FirstName && !wt.BirthDate && !wt.Name)) {
+      inhoud.innerHTML = '<p style="color:#c00;">⚠️ Geen geldige data ontvang nie.</p>' +
+        '<p style="font-size:0.78rem;color:#777;">Kontroleer WikiTree ID: <strong>' + escHtml(r.wt_id) + '</strong><br>' +
+        'Raai seker die ID is korrek op <a href="https://www.wikitree.com/wiki/' + encodeURIComponent(r.wt_id) + '" target="_blank">WikiTree</a>.</p>';
+      return;
+    }
+    inhoud.innerHTML = wtBouVergelyking(r, wt);
+  }
+  wtHaalData(wtApiUrl)
+    .then(wtVerwerk)
+    .catch(function() {
+      // Direkte aanroep het misluk — probeer CORS-proxy
+      inhoud.innerHTML = '<p style="color:#7a6a4a;">⏳ Direkte verbinding misluk, proxy word probeer…</p>';
+      var proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(wtApiUrl);
+      wtHaalData(proxyUrl)
+        .then(wtVerwerk)
+        .catch(function(err) {
+          inhoud.innerHTML = '<p style="color:#c00;">⚠️ Verbinding met WikiTree het misluk.</p>' +
+            '<p style="font-size:0.78rem;color:#777;">Fout: ' + escHtml(String(err)) + '</p>' +
+            '<p style="font-size:0.78rem;">Probeer die <a href="https://www.wikitree.com/wiki/' + encodeURIComponent(r.wt_id) + '" target="_blank">WikiTree-bladsy</a> direk.</p>';
+        });
     });
 }
 

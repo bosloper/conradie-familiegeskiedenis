@@ -2872,6 +2872,10 @@ function openPanel(id) {
   document.querySelectorAll('.person-link[data-id]').forEach(el => {
     el.addEventListener('click', () => openPanel(el.dataset.id));
   });
+  // Bind WikiTree vergelyking-knoppie
+  document.querySelectorAll('.wt-vergelyk-btn[data-wtpersid]').forEach(function(btn) {
+    btn.addEventListener('click', function() { wtVergelyk(btn.dataset.wtpersid); });
+  });
   correctionPersonId = id;
   attachCorrectionListeners();
 
@@ -3212,7 +3216,7 @@ function buildPanelHTML(r) {
     'padding:0.35rem 0.9rem;font-size:0.82rem;text-decoration:none;font-family:inherit;">🌳 WikiTree</a>'
   );
   if (r.wt_id) eksSk.push(
-    '<button onclick="wtVergelyk(\'' + r.id + '\')" style="' +
+    '<button class="wt-vergelyk-btn" data-wtpersid="' + r.id + '" style="' +
     'display:inline-flex;align-items:center;gap:0.4rem;background:#7a5c2a;color:#f5edd8;border:none;border-radius:16px;' +
     'padding:0.35rem 0.9rem;font-size:0.82rem;cursor:pointer;font-family:inherit;">⚖️ Vergelyk</button>'
   );
@@ -3313,10 +3317,10 @@ function deelPersoon(id) {
 // ── WIKITREE VERGELYKING ──
 function wtVergelyk(id) {
   var r = window.indexById && window.indexById[id];
-  if (!r || !r.wt_id) return;
+  if (!r || !r.wt_id) { alert('wtVergelyk: rekord of wt_id nie gevind vir ' + id); return; }
   var modal = document.getElementById('wt-modal');
   var inhoud = document.getElementById('wt-modal-inhoud');
-  if (!modal || !inhoud) return;
+  if (!modal || !inhoud) { alert('wtVergelyk: modal-element nie gevind nie'); return; }
   inhoud.innerHTML = '<p style="color:#7a6a4a;">⏳ WikiTree data word gelaai…</p>';
   modal.style.display = 'block';
 

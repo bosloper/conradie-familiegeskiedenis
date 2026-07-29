@@ -3317,15 +3317,15 @@ function deelPersoon(id) {
 // ── WIKITREE VERGELYKING ──
 function wtVergelyk(id, wtIdDirek) {
   var r = window.indexById && window.indexById[id];
-  // Gebruik wt_id direk van knoppie as indexById dit nie het nie
-  var wtId = (r && r.wt_id) ? r.wt_id : (wtIdDirek || '');
+  // Gebruik wt_id direk van knoppie — betroubaar ongeag JSON-kas
+  var wtId = wtIdDirek || (r && r.wt_id) || '';
   if (!wtId) {
     alert('WikiTree ID nie gevind vir hierdie rekord nie.');
     return;
   }
-  // Gebruik r as beskikbaar, anders bou 'n minimale objek
-  if (!r) r = { id: id, name: id, wt_id: wtId };
-  if (!r.wt_id) r = Object.assign({}, r, { wt_id: wtId });
+  // r gebruik vir Stamboom-kolom; wtId vir API-aanroep
+  if (!r) r = { id: id, name: id };
+  r = Object.assign({}, r, { wt_id: wtId });
   var modal = document.getElementById('wt-modal');
   var inhoud = document.getElementById('wt-modal-inhoud');
   if (!modal || !inhoud) { alert('wtVergelyk: modal-element nie gevind nie'); return; }

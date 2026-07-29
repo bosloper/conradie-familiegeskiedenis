@@ -2875,7 +2875,7 @@ function openPanel(id) {
   // Bind WikiTree vergelyking-knoppie
   document.querySelectorAll('.wt-vergelyk-btn[data-wtrek]').forEach(function(btn) {
     btn.addEventListener('click', function() {
-      try { wtVergelyk(JSON.parse(btn.dataset.wtrek)); }
+      try { wtVergelyk(JSON.parse(decodeURIComponent(escape(atob(btn.dataset.wtrek))))); }
       catch(e) { alert('Fout met WikiTree data: ' + e.message); }
     });
   });
@@ -3228,7 +3228,7 @@ function buildPanelHTML(r) {
       children_n: r.children_ids ? String(r.children_ids.length) : '0'
     };
     eksSk.push(
-      '<button class="wt-vergelyk-btn" data-wtrek="' + escHtml(JSON.stringify(_wtRek)) + '" style="' +
+      '<button class="wt-vergelyk-btn" data-wtrek="' + btoa(unescape(encodeURIComponent(JSON.stringify(_wtRek)))) + '" style="' +
       'display:inline-flex;align-items:center;gap:0.4rem;background:#7a5c2a;color:#f5edd8;border:none;border-radius:16px;' +
       'padding:0.35rem 0.9rem;font-size:0.82rem;cursor:pointer;font-family:inherit;">⚖️ Vergelyk</button>'
     );

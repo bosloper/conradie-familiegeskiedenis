@@ -2874,7 +2874,7 @@ function openPanel(id) {
   });
   // Bind WikiTree vergelyking-knoppie
   document.querySelectorAll('.wt-vergelyk-btn[data-wtpersid]').forEach(function(btn) {
-    btn.addEventListener('click', function() { wtVergelyk(btn.dataset.wtpersid); });
+    btn.addEventListener('click', function() { wtVergelyk(btn.dataset.wtpersid, btn.dataset.wtid); });
   });
   correctionPersonId = id;
   attachCorrectionListeners();
@@ -3216,7 +3216,7 @@ function buildPanelHTML(r) {
     'padding:0.35rem 0.9rem;font-size:0.82rem;text-decoration:none;font-family:inherit;">🌳 WikiTree</a>'
   );
   if (r.wt_id) eksSk.push(
-    '<button class="wt-vergelyk-btn" data-wtpersid="' + r.id + '" style="' +
+    '<button class="wt-vergelyk-btn" data-wtpersid="' + r.id + '" data-wtid="' + escHtml(r.wt_id) + '" style="' +
     'display:inline-flex;align-items:center;gap:0.4rem;background:#7a5c2a;color:#f5edd8;border:none;border-radius:16px;' +
     'padding:0.35rem 0.9rem;font-size:0.82rem;cursor:pointer;font-family:inherit;">⚖️ Vergelyk</button>'
   );
@@ -3315,9 +3315,17 @@ function deelPersoon(id) {
 }
 
 // ── WIKITREE VERGELYKING ──
-function wtVergelyk(id) {
+function wtVergelyk(id, wtIdDirek) {
   var r = window.indexById && window.indexById[id];
-  if (!r || !r.wt_id) { alert('wtVergelyk: rekord of wt_id nie gevind vir ' + id); return; }
+  // Gebruik wt_id direk van knoppie as indexById dit nie het nie
+  var wtId = (r && r.wt_id) ? r.wt_id : (wtIdDirek || '');
+  if (!wtId) {
+    alert('WikiTree ID nie gevind vir hierdie rekord nie.');
+    return;
+  }
+  // Gebruik r as beskikbaar, anders bou 'n minimale objek
+  if (!r) r = { id: id, name: id, wt_id: wtId };
+  if (!r.wt_id) r = Object.assign({}, r, { wt_id: wtId });
   var modal = document.getElementById('wt-modal');
   var inhoud = document.getElementById('wt-modal-inhoud');
   if (!modal || !inhoud) { alert('wtVergelyk: modal-element nie gevind nie'); return; }

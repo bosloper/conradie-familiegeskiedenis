@@ -3587,6 +3587,11 @@ function bouStats() {
     return r.id && r.id.charAt(0) === 'I' && !r.is_spouse;
   });
 
+  // Slegs bloedverwante met bevestigde stamlyn (c?-rekords uitgesluit)
+  var iKern = iRekords.filter(function(r) {
+    return r.branch && r.branch !== 'c?';
+  });
+
   // ── Hulpfunksie: top-N frekwensietelling ──
   function topN(arr, n) {
     var tel = {};
@@ -3636,7 +3641,7 @@ function bouStats() {
 
   // ── 3. Geboortes per dekade (SVG-grafiek) ──
   var dekades = {};
-  iRekords.forEach(function(r) {
+  iKern.forEach(function(r) {
     var jaar = r.birth_year
       ? parseInt(r.birth_year)
       : (r.birth_date ? parseInt(r.birth_date) : null);
@@ -3682,7 +3687,8 @@ function bouStats() {
       '" xmlns="http://www.w3.org/2000/svg">' + yEtikette + balkeSVG + '</svg>';
 
     html += '<div class="stats-paneel"><h3>📅 Geboortes per Dekade</h3>' +
-      '<div class="stats-grafiek">' + svgHtml + '</div></div>';
+      '<div class="stats-grafiek">' + svgHtml + '</div>' +
+      '<p class="stats-nota">* c?-rekords (onbevestigde stamlyn) uitgesluit.</p></div>';
   }
 
   // ── 4. Top 10 Begraafplekke ──
@@ -3731,9 +3737,9 @@ function bouStats() {
     '<p class="stats-nota">* 1 179 rekords uitgesluit: 588 onseker stamlyn (c?) en 591 nageslag van dogters van stamvader (c4/c6/c7).</p></div>';
 
   // ── 7. Generasie-verspreiding (SVG) ──
-  // Bereken dinamies uit werklike data (slegs nie-eggenotes, generasie 0–12)
+  // Bereken dinamies uit werklike data (slegs nie-eggenotes, generasie 0–12, c? uitgesluit)
   var genTelling = {};
-  iRekords.filter(function(r) { return !r.is_spouse; }).forEach(function(r) {
+  iKern.filter(function(r) { return !r.is_spouse; }).forEach(function(r) {
     var g = r.generation;
     if (typeof g === 'number' && g >= 0 && g <= 12) {
       genTelling[g] = (genTelling[g] || 0) + 1;
@@ -3748,8 +3754,8 @@ function bouStats() {
     genLabels.push(String(gi));
   }
   (function() {
-    var svgB = 560, svgH = 180;
-    var lM = 40, rM = 8, bM = 10, oM = 38;
+    var svgB = 560, svgH = 200;
+    var lM = 40, rM = 8, bM = 22, oM = 38;
     var gB = svgB - lM - rM;
     var gH = svgH - bM - oM;
     var maks = Math.max.apply(null, genData);
@@ -3758,8 +3764,13 @@ function bouStats() {
       var x = lM + Math.round(i * gB / genData.length);
       var bh = Math.round((v / maks) * gH);
       var y = bM + gH - bh;
+      var telLabel = v > 0
+        ? '<text x="' + (x + bw / 2) + '" y="' + (y - 3) +
+          '" text-anchor="middle" font-size="8" fill="var(--sepia)">' + v + '</text>'
+        : '';
       return '<rect x="' + x + '" y="' + y + '" width="' + bw + '" height="' + bh +
         '" fill="var(--sepia)" opacity="0.85" rx="1"/>' +
+        telLabel +
         '<text x="' + (x + bw / 2) + '" y="' + (svgH - 6) +
         '" text-anchor="middle" font-size="9" fill="var(--muted)">G' + genLabels[i] + '</text>';
     }).join('');
@@ -3773,11 +3784,12 @@ function bouStats() {
     }).join('');
     var svg = '<svg viewBox="0 0 ' + svgB + ' ' + svgH + '" xmlns="http://www.w3.org/2000/svg">' + yAs + stafke + '</svg>';
     html += '<div class="stats-paneel"><h3>📊 Generasie-verspreiding</h3>' +
-      '<div class="stats-grafiek">' + svg + '</div></div>';
+      '<div class="stats-grafiek">' + svg + '</div>' +
+      '<p class="stats-nota">* c?-rekords (onbevestigde stamlyn) uitgesluit.</p></div>';
   })();
 
   // ── 8. Top 10 Sterfteplekke ──
-  var sterfteplekke = iRekords
+  var sterfteplekke = iKern
     .filter(function(r) { return r.death_place && r.death_place.trim(); })
     .map(function(r) { return r.death_place.trim(); });
   html += bouBalkPaneel('✝️ Top 10 Sterfteplekke', topN(sterfteplekke, 10));
@@ -5155,7 +5167,7 @@ function attachCorrectionListeners() {
     var html = '<div style="max-width:720px;margin:0 auto;padding:1rem;">';
     html += '<div style="display:flex;align-items:baseline;gap:0.7rem;margin-bottom:0.9rem;">';
     html += '<h2 style="color:var(--sepia-light);font-size:1.2rem;margin:0;">✏️ Admin</h2>';
-    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-16-2</span>';
+    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-16-3</span>';
     html += '</div>';
 
     // ── Publiek-inligtingspaneel (standaard oop) ──

@@ -1005,6 +1005,11 @@ body.stamvader-aktief .tab-btn[data-tab="search"] {
 @media (max-width: 768px) {
   body:not(.filters-oop) main { min-height: calc(100vh - 130px); margin-top: 0; }
 }
+/* Gunstelinge-skakel: versteek wanneer filters oop of op lessenaar */
+#vg-skakel-balk { display: none; }
+@media (max-width: 768px) {
+  body:not(.filters-oop) #vg-skakel-balk { display: block; }
+}
 /* ── TAB SWITCHER ── */
 .tab-bar {
   background: #0e0b04;
@@ -2064,6 +2069,15 @@ body.stamvader-aktief .tab-btn[data-tab="search"] {
     <div id="soek-wenk" class="soek-wenk">
       🔍 Druk <strong>Filters &amp; Soek</strong> hierbo om enige persoon te vind — op naam, kode, plek of geboortejaar.
     </div>
+    <div id="vg-skakel-balk" style="text-align:center;padding:0.5rem 0 0.2rem;">
+      <button onclick="(function(){
+        var cb=document.getElementById('toggle-gunstelinge');
+        if(cb&&!cb.checked){cb.checked=true;cb.dispatchEvent(new Event('change'));}
+        document.getElementById('filter-toggle-btn').click();
+      })()" style="background:none;border:none;color:var(--forest);font-size:0.88rem;cursor:pointer;font-family:inherit;padding:0.2rem 0.5rem;text-decoration:underline dotted;text-underline-offset:3px;">
+        ⭐ Wys my Gunstelinge
+      </button>
+    </div>
     <div class="result-bar">
       <span id="result-count"><strong>–</strong> persone</span>
       <span id="loading-msg">Laai data…</span>
@@ -2804,6 +2818,9 @@ function applyFilters() {
   });
 
   renderPage();
+  // Gunstelinge-skakel: wys slegs as lys nie leeg is
+  var vgBalk = document.getElementById('vg-skakel-balk');
+  if (vgBalk) vgBalk.style.display = vgLees().length > 0 ? '' : 'none';
 }
 
 // ── RENDER ──
@@ -5138,7 +5155,7 @@ function attachCorrectionListeners() {
     var html = '<div style="max-width:720px;margin:0 auto;padding:1rem;">';
     html += '<div style="display:flex;align-items:baseline;gap:0.7rem;margin-bottom:0.9rem;">';
     html += '<h2 style="color:var(--sepia-light);font-size:1.2rem;margin:0;">✏️ Admin</h2>';
-    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-16-1</span>';
+    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-16-2</span>';
     html += '</div>';
 
     // ── Publiek-inligtingspaneel (standaard oop) ──

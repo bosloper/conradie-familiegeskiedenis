@@ -3553,21 +3553,19 @@ function wtBouVergelyking(r, wt) {
 }
 
 function wtKopieer(id, veld, waarde) {
-  // Stel die waarde in die Admin-paneel in sodat admStoor dit kan stoor
   var veldMap = { birth_date:'adm-birth-date', birth_place:'adm-birth-place', death_date:'adm-death-date', death_place:'adm-death-place' };
   var admId = veldMap[veld];
   if (!admId) return;
+  // Laai eers die persoon (skryf bestaande data), dan stel die nuwe waarde in
+  if (typeof admLaaiPersoon === 'function' && window.admCurrentId !== id) admLaaiPersoon(id);
   var el = document.getElementById(admId);
   if (el) {
     el.value = waarde;
     el.style.background = '#d4edda';
-    setTimeout(function() { el.style.background = ''; }, 2000);
+    setTimeout(function() { el.style.background = ''; }, 3000);
   }
-  // Maak seker admin-paneel se rekord ooreenstem
-  if (typeof admLaaiPersoon === 'function' && window.admCurrentId !== id) admLaaiPersoon(id);
   document.getElementById('wt-modal').style.display = 'none';
   if (typeof admTaakKies === 'function') admTaakKies('taak-stoor');
-  alert(veld + ' is na Admin-paneel gekopieer. Klik "Stoor Wysigings" om te bevestig.');
 }
 
 

@@ -7137,5 +7137,73 @@
       "fs_id": "LBWK-154",
       "wt_id": ""
     }
+  },
+  {
+    "tyd": "2026-07-30T06:32:18.426Z",
+    "volgorde": 1,
+    "rekord_id": "S2346",
+    "naam": "Jeanette EKSTEEN",
+    "tipe": "huwelik-wysiging",
+    "wysigings": {
+      "marr_dates[0]": {
+        "oud": "1952-09-06",
+        "nuut": "1975-05-10"
+      },
+      "marr_places[0]": {
+        "oud": "Montagu",
+        "nuut": "Worcester"
+      }
+    },
+    "rekord_na": {
+      "id": "S2346",
+      "ref": "2346",
+      "name": "Jeanette EKSTEEN",
+      "given": "Jeanette",
+      "surname": "EKSTEEN",
+      "sex": "F",
+      "family_code": "",
+      "branch": "",
+      "branch_path": [],
+      "generation": 0,
+      "uncertain": false,
+      "nickname": "",
+      "birth_date": "1954-08-31",
+      "birth_year": 1954,
+      "birth_place": "Heidelberg",
+      "birth_circa": false,
+      "death_date": "",
+      "death_year": null,
+      "death_place": "",
+      "burial_place": "",
+      "baptism_date": "",
+      "baptism_place": "",
+      "is_spouse": true,
+      "spouses": [
+        {
+          "id": "I2346",
+          "name": "Louis Johannes CONRADIE",
+          "birth_date": "1953-08-19",
+          "birth_year": 1953,
+          "divorce_date": "1978-05",
+          "divorced": true
+        }
+      ],
+      "children_ids": [
+        "I2347",
+        "I2348"
+      ],
+      "parents": [],
+      "marr_dates": [
+        "1975-05-10"
+      ],
+      "marr_places": [
+        "Worcester"
+      ],
+      "divorce_date": "1978-05",
+      "divorced": true,
+      "maiden_name": "",
+      "narrative": "Ingetroude lid van die Conradie familie.",
+      "note": ""
+    }
   }
 ]

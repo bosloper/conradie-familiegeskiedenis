@@ -640,6 +640,102 @@ main {
 }
 .vv-leeg { color: var(--muted); font-style: italic; font-size: 0.9rem; }
 
+/* Mini-stamboom modal */
+#stamboom-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.45);
+}
+#stamboom-modal.oop { display: flex; }
+#stamboom-modal-boks {
+  background: var(--card-bg);
+  border: 1.5px solid var(--sepia-light);
+  border-radius: 10px;
+  padding: 1.4rem 1rem 1rem;
+  max-width: 400px;
+  width: 95vw;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.28);
+  position: relative;
+}
+#stamboom-modal-boks h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.05rem;
+  color: var(--forest);
+  margin: 0 0 1rem;
+}
+#sb-sluit {
+  position: absolute;
+  top: 0.7rem; right: 0.9rem;
+  background: none; border: none;
+  font-size: 1.3rem; cursor: pointer;
+  color: var(--muted);
+}
+.sb-ry { margin-bottom: 0.9rem; }
+.sb-ry-titel {
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 0.35rem;
+}
+.sb-blokke {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.sb-blok {
+  background: var(--sepia-light);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.8rem;
+  font-family: inherit;
+  cursor: pointer;
+  text-align: left;
+  line-height: 1.3;
+}
+.sb-blok:hover { background: var(--sepia); }
+.sb-blok.huidig {
+  background: var(--forest);
+  font-weight: bold;
+}
+.sb-blok.onbekend {
+  background: none;
+  color: var(--muted);
+  border: 1px dashed var(--sepia-light);
+  cursor: default;
+  font-style: italic;
+}
+.sb-paar {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  flex-wrap: wrap;
+}
+.sb-kruis {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+.sb-meer {
+  font-size: 0.78rem;
+  color: var(--muted);
+  font-style: italic;
+  align-self: center;
+}
+.sb-skeier {
+  border: none;
+  border-top: 1px solid var(--sepia-light);
+  margin: 0.6rem 0;
+}
+
 /* Empty state */
 .empty-state {
   grid-column: 1/-1;
@@ -1989,6 +2085,15 @@ body.stamvader-aktief .tab-btn[data-tab="search"] {
   </div>
 </div>
 
+<!-- Mini-stamboom modal -->
+<div id="stamboom-modal">
+  <div id="stamboom-modal-boks">
+    <button id="sb-sluit" onclick="sluitStamboomModal()">✕</button>
+    <h2>🌿 Mini-stamboom</h2>
+    <div id="sb-inhoud"></div>
+  </div>
+</div>
+
 <!-- WikiTree vergelyking-modal -->
 <div id="wt-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:3000;overflow-y:auto;padding:1rem;">
   <div style="background:var(--parchment);max-width:520px;margin:2rem auto;border-radius:8px;padding:1.2rem 1rem;position:relative;">
@@ -3194,14 +3299,20 @@ function buildPanelHTML(r) {
     if (gadeBtns) parts.push('<div style="margin-top:1rem;text-align:center">' + gadeBtns + '</div>');
   }
 
-  // Voorvader-knoppie (slegs vir bloedverwante met family_code)
+  // Voorvader- en stamboom-knoppies (slegs vir bloedverwante met family_code)
   if (r.family_code && !r.is_spouse) {
-    parts.push(`<div style="margin-top:1rem;text-align:center">
+    parts.push(`<div style="margin-top:1rem;text-align:center;display:flex;flex-wrap:wrap;gap:0.5rem;justify-content:center">
       <button onclick="toonVoorvaderModal('${r.id}')" style="
         background:var(--sepia-light);color:#fff;border:none;border-radius:20px;
         padding:0.45rem 1.1rem;font-size:0.85rem;cursor:pointer;font-family:inherit;
         display:inline-flex;align-items:center;gap:0.4rem">
         🧬 Voorvaderketting
+      </button>
+      <button onclick="toonStamboomModal('${r.id}')" style="
+        background:var(--forest);color:#fff;border:none;border-radius:20px;
+        padding:0.45rem 1.1rem;font-size:0.85rem;cursor:pointer;font-family:inherit;
+        display:inline-flex;align-items:center;gap:0.4rem">
+        🌿 Mini-stamboom
       </button>
     </div>`);
   }
@@ -3979,6 +4090,103 @@ function toonVoorvaderModal(id) {
 
 function sluitVoorvaderModal() {
   document.getElementById('voorvader-modal').classList.remove('oop');
+}
+
+function sluitStamboomModal() {
+  document.getElementById('stamboom-modal').classList.remove('oop');
+}
+
+function bouStamboomBlok(rek, isHuidig) {
+  if (!rek) {
+    return '<span class="sb-blok onbekend">Onbekend</span>';
+  }
+  var klas = 'sb-blok' + (isHuidig ? ' huidig' : '');
+  var kortNaam = rek.given || rek.name || '?';
+  return '<button class="' + klas + '" onclick="sluitStamboomModal();openPanel(\'' + rek.id + '\')">' + kortNaam + '</button>';
+}
+
+function toonStamboomModal(id) {
+  var r = indexById[id];
+  if (!r) return;
+
+  var rye = [];
+  var MAX_BROERS = 5; // persoon + 4 ander
+
+  // --- RY 1: GROOTOUERS ---
+  var grootouers = [];
+  (r.parents || []).forEach(function(ouerRef) {
+    var ouer = indexById[ouerRef.id];
+    if (ouer) {
+      (ouer.parents || []).forEach(function(goRef) {
+        grootouers.push(indexById[goRef.id] || null);
+      });
+    }
+  });
+  if (grootouers.length > 0) {
+    var goBlokke = grootouers.map(function(go) { return bouStamboomBlok(go, false); }).join('');
+    rye.push('<div class="sb-ry"><div class="sb-ry-titel">Grootouers</div><div class="sb-blokke">' + goBlokke + '</div></div>');
+    rye.push('<hr class="sb-skeier">');
+  }
+
+  // --- RY 2: OUERS ---
+  var ouers = r.parents || [];
+  if (ouers.length > 0) {
+    var ouerHTML = '<div class="sb-ry"><div class="sb-ry-titel">Ouers</div>';
+    // Groepeer as pare: aanvaar eerste twee as 'n paar (vader × moeder)
+    var ouerBlokke = ouers.map(function(oRef) {
+      return bouStamboomBlok(indexById[oRef.id] || null, false);
+    });
+    ouerHTML += '<div class="sb-paar">' + ouerBlokke.join('<span class="sb-kruis">×</span>') + '</div>';
+    ouerHTML += '</div>';
+    rye.push(ouerHTML);
+    rye.push('<hr class="sb-skeier">');
+  }
+
+  // --- RY 3: PERSOON + BROERS/SUSTERS ---
+  var broersLys = [];
+  if (ouers.length > 0) {
+    var eersteOuer = indexById[ouers[0].id];
+    if (eersteOuer && eersteOuer.children_ids) {
+      eersteOuer.children_ids.forEach(function(kId) {
+        if (kId !== id) broersLys.push(indexById[kId] || null);
+      });
+    }
+  }
+  var gesinsHTML = '<div class="sb-ry"><div class="sb-ry-titel">Gesin</div><div class="sb-blokke">';
+  gesinsHTML += bouStamboomBlok(r, true); // die persoon self
+  var sigbaar = 0;
+  for (var i = 0; i < broersLys.length && sigbaar < 4; i++) {
+    gesinsHTML += bouStamboomBlok(broersLys[i], false);
+    sigbaar++;
+  }
+  var ekstra = broersLys.length - sigbaar;
+  if (ekstra > 0) {
+    gesinsHTML += '<span class="sb-meer">+' + ekstra + ' meer</span>';
+  }
+  gesinsHTML += '</div></div>';
+  rye.push(gesinsHTML);
+
+  // --- RY 4: KINDERS ---
+  if (r.children_ids && r.children_ids.length > 0) {
+    rye.push('<hr class="sb-skeier">');
+    var kindHTML = '<div class="sb-ry"><div class="sb-ry-titel">Kinders</div><div class="sb-blokke">';
+    var kindSigbaar = 0;
+    for (var j = 0; j < r.children_ids.length && kindSigbaar < 6; j++) {
+      var kind = indexById[r.children_ids[j]];
+      kindHTML += bouStamboomBlok(kind || null, false);
+      kindSigbaar++;
+    }
+    var ekstraKinders = r.children_ids.length - kindSigbaar;
+    if (ekstraKinders > 0) {
+      kindHTML += '<span class="sb-meer">+' + ekstraKinders + ' meer</span>';
+    }
+    kindHTML += '</div></div>';
+    rye.push(kindHTML);
+  }
+
+  var inhoud = document.getElementById('sb-inhoud');
+  inhoud.innerHTML = rye.length ? rye.join('') : '<div style="color:var(--muted);font-style:italic;font-size:0.9rem;">Geen familiedata beskikbaar nie.</div>';
+  document.getElementById('stamboom-modal').classList.add('oop');
 }
 
 function escHtml(s) {
@@ -4898,7 +5106,7 @@ function attachCorrectionListeners() {
     var html = '<div style="max-width:720px;margin:0 auto;padding:1rem;">';
     html += '<div style="display:flex;align-items:baseline;gap:0.7rem;margin-bottom:0.9rem;">';
     html += '<h2 style="color:var(--sepia-light);font-size:1.2rem;margin:0;">✏️ Admin</h2>';
-    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-15-0</span>';
+    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-16-0</span>';
     html += '</div>';
 
     // ── Publiek-inligtingspaneel (standaard oop) ──

@@ -4434,6 +4434,7 @@ function vulVoorstelModal(id) {
       huwDiv.innerHTML = r.spouses.map(function(sp, i) {
         var huidigDatum = (r.marr_dates  && r.marr_dates[i])  ? r.marr_dates[i]  : '';
         var huidigPlek  = (r.marr_places && r.marr_places[i]) ? r.marr_places[i] : '';
+        var huidigEgsk = sp.divorce_date || '';
         return '<div class="vm-huw-blok">' +
           '<div class="vm-huw-nr">Huwelik ' + (i+1) + ': ' + (sp.name || '?') + '</div>' +
           '<table class="vm-tabel"><tbody>' +
@@ -4446,6 +4447,11 @@ function vulVoorstelModal(id) {
             '<td class="vm-veld-naam">Plek</td>' +
             '<td class="vm-huidig' + (huidigPlek ? '' : ' leeg') + '">' + (huidigPlek || '—') + '</td>' +
             '<td class="vm-nuut"><input type="text" id="vmi-huw' + i + '-plek" placeholder="Troudorp / kerk"></td>' +
+          '</tr>' +
+          '<tr>' +
+            '<td class="vm-veld-naam">Egskeiding</td>' +
+            '<td class="vm-huidig' + (huidigEgsk ? '' : ' leeg') + '">' + (huidigEgsk || '—') + '</td>' +
+            '<td class="vm-nuut"><input type="text" id="vmi-huw' + i + '-egsk" placeholder="bv. 1902-03-15"></td>' +
           '</tr>' +
           '</tbody></table></div>';
       }).join('');
@@ -4723,9 +4729,11 @@ function vmBouBoodskap(nuutPersAppart) {
     r.spouses.forEach(function(sp, i) {
       var datum = get('vmi-huw' + i + '-datum');
       var plek  = get('vmi-huw' + i + '-plek');
+      var egsk  = get('vmi-huw' + i + '-egsk');
       if (datum) lyne.push('HUWELIKSDATUM: ' + datum);
       if (plek)  lyne.push('HUWELIKSPLEK: '  + plek);
-      if ((datum || plek) && r.spouses.length > 1) lyne.push('HUWELIK_NR: ' + (i+1));
+      if (egsk)  lyne.push('EGSKEIDINGSDATUM: ' + egsk);
+      if ((datum || plek || egsk) && r.spouses.length > 1) lyne.push('HUWELIK_NR: ' + (i+1));
     });
   }
 
@@ -4897,9 +4905,11 @@ function attachCorrectionListeners() {
     var naam  = document.getElementById('adm-huw-naam');
     var datum = document.getElementById('adm-huw-datum');
     var plek  = document.getElementById('adm-huw-plek');
+    var egsk  = document.getElementById('adm-huw-egsk');
     if (naam)  naam.value  = sp.name || '';
     if (datum) datum.value = (p.marr_dates && p.marr_dates[i]) ? p.marr_dates[i] : '';
     if (plek)  plek.value  = (p.marr_places && p.marr_places[i]) ? p.marr_places[i] : '';
+    if (egsk)  egsk.value  = sp.divorce_date || '';
     // Stoor watter indeks ons redigeer
     window.admHuwRedigeerIndeks = i;
     // Wys die toegewyde "Dateer op"-knoppie reg by die velde
@@ -4935,41 +4945,63 @@ function attachCorrectionListeners() {
     function get(id) { var el=document.getElementById(id); return el?el.value.trim():''; }
     var datum = get('adm-huw-datum');
     var plek  = get('adm-huw-plek');
+    var egsk  = get('adm-huw-egsk');
     if (!p.marr_dates)  p.marr_dates  = [];
     if (!p.marr_places) p.marr_places = [];
-    // Verseker array groot genoeg is
+    // Verseker arrays groot genoeg is
     while (p.marr_dates.length  <= i) p.marr_dates.push('');
     while (p.marr_places.length <= i) p.marr_places.push('');
+    // Bou wysigings-objek vir patch-log
+    var huwWysigings = {};
+    var oudDatum = p.marr_dates[i]  || '';
+    var oudPlek  = p.marr_places[i] || '';
+    var sp = p.spouses && p.spouses[i];
+    var oudEgsk  = (sp && sp.divorce_date) || '';
+    var oudGeskei = (sp && sp.divorced) || false;
+    if (datum !== oudDatum) { huwWysigings['marr_dates['  + i + ']'] = { oud: oudDatum, nuut: datum }; }
+    if (plek  !== oudPlek)  { huwWysigings['marr_places[' + i + ']'] = { oud: oudPlek,  nuut: plek  }; }
+    if (egsk  !== oudEgsk)  { huwWysigings['divorce_date[' + i + ']'] = { oud: oudEgsk, nuut: egsk  }; }
+    // Pas toe in geheue
     p.marr_dates[i]  = datum;
     p.marr_places[i] = plek;
+    if (sp) {
+      sp.divorce_date = egsk;
+      sp.divorced = !!(egsk);
+    }
     window.admHuwRedigeerIndeks = null;
     var dateerWrap = document.getElementById('adm-huw-dateer-wrap');
     if (dateerWrap) dateerWrap.style.display = 'none';
     var statusEl = document.getElementById('adm-status');
-    if (statusEl) statusEl.textContent = '✅ Huweliksdatum opgedateer vir ' + (p.spouses[i]&&p.spouses[i].name||'?') + ' — JSON word afgelaai...';
-    // Outomatiese JSON-aflaai sodat wysiging nie verlore gaan nie
-    if (typeof admLaaiAf === 'function') {
-      setTimeout(function() {
-        admLaaiAf();
-        if (statusEl) statusEl.textContent = '✅ Huweliksdatum opgedateer en JSON afgelaai (' + (p.spouses[i]&&p.spouses[i].name||'?') + ').';
-      }, 100);
+    // Stoor via patch-log (nie direkte admLaaiAf nie)
+    if (Object.keys(huwWysigings).length > 0) {
+      patchLogVoegBy({
+        tyd: new Date().toISOString(),
+        rekord_id: p.id,
+        naam: p.name,
+        tipe: 'huwelik-wysiging',
+        wysigings: huwWysigings
+      });
+      if (statusEl) statusEl.textContent = '✅ Huwelik opgedateer vir ' + (sp&&sp.name||'?') + ' — in patch-log. Gebruik "Pas Patches Toe & Laai Af" om te stoor.';
+    } else {
+      if (statusEl) statusEl.textContent = 'ℹ️ Geen wysigings — velde onveranderd.';
     }
     // Herlaai die bestaande huwelike-afdeling
     var huwDiv = document.getElementById('adm-huw-bestaande');
     if (huwDiv && p.spouses) {
-      var huwHtml = '<div style="color:#e0b87a;font-size:0.82rem;margin-bottom:0.6rem;">Bestaande huwelike (klik ✏️ om datum/plek te redigeer):</div>';
-      p.spouses.forEach(function(sp, j) {
+      var huwHtml = '<div style="color:#e0b87a;font-size:0.82rem;margin-bottom:0.6rem;">Bestaande huwelike (klik ✏️ om datum/plek/egskeiding te redigeer):</div>';
+      p.spouses.forEach(function(sp2, j) {
         var d2 = (p.marr_dates[j]) ? p.marr_dates[j] : '';
         var pl2 = (p.marr_places[j]) ? p.marr_places[j] : '';
-        var v2 = d2 ? ' — ' + d2 + (pl2 ? ', ' + pl2 : '') : (pl2 ? ', ' + pl2 : '');
+        var eg2 = sp2.divorce_date ? ' [Geskei ' + sp2.divorce_date + ']' : '';
+        var v2 = d2 ? ' — ' + d2 + (pl2 ? ', ' + pl2 : '') : (pl2 ? ' — ' + pl2 : '');
         huwHtml += '<div style="background:#f5f0e8;border-radius:4px;padding:0.35rem 0.6rem;margin-bottom:0.3rem;color:#1a1208;font-size:0.88rem;display:flex;align-items:center;justify-content:space-between;">' +
-          '<span>💍 ' + (sp.name||'?') + v2 + '</span>' +
+          '<span>💍 ' + (sp2.name||'?') + v2 + eg2 + '</span>' +
           '<button onclick="admVulHuwIn(' + j + ')" style="margin-left:0.5rem;padding:0.15rem 0.4rem;background:#c49a3a;color:#fff;border:none;border-radius:3px;cursor:pointer;font-size:0.75rem;">✏️</button>' +
           '</div>';
       });
       huwDiv.innerHTML = huwHtml;
     }
-    ['adm-huw-naam','adm-huw-datum','adm-huw-plek'].forEach(function(id) {
+    ['adm-huw-naam','adm-huw-datum','adm-huw-plek','adm-huw-egsk'].forEach(function(id) {
       var el = document.getElementById(id); if (el) el.value = ''; });
   };
 
@@ -5106,7 +5138,7 @@ function attachCorrectionListeners() {
     var html = '<div style="max-width:720px;margin:0 auto;padding:1rem;">';
     html += '<div style="display:flex;align-items:baseline;gap:0.7rem;margin-bottom:0.9rem;">';
     html += '<h2 style="color:var(--sepia-light);font-size:1.2rem;margin:0;">✏️ Admin</h2>';
-    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-16-0</span>';
+    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-16-1</span>';
     html += '</div>';
 
     // ── Publiek-inligtingspaneel (standaard oop) ──
@@ -5607,11 +5639,12 @@ function attachCorrectionListeners() {
     var indiener    = parsed['INDIENER_NAAM'] || '';
 
     // Hanteer huweliksdatum/plek as aparte struktuur
-    var huwDatum = parsed['HUWELIKSDATUM'] || '';
-    var huwPlek  = parsed['HUWELIKSPLEK']  || '';
+    var huwDatum = parsed['HUWELIKSDATUM']    || '';
+    var huwPlek  = parsed['HUWELIKSPLEK']     || '';
+    var huwEgsk  = parsed['EGSKEIDINGSDATUM'] || '';
     var huwNr    = parsed['HUWELIK_NR'] ? (parseInt(parsed['HUWELIK_NR']) - 1) : 0;
     if (isNaN(huwNr) || huwNr < 0) huwNr = 0;
-    var huwInfo  = (huwDatum || huwPlek) ? { datum: huwDatum, plek: huwPlek, indeks: huwNr } : null;
+    var huwInfo  = (huwDatum || huwPlek || huwEgsk) ? { datum: huwDatum, plek: huwPlek, egsk: huwEgsk, indeks: huwNr } : null;
 
     // Hanteer events-voorstelle
     var evVoorstelle = [];
@@ -5750,12 +5783,13 @@ function attachCorrectionListeners() {
               '<span style="color:#c49a3a;font-size:0.8rem;">Aanvaar</span></label>' +
               '</td></tr>';
     });
-    // Huweliksdatum-ry
-    if (huwInfo && (huwInfo.datum || huwInfo.plek)) {
+    // Huweliksdatum-ry (sluit ook egskeidingsdatum in)
+    if (huwInfo && (huwInfo.datum || huwInfo.plek || huwInfo.egsk)) {
       var bestaandeDatum = (persoon.marr_dates && persoon.marr_dates[huwInfo.indeks]) || '';
       var bestaandePlek  = (persoon.marr_places && persoon.marr_places[huwInfo.indeks]) || '';
-      var oudTeks  = [bestaandeDatum, bestaandePlek].filter(Boolean).join(', ') || '<em>leeg</em>';
-      var nuutTeks = [huwInfo.datum, huwInfo.plek].filter(Boolean).join(', ');
+      var bestaandeEgsk  = (persoon.spouses && persoon.spouses[huwInfo.indeks] && persoon.spouses[huwInfo.indeks].divorce_date) || '';
+      var oudTeks  = [bestaandeDatum, bestaandePlek, bestaandeEgsk ? 'Geskei: '+bestaandeEgsk : ''].filter(Boolean).join(', ') || '<em>leeg</em>';
+      var nuutTeks = [huwInfo.datum, huwInfo.plek, huwInfo.egsk ? 'Geskei: '+huwInfo.egsk : ''].filter(Boolean).join(', ');
       html += '<tr style="background:#0e1a0e;">' +
               '<td style="padding:0.3rem 0.5rem;color:#7a6a4a;">HUWELIK #' + (huwInfo.indeks + 1) + '</td>' +
               '<td style="padding:0.3rem 0.5rem;color:#5c4510;">' + oudTeks + '</td>' +
@@ -5766,6 +5800,7 @@ function attachCorrectionListeners() {
               'data-indeks="' + huwInfo.indeks + '" ' +
               'data-datum="' + (huwInfo.datum || '').replace(/"/g,'&quot;') + '" ' +
               'data-plek="'  + (huwInfo.plek  || '').replace(/"/g,'&quot;') + '" ' +
+              'data-egsk="'  + (huwInfo.egsk  || '').replace(/"/g,'&quot;') + '" ' +
               'checked style="cursor:pointer;width:16px;height:16px;accent-color:#5cb85c;"> ' +
               '<span style="color:#5cb85c;font-size:0.8rem;">Aanvaar</span></label>' +
               '</td></tr>';
@@ -5928,19 +5963,24 @@ function attachCorrectionListeners() {
       var hIndeks = parseInt(huwCb.getAttribute('data-indeks')) || 0;
       var hDatum  = huwCb.getAttribute('data-datum') || '';
       var hPlek   = huwCb.getAttribute('data-plek')  || '';
+      var hEgsk   = huwCb.getAttribute('data-egsk')  || '';
       if (!persoon.marr_dates)  persoon.marr_dates  = [];
       if (!persoon.marr_places) persoon.marr_places = [];
       while (persoon.marr_dates.length  <= hIndeks) persoon.marr_dates.push('');
       while (persoon.marr_places.length <= hIndeks) persoon.marr_places.push('');
       var oudDatum = persoon.marr_dates[hIndeks]  || '';
       var oudPlek  = persoon.marr_places[hIndeks] || '';
+      var huwSp    = persoon.spouses && persoon.spouses[hIndeks];
+      var oudEgsk  = (huwSp && huwSp.divorce_date) || '';
       if (hDatum) persoon.marr_dates[hIndeks]  = hDatum;
       if (hPlek)  persoon.marr_places[hIndeks] = hPlek;
+      if (hEgsk && huwSp) { huwSp.divorce_date = hEgsk; huwSp.divorced = true; }
       toegepas++;
-      // Stoor huwelikswysigings direk in patch-log (admStoor kan dit nie doen nie)
+      // Stoor huwelikswysigings in patch-log
       var huwWysigings = {};
-      if (hDatum && hDatum !== oudDatum) huwWysigings['marr_dates[' + hIndeks + ']'] = { oud: oudDatum, nuut: hDatum };
+      if (hDatum && hDatum !== oudDatum) huwWysigings['marr_dates[' + hIndeks + ']']  = { oud: oudDatum, nuut: hDatum };
       if (hPlek  && hPlek  !== oudPlek)  huwWysigings['marr_places[' + hIndeks + ']'] = { oud: oudPlek,  nuut: hPlek  };
+      if (hEgsk  && hEgsk  !== oudEgsk)  huwWysigings['divorce_date[' + hIndeks + ']'] = { oud: oudEgsk, nuut: hEgsk };
       if (Object.keys(huwWysigings).length > 0) {
         patchLogVoegBy({
           tyd: new Date().toISOString(),
@@ -8494,6 +8534,16 @@ function attachCorrectionListeners() {
       if (!p) { oorgeslaan++; return; }
       Object.keys(item.wysigings).forEach(function(veld) {
         var nuutWaarde = item.wysigings[veld].nuut;
+        // Hanteer divorce_date[i] — sit op spouses[i], nie 'n top-vlak array nie
+        var egskMatch = veld.match(/^divorce_date\[(\d+)\]$/);
+        if (egskMatch) {
+          var egskIdx = parseInt(egskMatch[1]);
+          if (p.spouses && p.spouses[egskIdx]) {
+            p.spouses[egskIdx].divorce_date = nuutWaarde;
+            p.spouses[egskIdx].divorced = !!(nuutWaarde);
+          }
+          return;
+        }
         // Hanteer array-indeks velde soos marr_dates[0]
         var arrMatch = veld.match(/^(.+)\[(\d+)\]$/);
         if (arrMatch) {

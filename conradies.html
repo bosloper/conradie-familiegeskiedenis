@@ -5165,7 +5165,7 @@ function attachCorrectionListeners() {
     var html = '<div style="max-width:720px;margin:0 auto;padding:1rem;">';
     html += '<div style="display:flex;align-items:baseline;gap:0.7rem;margin-bottom:0.9rem;">';
     html += '<h2 style="color:var(--sepia-light);font-size:1.2rem;margin:0;">✏️ Admin</h2>';
-    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-17-0</span>';
+    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-18-0</span>';
     html += '</div>';
 
     // ── Publiek-inligtingspaneel (standaard oop) ──
@@ -5223,7 +5223,8 @@ function attachCorrectionListeners() {
         { id:'taak-duptoets',   ikoon:'🔎', naam:'Duplikaattoets',    kleur:'#7a4a8a' },
         { id:'taak-merge',      ikoon:'🔀', naam:'Samesmelting',       kleur:'#8a4a2a' },
         { id:'taak-datum',      ikoon:'📅', naam:'Datumnormalisering', kleur:'#3a6a8a' },
-        { id:'taak-datumtoets', ikoon:'🗓️', naam:'Datumtoets',         kleur:'#5a8a6a' }
+        { id:'taak-datumtoets', ikoon:'🗓️', naam:'Datumtoets',         kleur:'#5a8a6a' },
+        { id:'taak-cchuw',      ikoon:'💍', naam:'C-C Huwelike',        kleur:'#8a3a5a' }
       ];
       html += '<div style="background:#0e150e;border:1px solid #2d4a2d;border-radius:6px;padding:0.5rem;margin-bottom:1rem;">';
       html += '<div style="color:#4a7a4a;font-size:0.73rem;letter-spacing:0.06em;margin-bottom:0.4rem;">DATABASIS-ADMINISTRASIE</div>';
@@ -5441,6 +5442,19 @@ function attachCorrectionListeners() {
       html += '<div id="adm-datumtoets-uitset" style="margin-top:0.3rem;font-size:0.80rem;"></div>';
       html += '</div>';
       html += '</div>'; // end taak-datumtoets
+
+      // ── PANEEL: Conradie-Conradie Huwelike ──
+      html += '<div id="taak-cchuw" class="adm-taak" style="display:none;">';
+      html += '<div style="padding:0.7rem 0.9rem;background:#1a080f;border:1px solid #8a3a5a44;border-radius:6px;margin-bottom:0.7rem;">';
+      html += '<div style="color:#d060a0;font-size:0.85rem;font-weight:bold;margin-bottom:0.4rem;">💍 Conradie-Conradie Huwelike</div>';
+      html += '<div style="color:#8a4a6a;font-size:0.80rem;margin-bottom:0.7rem;">Identifiseer alle huwelike waar beide gades Conradie-bloedverwante is. Geen data word gewysig nie.</div>';
+      html += '<div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.6rem;">';
+      html += '<button onclick="admCCHuwelike()" style="padding:0.45rem 1rem;background:#200818;color:#d060a0;border:1px solid #8a3a5a;border-radius:4px;cursor:pointer;font-size:0.85rem;font-weight:bold;">🔍 Genereer Verslag</button>';
+      html += '<button onclick="admCCHuwelikeCsv()" id="btn-cchuw-csv" style="display:none;padding:0.45rem 0.9rem;background:#180610;color:#c050a0;border:1px solid #6a2a4a;border-radius:4px;cursor:pointer;font-size:0.84rem;">⬇️ Laai CSV af</button>';
+      html += '</div>';
+      html += '<div id="adm-cchuw-uitset" style="margin-top:0.3rem;font-size:0.80rem;"></div>';
+      html += '</div>';
+      html += '</div>'; // end taak-cchuw
 
     }
 
@@ -7782,6 +7796,105 @@ function attachCorrectionListeners() {
   };
 
   // ── Einde: Datumkonsekwentheid ──
+
+  // ── Conradie-Conradie Huwelike ──
+  window.admCCHuwelike = function admCCHuwelike() {
+    var uitset = document.getElementById('adm-cchuw-uitset');
+    if (!uitset) return;
+    uitset.innerHTML = '<span style="color:#8a4a6a;">Besig...</span>';
+
+    var bevindinge = [];
+
+    CONRADIE_DATA.forEach(function(r) {
+      // Slegs I-rekords (bloedverwante)
+      if (!r.id || r.id.charAt(0) !== 'I') return;
+      if (r.merged_into) return;
+      if (!r.spouses || !r.spouses.length) return;
+
+      r.spouses.forEach(function(sp, i) {
+        // C-C huwelik: gade se ID begin met 'I'
+        if (!sp.id || sp.id.charAt(0) !== 'I') return;
+        var gade = indexById[sp.id];
+        if (!gade) return;
+        if (gade.merged_into) return;
+
+        var huwDatum = (r.marr_dates && r.marr_dates[i]) ? r.marr_dates[i] : '';
+        var huwPlek  = (r.marr_places && r.marr_places[i]) ? r.marr_places[i] : '';
+
+        bevindinge.push({
+          id1:      r.id,
+          naam1:    r.name || '',
+          kode1:    r.family_code || '',
+          gen1:     r.generation != null ? r.generation : '',
+          id2:      gade.id,
+          naam2:    gade.name || '',
+          kode2:    gade.family_code || '',
+          gen2:     gade.generation != null ? gade.generation : '',
+          huwDatum: huwDatum,
+          huwPlek:  huwPlek
+        });
+      });
+    });
+
+    window._ccHuwLys = bevindinge;
+
+    var csvKnop = document.getElementById('btn-cchuw-csv');
+    if (csvKnop) csvKnop.style.display = bevindinge.length ? 'inline-block' : 'none';
+
+    if (!bevindinge.length) {
+      uitset.innerHTML = '<span style="color:#8a4a6a;">Geen Conradie-Conradie huwelike gevind nie.</span>';
+      return;
+    }
+
+    var nuH = '<div style="color:#d060a0;font-size:0.82rem;margin-bottom:0.5rem;">Totaal: <strong>' + bevindinge.length + '</strong> C-C huwelike gevind</div>';
+    nuH += '<div style="overflow-x:auto;">';
+    nuH += '<table id="cchuw-tabel" style="width:100%;border-collapse:collapse;font-size:0.78rem;">';
+    nuH += '<thead><tr style="background:#200818;color:#c050a0;">';
+    nuH += '<th style="padding:0.3rem 0.5rem;text-align:left;border-bottom:1px solid #6a2a4a;">ID1</th>';
+    nuH += '<th style="padding:0.3rem 0.5rem;text-align:left;border-bottom:1px solid #6a2a4a;">Naam</th>';
+    nuH += '<th style="padding:0.3rem 0.5rem;text-align:left;border-bottom:1px solid #6a2a4a;">Kode1</th>';
+    nuH += '<th style="padding:0.3rem 0.5rem;text-align:left;border-bottom:1px solid #6a2a4a;">ID2</th>';
+    nuH += '<th style="padding:0.3rem 0.5rem;text-align:left;border-bottom:1px solid #6a2a4a;">Gade</th>';
+    nuH += '<th style="padding:0.3rem 0.5rem;text-align:left;border-bottom:1px solid #6a2a4a;">Kode2</th>';
+    nuH += '<th style="padding:0.3rem 0.5rem;text-align:left;border-bottom:1px solid #6a2a4a;">Huwdatum</th>';
+    nuH += '<th style="padding:0.3rem 0.5rem;text-align:left;border-bottom:1px solid #6a2a4a;">Huwplek</th>';
+    nuH += '</tr></thead><tbody>';
+
+    bevindinge.forEach(function(b, idx) {
+      var ryKleur = (idx % 2 === 0) ? '#130409' : '#1a0610';
+      nuH += '<tr style="background:' + ryKleur + ';">';
+      nuH += '<td style="padding:0.25rem 0.5rem;color:#c8a0b8;cursor:pointer;" onclick="openPanel(\'' + b.id1 + '\')">' + b.id1 + '</td>';
+      nuH += '<td style="padding:0.25rem 0.5rem;color:#e8d0e0;">' + b.naam1 + '</td>';
+      nuH += '<td style="padding:0.25rem 0.5rem;color:#9a6a8a;font-size:0.75rem;font-family:monospace;">' + b.kode1 + '</td>';
+      nuH += '<td style="padding:0.25rem 0.5rem;color:#c8a0b8;cursor:pointer;" onclick="openPanel(\'' + b.id2 + '\')">' + b.id2 + '</td>';
+      nuH += '<td style="padding:0.25rem 0.5rem;color:#e8d0e0;">' + b.naam2 + '</td>';
+      nuH += '<td style="padding:0.25rem 0.5rem;color:#9a6a8a;font-size:0.75rem;font-family:monospace;">' + b.kode2 + '</td>';
+      nuH += '<td style="padding:0.25rem 0.5rem;color:#b08090;">' + (b.huwDatum || '—') + '</td>';
+      nuH += '<td style="padding:0.25rem 0.5rem;color:#b08090;">' + (b.huwPlek || '—') + '</td>';
+      nuH += '</tr>';
+    });
+
+    nuH += '</tbody></table></div>';
+    uitset.innerHTML = nuH;
+  };
+
+  window.admCCHuwelikeCsv = function admCCHuwelikeCsv() {
+    var lys = window._ccHuwLys;
+    if (!lys || lys.length === 0) { alert('Genereer eers die verslag.'); return; }
+    function esc(s) { return '"' + String(s || '').replace(/"/g, '""') + '"'; }
+    var rye = ['ID1,Naam1,FamilieKode1,Generasie1,ID2,Naam2,FamilieKode2,Generasie2,Huwdatum,Huwplek'];
+    lys.forEach(function(b) {
+      rye.push([esc(b.id1), esc(b.naam1), esc(b.kode1), esc(b.gen1),
+                esc(b.id2), esc(b.naam2), esc(b.kode2), esc(b.gen2),
+                esc(b.huwDatum), esc(b.huwPlek)].join(','));
+    });
+    var blob = new Blob([rye.join('\n')], { type: 'text/csv' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'conradie_cc_huwelike.csv';
+    a.click();
+  };
+  // ── Einde: C-C Huwelike ──
 
   // Op-aanvraag verslag: skandeer alle I én S-rekords, bou HTML-tabel + CSV-aflaai
   window.admDupVerslag = function admDupVerslag() {

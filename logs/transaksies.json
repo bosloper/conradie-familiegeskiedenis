@@ -7205,5 +7205,855 @@
       "narrative": "Ingetroude lid van die Conradie familie.",
       "note": ""
     }
+  },
+  {
+    "tyd": "2026-07-31T12:59:47.505Z",
+    "volgorde": 1,
+    "rekord_id": "I4000",
+    "naam": "Pieter Jacobus CONRADIE",
+    "tipe": "wysiging",
+    "wysigings": {
+      "birth_place": {
+        "oud": "",
+        "nuut": "Richmond, Kaapkolonie"
+      },
+      "death_year": {
+        "oud": "1936",
+        "nuut": 1936
+      }
+    },
+    "rekord_na": {
+      "id": "I4000",
+      "ref": "4000",
+      "name": "Pieter Jacobus CONRADIE",
+      "given": "Pieter Jacobus",
+      "surname": "CONRADIE",
+      "sex": "M",
+      "family_code": "c2d5e1f8g1",
+      "branch": "c2",
+      "branch_path": [
+        "b1",
+        "c2",
+        "c2d5",
+        "c2d5e1",
+        "c2d5e1f8",
+        "c2d5e1f8g1"
+      ],
+      "generation": 6,
+      "uncertain": false,
+      "nickname": "",
+      "birth_date": "1860-11-17",
+      "birth_year": 1860,
+      "birth_place": "Richmond, Kaapkolonie",
+      "birth_circa": false,
+      "death_date": "1936-03-21",
+      "death_year": 1936,
+      "death_place": "Kenhardt, Kaapprovinsie",
+      "burial_place": "Plaas Steynsput, Kenhardt, Kaapprovinsie",
+      "baptism_date": "",
+      "baptism_place": "",
+      "is_spouse": false,
+      "spouses": [
+        {
+          "id": "S4000",
+          "name": "Anna Maria CONRADIE",
+          "birth_date": "1864-08-11",
+          "birth_year": 1864,
+          "divorce_date": "",
+          "divorced": false
+        }
+      ],
+      "children_ids": [
+        "I4001",
+        "I4027",
+        "I4028",
+        "I4029",
+        "I4030",
+        "I4031",
+        "I4039",
+        "I4040",
+        "I4045",
+        "I4055"
+      ],
+      "parents": [
+        {
+          "id": "I3999",
+          "name": "Cornelius Johannes CONRADIE",
+          "role": "father"
+        },
+        {
+          "id": "S3999",
+          "name": "Emmerentia Jacomina * SPIES",
+          "role": "mother"
+        }
+      ],
+      "marr_dates": [
+        "1883-08-06"
+      ],
+      "marr_places": [
+        "Richmond, Kaapkolonie"
+      ],
+      "divorce_date": "",
+      "divorced": false,
+      "maiden_name": "",
+      "narrative": "Met sy troue was hy \"veeboer\" van Richmond, en sy afkomstig van Richmond. Hulle het op die plaas \"Rondawels\", (die eerste doopregisters verwys na \"Rondabelfontein\") by Richmond geboer, en het later na Kenhardt distrik getrek. Die kinders het hom as \"Oupa Steynsput\" geken.",
+      "note": "",
+      "occupation": "Boer",
+      "events": [],
+      "fs_id": "GCKG-TR5",
+      "wt_id": "Conradie-604"
+    }
+  },
+  {
+    "tyd": "2026-07-31T12:59:47.505Z",
+    "volgorde": 2,
+    "rekord_id": "I4001",
+    "naam": "Cornelius Johannes CONRADIE",
+    "tipe": "wysiging",
+    "wysigings": {
+      "death_year": {
+        "oud": "1974",
+        "nuut": 1974
+      },
+      "wt_id": {
+        "oud": "",
+        "nuut": "Conradie-1179"
+      }
+    },
+    "rekord_na": {
+      "id": "I4001",
+      "ref": "4001",
+      "name": "Cornelius Johannes CONRADIE",
+      "given": "Cornelius Johannes",
+      "surname": "CONRADIE",
+      "sex": "M",
+      "family_code": "c2d5e1f8g1h1",
+      "branch": "c2",
+      "branch_path": [
+        "b1",
+        "c2",
+        "c2d5",
+        "c2d5e1",
+        "c2d5e1f8",
+        "c2d5e1f8g1",
+        "c2d5e1f8g1h1"
+      ],
+      "generation": 7,
+      "uncertain": false,
+      "nickname": "",
+      "birth_date": "1884-07-05",
+      "birth_year": 1884,
+      "birth_place": "",
+      "birth_circa": false,
+      "death_date": "1974-12-07",
+      "death_year": 1974,
+      "death_place": "Bloemfontein",
+      "burial_place": "Memorium Begraafplaas, Bloemfontein",
+      "baptism_date": "",
+      "baptism_place": "",
+      "is_spouse": false,
+      "spouses": [
+        {
+          "id": "S4001",
+          "name": "Maria Magdalena Elizabeth LACOCK",
+          "birth_date": "1890-01-06",
+          "birth_year": 1890,
+          "divorce_date": "",
+          "divorced": false
+        }
+      ],
+      "children_ids": [
+        "I4002",
+        "I4010",
+        "I4011",
+        "I4012",
+        "I4023",
+        "I4024",
+        "I4025",
+        "I4026"
+      ],
+      "parents": [
+        {
+          "id": "I4000",
+          "name": "Pieter Jacobus CONRADIE",
+          "role": "father"
+        },
+        {
+          "id": "S4000",
+          "name": "Anna Maria CONRADIE",
+          "role": "mother"
+        }
+      ],
+      "marr_dates": [
+        "1912-03-11"
+      ],
+      "marr_places": [
+        "Kenhardt, Kaapprovinsie"
+      ],
+      "divorce_date": "",
+      "divorced": false,
+      "maiden_name": "",
+      "narrative": "doopinskrywing verwys na \"Rondabelsfontein\" Hulle het in 1942 na Bloemfontein verhuis",
+      "note": "",
+      "events": [
+        {
+          "year": "1942",
+          "type": "VERHUISING",
+          "text": "Tree af op kleinhoewe in die Bloemspruit - Shannon omgewing",
+          "bestemming": "Bloemfontein, OVS"
+        }
+      ],
+      "occupation": "Boer",
+      "fs_id": "GBFF-WP6",
+      "wt_id": "Conradie-1179"
+    }
+  },
+  {
+    "tyd": "2026-07-31T12:59:47.505Z",
+    "volgorde": 3,
+    "rekord_id": "S4000",
+    "naam": "Anna Maria CONRADIE",
+    "tipe": "wysiging",
+    "wysigings": {
+      "death_date": {
+        "oud": "",
+        "nuut": "1953-03-07"
+      },
+      "death_year": {
+        "oud": "",
+        "nuut": 1953
+      },
+      "burial_place": {
+        "oud": "",
+        "nuut": "Ou begraafplaas, Petrusburg, OVS"
+      },
+      "note": {
+        "oud": "",
+        "nuut": "Sy is [3952] c2d5e1f7g1, dogter van [3951] Jacob Johannes Conradie"
+      }
+    },
+    "rekord_na": {
+      "id": "S4000",
+      "ref": "4000",
+      "name": "Anna Maria CONRADIE",
+      "given": "Anna Maria",
+      "surname": "CONRADIE",
+      "sex": "F",
+      "family_code": "",
+      "branch": "",
+      "branch_path": [],
+      "generation": 0,
+      "uncertain": false,
+      "nickname": "",
+      "birth_date": "1864-08-11",
+      "birth_year": 1864,
+      "birth_place": "",
+      "birth_circa": false,
+      "death_date": "1953-03-07",
+      "death_year": 1953,
+      "death_place": "",
+      "burial_place": "Ou begraafplaas, Petrusburg, OVS",
+      "baptism_date": "",
+      "baptism_place": "",
+      "is_spouse": true,
+      "spouses": [
+        {
+          "id": "I4000",
+          "name": "Pieter Jacobus CONRADIE",
+          "birth_date": "1860-11-17",
+          "birth_year": 1860,
+          "divorce_date": "",
+          "divorced": false
+        }
+      ],
+      "children_ids": [
+        "I4001",
+        "I4027",
+        "I4028",
+        "I4029",
+        "I4030",
+        "I4031",
+        "I4039",
+        "I4040",
+        "I4045",
+        "I4055"
+      ],
+      "parents": [],
+      "marr_dates": [
+        "~1883"
+      ],
+      "marr_places": [
+        ""
+      ],
+      "divorce_date": "",
+      "divorced": false,
+      "maiden_name": "",
+      "narrative": "Met sy troue was hy \"veeboer\" van Richmond, en sy afkomstig van Richmond. Hulle het op die plaas \"Rondawels\", (die eerste doopregisters verwys na \"Rondabelfontein\") by Richmond geboer, en het later na Kenhardt distrik getrek. Die kinders het hom as \"Oupa Steynsput\" geken.",
+      "note": "Sy is [3952] c2d5e1f7g1, dogter van [3951] Jacob Johannes Conradie"
+    }
+  },
+  {
+    "tyd": "2026-07-31T12:59:47.505Z",
+    "volgorde": 4,
+    "rekord_id": "I3951",
+    "naam": "Jacob Johannes CONRADIE",
+    "tipe": "wysiging",
+    "wysigings": {
+      "death_year": {
+        "oud": "1917",
+        "nuut": 1917
+      },
+      "wt_id": {
+        "oud": "",
+        "nuut": "Conradie-475"
+      }
+    },
+    "rekord_na": {
+      "id": "I3951",
+      "ref": "3951",
+      "name": "Jacob Johannes CONRADIE",
+      "given": "Jacob Johannes",
+      "surname": "CONRADIE",
+      "sex": "M",
+      "family_code": "c2d5e1f7",
+      "branch": "c2",
+      "branch_path": [
+        "b1",
+        "c2",
+        "c2d5",
+        "c2d5e1",
+        "c2d5e1f7"
+      ],
+      "generation": 5,
+      "uncertain": false,
+      "nickname": "",
+      "birth_date": "1839-11-05",
+      "birth_year": 1839,
+      "birth_place": "",
+      "birth_circa": false,
+      "death_date": "1917-08-22",
+      "death_year": 1917,
+      "death_place": "",
+      "burial_place": "Murraysburg",
+      "baptism_date": "",
+      "baptism_place": "",
+      "is_spouse": false,
+      "spouses": [
+        {
+          "id": "S3951",
+          "name": "Hendrina Aletta CONRADIE",
+          "birth_date": "1846-12-05",
+          "birth_year": 1846,
+          "divorce_date": "",
+          "divorced": false
+        },
+        {
+          "id": "S3951b",
+          "name": "Hendrina Johanna BOOYSEN",
+          "birth_date": "",
+          "birth_year": null,
+          "divorce_date": "",
+          "divorced": false
+        }
+      ],
+      "children_ids": [
+        "I3952",
+        "I3953",
+        "I3970",
+        "I3990",
+        "I3991",
+        "I3992",
+        "I3993",
+        "I3994",
+        "I3995",
+        "I3997"
+      ],
+      "parents": [
+        {
+          "id": "I3749",
+          "name": "Pieter Jacobus CONRADIE",
+          "role": "father"
+        },
+        {
+          "id": "S3749",
+          "name": "Petronella Jacoba MEEGEL",
+          "role": "mother"
+        }
+      ],
+      "marr_dates": [
+        "1863-09-20",
+        ""
+      ],
+      "marr_places": [
+        "NGK Murraysburg",
+        "Aberdeen"
+      ],
+      "divorce_date": "",
+      "divorced": false,
+      "maiden_name": "",
+      "narrative": "Hy & sy 1ste vrou was eie neef & niggie. Sy was die dogter van c2d5e7 David Schalk & Anna Maria PIENAAR wat op 13.05.1844 trou. Die verwantskap blyk reeds so in die 1954 geslagsregister, maar sonder haar geboortedatum. Hy koop op 17 Jan. 1889 die plaas Loskop en Klein Loskop van C.J.Burger, en ontvang kaart en transport. Voor hierdie datum het hy en sy familie op Rondawel in die Richmond distr gewoon. Bron: 2001: agterkleinseun C.F.Conradie f7g3h3i2 eienaar van Loskop.",
+      "note": "",
+      "wt_id": "Conradie-475"
+    }
+  },
+  {
+    "tyd": "2026-07-31T12:59:47.505Z",
+    "volgorde": 5,
+    "rekord_id": "I6668",
+    "naam": "Hermina CONRADIE",
+    "tipe": "wysiging",
+    "wysigings": {
+      "death_year": {
+        "oud": "1929",
+        "nuut": 1929
+      },
+      "note": {
+        "oud": "",
+        "nuut": "WikiTree verwys na \"Harmina Conradi\""
+      },
+      "wt_id": {
+        "oud": "",
+        "nuut": "Conradi-123"
+      }
+    },
+    "rekord_na": {
+      "id": "I6668",
+      "ref": "6668",
+      "name": "Hermina CONRADIE",
+      "given": "Hermina",
+      "surname": "CONRADIE",
+      "sex": "F",
+      "family_code": "c6",
+      "branch": "c6",
+      "branch_path": [
+        "b1",
+        "c6"
+      ],
+      "generation": 2,
+      "uncertain": false,
+      "nickname": "",
+      "birth_date": "1755",
+      "birth_year": 1755,
+      "birth_place": "",
+      "birth_circa": false,
+      "death_date": "1929",
+      "death_year": 1929,
+      "death_place": "Kaapland",
+      "burial_place": "",
+      "baptism_date": "",
+      "baptism_place": "",
+      "is_spouse": false,
+      "spouses": [
+        {
+          "id": "S6668",
+          "name": "Jacobus Petrus VILJOEN",
+          "birth_date": "",
+          "birth_year": null,
+          "divorce_date": "",
+          "divorced": false
+        }
+      ],
+      "children_ids": [],
+      "parents": [],
+      "marr_dates": [],
+      "marr_places": [],
+      "divorce_date": "",
+      "divorced": false,
+      "maiden_name": "",
+      "narrative": "",
+      "note": "WikiTree verwys na \"Harmina Conradi\"",
+      "occupation": "",
+      "events": [],
+      "fs_id": "",
+      "wt_id": "Conradi-123"
+    }
+  },
+  {
+    "tyd": "2026-07-31T12:59:47.505Z",
+    "volgorde": 6,
+    "rekord_id": "I2",
+    "naam": "Johann Henricus CONRADIE",
+    "tipe": "wysiging",
+    "wysigings": {
+      "death_year": {
+        "oud": "1776",
+        "nuut": 1776
+      },
+      "wt_id": {
+        "oud": "",
+        "nuut": "Conradi-90"
+      }
+    },
+    "rekord_na": {
+      "id": "I2",
+      "ref": "0002",
+      "name": "Johann Henricus CONRADIE",
+      "given": "Johann Henricus",
+      "surname": "CONRADIE",
+      "sex": "M",
+      "family_code": "b1",
+      "branch": "b1",
+      "branch_path": [
+        "b1"
+      ],
+      "generation": 1,
+      "uncertain": false,
+      "nickname": "",
+      "birth_date": "1710",
+      "birth_year": 1710,
+      "birth_place": "",
+      "birth_circa": false,
+      "death_date": "1776-07-18",
+      "death_year": 1776,
+      "death_place": "",
+      "burial_place": "",
+      "baptism_date": "",
+      "baptism_place": "",
+      "is_spouse": false,
+      "spouses": [
+        {
+          "id": "S2",
+          "name": "Rosa SWANEPOEL",
+          "birth_date": "1721",
+          "birth_year": null,
+          "divorce_date": "",
+          "divorced": false
+        }
+      ],
+      "children_ids": [
+        "I3",
+        "I2725",
+        "I4570",
+        "I6135",
+        "I6136",
+        "I6668",
+        "I6669"
+      ],
+      "parents": [],
+      "marr_dates": [],
+      "marr_places": [],
+      "divorce_date": "",
+      "divorced": false,
+      "maiden_name": "",
+      "narrative": "Johannes Henricus CONRADIE, die stamvader se eerste seun, is op 21 September 1710 in Kaapstad gedoop — sy doopinskrywing lui: \"Johannes Henricus van Fredrik Conradi van Marpurg, en Hermina Hermansz. di Getuigen Robbert Robbertsz. en Neeltje Slabbaarts.\" Hy is op 19 Julie 1737 in Stellenbosch met Rosa SWANEPOEL getroud en het op 18 Julie 1776 in Tulbagh oorlede. Rosa SWANEPOEL is op 21 April 1767 in Tulbagh oorlede.\n\nMet sy troue was hy 'n burger van Drakenstein. Rosa was die 4de kind en enigste d/v Pieter Janz. SWANEPOEL, wat voor 1700 hier van Gelderland (Nederland) aan gekom het; hy is op 01.05.1712 met Maria Sibella SACHS getroud. Rosa het 7 broers gehad. Rosa se vader was die eerste eienaar van die leenplaas Nieuw Munster naby die huidige dorp Wolseley. Pieter SWANEPOEL het sy leenplaas vernoem na sy geboortedorp Nieuwmunster in die teenwoordige Wes-Vlaandere). Johannes Hendrik CONRADIE bekom op 26 Oktober 1747 oordrag van die plaas Nieuw Munster, wat tot toe die leenplaas van sy skoonvader, Pieter Janz. SWANEPOEL was. Volgens die \"Wildschutte Boeken\" in die Kaapse Argief, het Johann versoek dat hy beeste mag laat wei \"De Wilde Paerd Clooff over Claasvoogts Rievier\". Hierdie lengingsplaas is op 2 Mei 1739 aan hom toegestaan, maar teen 1750 het hy reeds \"Wildepaarde Cloof\" verlaat, (want hy boer toe op Nieu Munster), en Wildepaarde Cloof is op 27 Nov 1750 aan die weduwee van Matthys CALLETZ toegeken. [Wilde Perde Kloof is die gedeelte bo teen die berg se kant tussen die Klaas Voogds Rivier Oos en Ashton]. Bronne: Kaapse Argief RLR 10/1 p.39 en RLR 12/2 p.254. Letop: 3 seuns van Johannes (c1, c3 en c5) boer almal in die Montagu / Robertson / Klaasvoogts omgewing, maar die 2de seun (c2) boer later as die tweede geslag voort op Nieuw Munster.",
+      "note": "",
+      "occupation": "",
+      "events": [],
+      "fs_id": "",
+      "wt_id": "Conradi-90"
+    }
+  },
+  {
+    "tyd": "2026-07-31T12:59:47.505Z",
+    "volgorde": 7,
+    "rekord_id": "S1",
+    "naam": "Hermina HARMENSZ",
+    "tipe": "wysiging",
+    "wysigings": {
+      "wt_id": {
+        "oud": "",
+        "nuut": "Harmse-20"
+      }
+    },
+    "rekord_na": {
+      "id": "S1",
+      "ref": "0001",
+      "name": "Hermina HARMENSZ",
+      "given": "Hermina",
+      "surname": "HARMENSZ",
+      "sex": "",
+      "family_code": "",
+      "branch": "",
+      "branch_path": [],
+      "generation": 0,
+      "uncertain": false,
+      "nickname": "",
+      "birth_date": "",
+      "birth_year": null,
+      "birth_place": "",
+      "birth_circa": false,
+      "death_date": "",
+      "death_year": null,
+      "death_place": "",
+      "burial_place": "",
+      "baptism_date": "",
+      "baptism_place": "",
+      "is_spouse": true,
+      "spouses": [
+        {
+          "id": "I1",
+          "name": "Friedrich Henrich CONRADIE",
+          "birth_date": "1668",
+          "birth_year": 1668,
+          "divorce_date": "",
+          "divorced": false
+        }
+      ],
+      "children_ids": [],
+      "parents": [],
+      "marr_dates": [
+        ""
+      ],
+      "marr_places": [
+        ""
+      ],
+      "divorce_date": "",
+      "divorced": false,
+      "maiden_name": "",
+      "narrative": "Friederich Henrich Conradij, die stamvader van die Suid-Afrikaanse se Conradie familie, is in 1668 in Marburg (teenswoordige Duitsland) gebore. Die presiese datum is onbekend, maar ons weet uit die Marburger Sippenbuch, dat sy ouers Johann Henrich Conradi en Anna Elizabeth Schneider se gebooie op 22 Sept 1667 in Marburg geloop het - Friederich se jonger suster is op 14 Nov 1669 in Marburg gedoop - die logiese afleiding is dus dat Friederich gedurende die jaar 1668 gebore is. Op 16 Okt 1682 word Friederich ingeskryf by 'n Gimnasium (skool) in Marburg. Gedurende 1688 vertrek hy, op ouderdom 20 jaar, uit Marburg op die eerste been van 'n uittog wat hom uiteindelik, vroeg in 1689, as soldaat, na Kaap die Goeie Hoop sou bring. Oor sy beweegredes om Marburg te verlaat kan ons tans net spekuleer. Hy kon bloot werk gaan soek het in die destydse voorspoedige Nederland en is uiteindelik so as soldaat in diens van die VOC geneem, en toegewys om na die Kaap te gaan. Friederich het ongeveer 500km vanaf Marburg na Nederland gegaan op 'n soektog na werk, wat hom uiteindelik as soldaat, in diens van die VOC geplaas het, en van waar hy in 1688 met die boot WAPEN VAN ALKMAAR van af Texel vertrek het na die Kaap. Baie Duitsers het destyds as soldate by die VOC gewerk. Die skeepsoldyboeke van die Verenigde Oost-Indische Compagnie (VOC) in die Nationaal Archief in Nederland ontsluit vir ons konkrete inligting oor ons Conradie-stamvader: \"Frederick Coenradi uit Maerburgh\" het op 27 Julie 1688 as soldaat in diens van die VOC getree, en het op dieselfde dag op die skip Wapen van Alkmaar uit Texel (Nederland) na Kaap de Goede Hoop vertrek. Aan boord het die skip 121 matrose gehad, 86 soldate (waaronder Frederick) en 43 passasiers - 42 van laasgenoemde was Franse Huguenote op pad na die Kaap. Die vaart na die Kaap het 6 maande geneem - ander vaarte van die Alkmaar het meer dikwels ne 5 maande en selfs 4 maande geneem. Volgens die skeepsrekord het 37 matrose op die vaart na die Kaap gesterf, maar geen soldate of passasiers nie. Altesame 44 soldate, insluitend Frederick Coenradi, het op 21 Januarie 1689 in die Kaap aan wal gegaan om hier diens vir die VOC te kom doen. Frederick Coenradi tree op 31 Desember 1691, na ongeveer 3 en half jaar, as VOC soldaat, uit diens omrede hy op 1 Januarie 1692 'n Vryburger aan die Kaap word. (Frederick is in 1668 gebore, en was dus nou 24 jaar oud. Hy sou eers 11 jaar later, in 1703, trou) Die Wapen van Alkmaar was 'n pinas tipe seilboot, wat algemeen deur die VOC gebruik is - ten minste 81 se name word gelys. Die boot is in 1671 vir die kamer van Amsterdam in die Enkhuizen VOC-werf in Amsterdam gebou. Dit was 160 voet lank, 38,25 voet breed, en die \"holte\" (die deel onderkant die laagste opening in die boeg) was 13 voet diep. Die boot se laaivermoë was 892 ton en dit kon 260-300 mense dra. Die Wapen van Alkmaar het 'n goeie aantal suksesvolle vaarte onderneem; Op 1 Junie 1690 vertrek 'n armada van bote vanaf die Kaap terug na Zeeland - na maande op die see en naby die Shetland-eilande beland hulle in 'n woeste storm, en in een van die grootste rampe wat die VOC getref het, vergaan vier bote - Wapen van Alkmaar, Kapelle, Pijlswaart en Land van Schouwen - meer as 3000 ton in totaal. Die stamvader se naam verskyn NIE in die Monsterrolle vir die jare 1685, 1686 of 1688. Die Monsterrolle het net Vryburgers se name gelys en nie persone wat in diens van die HOIK/VOC was nie. In iedergeval verwag ons nie om sy naam daar te sien nie, want hy het eers in 1689 na die Kaap gekom, en eers aan die begin van 1692 'n Vryburger geword. \"Fredk. Coenrade v. Maarburgh\" se naam as Vryburger aan \"die Kaap\" is opgeteken op bladsy 153 van 1695 se Monsterrol. Die naam \"Frederik Coenraads\" [hoogs waarskynlik ook ons stamvader] verskyn as Vryburger op bladsy 18 in die afdeling \" ’t Caabse district\" in die \"Monsterrol van de vrije luijden opgemaaket 23 Januarij 1702\" Op Sondag 7 Oktober 1703 (op 35-jarige ouderdom) trou \"Fredrik Coenraad van Marburg jonkman, met Hermina Harmentz van Toderwaart, jongd.\" in die Kaap. (Nederduitsch Gereformeerde Kerk, (Kaapstad), de Caep de Goede Hoop. [Kyk ook LDS register mikro- film bladsy] \"Toderwaart\" verwys na die huidige dorp Dodewaard in die Nederlandse provinsie Gelderland. (Dit is aan my onbekend op welke manier Hermina Harmensz na die Kaap gekom het - saam met haar ouers of as 'n weeskind?) Die korrekte spelling van Hermina se \"van\" of tweede naam sal moontlik nooit vasgestel kan word nie. Ons kies steeds, na heroorweging in 2012, om haar naam as Hermina HARMENSZ te skrywe. Tot 1811 het die Nederlanders \"vanne\" gebruik wat op die vader se naam berus het - die sogenaamder patronimiese naamgewing - die kind se \"van\" of tweede naam het die vader se naam+'n agtervoegsel gekry. Hier is 'n voorbeeld: Harmina HARMENS, geboren te Vollenhove, gedoopt (N.G.) op 14-05-1699 te Vollenhove, dochter van Harmen GERRITS en Aeltjen HENDRICX. Dit is amper ons stammoeder, maar sy is darem so 20 jaar te jonk! \"Harmen\" was in daardie tyd 'n baie gewilde mansnaam, en so het ons baie HARMENSZ kinders gekry wat eintlik geen naby familie van mekaar was nie - die van het bloot na die pa se naam verwys --- iets soos \"Hermina, kind van Harmen\". Ons stammoeder se naam verskil vir elke opskrywer (by troue, doop of doopgetuie) - hier is variasies: HARMANZE, HARMENS, HARMENSZ, HARMENTZ, HERMINSE. Volgens die VOC-soldyboeke het byna 240 HARMENS persone vir die VOC gewerk, maar 499 HARMENSZ persone was op die soldyboeke. Nadat Hendricus Munkerus, woonagtig in die Kaap - 'n baie vermoënde man volgens sy boedel, in lewe \"Onderkoopman en Kassier in diens den E: Comp:e aan Cabo de Goede Hoop\" op 29 Jan 1705 sterf, meld sy finale inventaris (MOOC8/2.8) op 20 Mei 1707 dat hy op 2 Aug 1704 'n \"onderhandsche obligatie ten lasten van Fredrik Conradij .... ter somma van Rd:s100:00\" toegestaan het - maw hy het die geld aan Frederick geleen. Nadat die stamvader in 1692 'n Vryburger geword het, en tot daar tekens is dat hy in Drakenstein 'n wynboer geword het, is ons tans nie seker wat hy gedoen het terwyl hy nog aan die Kaap gewoon het nie. Daar is spekulasie van 'n Herbergier of Traverne eienaar, maar stawende inligting moet nog gevind word. Tot waarskynlik 1704 het Frederich en Hermina nog in die Kaap gewoon, maar teen die jaar 1707 moes hulle reeds na 'n plaas in die Drakenstein omgewing verhuis het, want hulle tree op as doopgetuies by Drakenstein gemeente: \"1707; 8ste Octob]; Derk; d'Vader Ary Derkse van Neck, d' Moeder Anna Esser. Getùygen Frederik Coenraad, en Armina Coenraad\" Op 26 Mei 1708 wys 'n inventaris (MOOC8/2.24) dat hy op 'n veiling te Drakenstein 1 trekos en 'n koei teen Rds17:1 uit die boedel van wyle Susanna de Vos gekoop het. Eers na 7 jaar van getroude lewe, toe die stamvader reeds 42 jaar oud was, is daar 'n kind wat gedoop word. Die dooprekord vir die egpaar se eerste kind is opgeneem op 'n LDS mikrofilm kopie van bladsy 97 van die register van die NG Kerk de Caep de Goede Hoop. Die seuntjie is gedoop op Sondag 21 September 1710 en die doop het oënskynlik saam met twee ander dooppare in die kerk in Kaapstad gebeur. Let op hoe ons stamvader seker gemaak word dat sy eerste seun duidelik na die seun se oupa in Marburg vernoem word. Die inskrywing lees \"Johannes Henricus van Fredrik Conradi van Marpurg, en Hermina Hermansz. di Getuigen Robbert Robbertsz. en Neeltje Slabbaarts.\" Nota: die doopgetuies is een van die stamouers van die Brand-familie in SA soos gemeld op stamouers.com: Robert Roberts BRAND van Oslo in Noorwee het getrou op 21 November 1700 met Cornelia (Neeltjie) SLABBERT en sy was van Meliskerke in Nederland. 'n Erfbrief (bewys van eienaarskap) word op 11 Mei 1712 aan Friedrich Conradi uitgereik as eerste eienaar van die plasie Werda, met oppervlakte 30 morg 403 vk. roede. Letop, uit voorafgaande inligting, dat Friedrich reeds in 1707 en 1708 in Drakenstein aktief was. 'n Erfbrief is gewoonlik 3 of meer jaar nadat grond aan 'n landbouer toegesê is uitgereik. Dit het die boer geleentheid gegee om die nuwe plaas mak te maak en verbeterings aan te bring. Ons aanvaar dus dat Friedrich op die minimum reeds in 1707 op die Werda plasie aktief was. Die plasie, geleë in die veldkornetskap Groot Drakenstein, was in die onmiddellike omgewing van die huidige Simondium. ('n \"WERDA\" plaasnaambord kon nog relatief onlangs daar gesien word.) Daar is min twyfel dat Friedrich die plaas Werda genoem het na die dorpie Wehrda (vandag deel van Marburg) in Hesse waar sy vader 'n Lutherse predikant was. Die ooreenkomste met die landelikheid van Wehrda, die Lahnrivier en -berge, is vandag in die omgewing van Simondium steeds baie sigbaar - met die omliggende berge en die Bergrivier. Die oorspronklike 1712 \"Werda\" plasie was ongeveer 2000 meter op die langste deel, en 1000 meter op die wydste deel. Om op te som - as 'n mens met die R45 van Simondium rigting Franschhoek ry, dan ry jy oor 'n gedeelte van die oorspronklike 1712 Werda plasie. Solank as wat Friedrich Conradie en Harmina Harmensz op Werda gewoon het, was een van hulle naaste bure (binne gemaklike stap-afstand) Willem van Zyl en sy vrou Christina van Loveren op die plaas Vrede en Lust (vandag teenoor Simondium) . Op hierdie plaas het die omliggende Vryburgers Sondae byeengekom vir godsdiensbeoefening. Na kerk was dit dan ook gerieflik vir die kerkgangers om hulle weeklikse benodighede by die plaaswinkel op Vrede en Lust aan te koop.(bron pdf: The History of Vrede En Lust) 'n Bekende 1710 tekening van EV Stade toon hoe Vrede en Lust se omgewing destyds gelyk het. Die skets is gemaak van 'n posisie naby die Bergrivier min of meer teenoor vandag se Simondium. Verskeie landmerke kan herken word - ondermeer die Babylon's Toring koppie. Die tekening wys ongeveer 10 geboue in die omgewing van Vrede en Lust en ook die pad wat van Babylon's Toring se rigting vanaf die Kaap gekom het. Die reghoekige plaasgeboue het klein vensters; dus sou die vertrekke met kleivloere en lae rietdakke binne donker en somber wees. Met primitiewe boumateriaal het die buitemure van die geboue vinnig verweer. Brandhout is uit die omgewing verkry. Dit is teen hierdie agtergrond wat Friedrich Conradie in reeds in 1707 as 'n buurman op Werda begin boer het en in 1712 amptelik eienaarskap gekry het. Werda se grond sou moontlik na links net buite beeld in die 1710 skets geleë wees. Ons weet nie of daar permanente water op die plasie was nie - miskien 'n fontein of twee. Die standhoudende Bergrivier was naby en moontlik moes Werda se plaasdiere daagliks na die rivier geneem word om te suip. Dit is ook nie onmoontlik dat die boere vir landboudoeleindes water met grondkanale uit die Bergrivier gekeer het. In 1714 tree \"burger\" ... \"Freedrik Coenradij\" op as een van verskeie getuies toe die inventaris van besittings vir oorlede Dirk Jacobs Brouwer (MOOC8/2.122) op 2 Okt 1714 deur die sekretaris vir Stellenbosch en Drakenstein opgestel word. In die periode 1716 - 1723 tree Friedrich Conradi en Hermina Harmensz by 4 doopgeleenthede op as doopgetuies by die NG Kerk gemeente van Stellenbosch - inskrywings vir 6.12.1716, 27.6.1718, 20.10.1720 en 10.10.1723 kan na geslaan word. Op 6 Desember 1716 word sy naam as 'n doopgetuie as \"Fredrik Coenradi\" gespel. Friedrich Conradi en Harmina Harmensz se kind Frederik Coenradi word op 19 Julie 1716 gedoop by die NG Kerk Drakenstein (Paarl) - die inskrywing lees: \"Anno 1716; Den 19de Julij; Frederik, soon van Frederik Coenradi an Harmina Herminse. Getuijgen ....\" \"Fredrik Coenradi & Harmina Harmensz\" se name is as Vryburgers opgeteken op bladsy 251 in 1712 se Monsterrol vir Drakenstein. [The muster roll I present here is that of the Free Settlers compiled on 31st December 1712, Cape Archives VC 49, pages 244 to 268. It is divided into the three districts of the Cape at that date, and contains names of the free people, that is those not in the employ of the Dutch East India Company - Richard Ball] \"Fredrik Conradi & Hermeijntje Harmens\" is ook opgeteken onder Drakenstein op bladsy 274 van 1713 se Monsterrol. Cape Slave Transactions van Prof. Richard Shell wys Frederick se betrokkenheid met Slawe: Op 3 Aug 1716 koop hy vir Magdalena, 'n 17-jarige slavin van Mauritius, vir Rds60 van Jan Heinr Tauken, net om haar weer die volgende dag op 4 Aug 1716 teen 'n wins vir Rds70 aan Henrik Kruijwagen te verkoop! [Sulke mensehandel, ook nog met winsbejag daarby, vind ek vandag beslis erg skokkend! - Piet] Op 28 Julie 1719 kom Friedrich in besit van oorlede Heinrich Scheffer se 300 morg plaas met naam Nuwedorp - ook geleë in die veldkornetskap Groot Drakenstein. Hy was toe die 3de eienaar van Nuwedorp, waarvoor die eerste erfbrief op 20 Desember 1689 aan Jacobus van As uitgereik is. Nuwedorp was byna aanliggend tot Friedrich se eerste plaas Werda. Nuwedorp, wat oorspronklik uit 5 toekennings van 60 morg elk bestaan het, was sedert 1710 as 'n eenheid van 300 morg bestuur, en was dus 10 keer groter as Friedrich se bestaande plaas Werda. Die Opgaafrolle in die Kaapse Argief (KA 4060 volgnr 0758) van April 1720 gee vir belasting doeleindes 'n kort opsomming van Frederick Conradi en Hermina Harmensz se bates in die Drakenstein distrik - hierdie inligting sou beide Werda en Nuwedorp insluit: Hulle het 8 beeste, 6 varke, daar is 12,000 wingerdstokke, hulle het 2 leggers wyn, een karabyn (ligte geweer met kort loop) en 'n sabel (soort swaard). Hulle het 'n vry man en vrou met 'n seun in diens, en besit 1 volwasse slavin. Op 19 Aug 1722 dui Lambert Engels se boedel (MOOC8/4.38) aan dat Frederick die boedel geld skuld: \"Fredricq Conradi verschoote penn:ƒ 90\". Na byna 5 jaar op Nuwedorp, verkoop Friedrich die plaas op 3 Mei 1724 aan Jacques de Villiers. Op 6 November 1726 verkoop Friedrich die plaas Werda aan Isaac de Villiers, 'n seun van Pierre de Villiers van Laborie en Picardie. Ons stamvader was nou nie meer 'n plaaseienaar nie. 'n Mens kry die indruk dat hy voor sy dood doelbewus afgeskaal het, en dit is moontlik dat hy gesondheidsprobleme ontwikkel het. Op 24 Mei 1727 verkoop Frederick die manlike slaaf met naam Hotom, afkomstig van Macassar, vir Rds75 aan Nicolaas Gockelius. [Cape Slave Transactions] In die boedelinventaris, gedateer 2 Feb 1728, van Jan Mijndertsz: Kruijwagen (MOOC8/5.19) word gemeld dat \"s Fredrik Coenradi over geleverde goederen rd:5:8 stv: f15:10:--\" ondermeer een van die items op die \"schultboek\" is - my interpretasie hier is dat die boedel die geld aan Frederick geskuld het. Op 20 Februarie 1728 verkoop Frederick 'n manlike slaaf met naam Anthonij, afkomstig van Ternat, vir Rds70 aan Christoffel De Wit.[Cape Slave Transactions] Friederich Conradi sterf in 1729. Hy sou toe 61 jaar oud wees en 26 jaar lank getroud - sy oudste seun Jan Hendrik was toe 19 jaar oud. Meer stawende inligting oor Friederich se dood moet nog gevind word. Hermina Harmensz, is na Friedrich Conradi se dood, weer op 12 Februarie 1730 in die NG Kerk Drakenstein (Paarl) met Anthonie Duyf getroud - die huweliks- inskrywing lees: \"Den 12 Maart 1730. Anthonij Duyf van Schalkwyk Baas Wagenmaker in dienst der E.E. Compagnije. J.M. met Hermina Harmens van [Dooywaart] weduwe van wylen den Borger Ludewyk Coenradi.\" (Die \"Ludewyk\" sekerlik 'n fout van die inskrywer.) Hermina lewe ten minste tot 1744, want daar is 'n verwysing (CJ/2610) in die Kaapse argief vir 'n testament wat deur haar gemaak is. In die monsterrol vir 1733 op bladsy 14 verskyn die naam (as Jan Hendrik Coenradi) van die stamouers se eerste seun Johannes Hendrik wat nou reeds 'n jongman van ongeveer 23 jaar ouderdom was: \"Jan Hendrik Coenradi\" nou hier gelys as b1. as die tweede geslag:",
+      "note": "",
+      "occupation": "",
+      "events": [],
+      "fs_id": "",
+      "wt_id": "Harmse-20"
+    }
+  },
+  {
+    "tyd": "2026-07-31T12:59:47.505Z",
+    "volgorde": 8,
+    "rekord_id": "I3",
+    "naam": "Frederik Hendrik CONRADIE",
+    "tipe": "huwelik-wysiging",
+    "wysigings": {
+      "marr_dates[0]": {
+        "oud": "~1764",
+        "nuut": "1762-10-10"
+      }
+    },
+    "rekord_na": {
+      "id": "I3",
+      "ref": "0003",
+      "name": "Frederik Hendrik CONRADIE",
+      "given": "Frederik Hendrik",
+      "surname": "CONRADIE",
+      "sex": "M",
+      "family_code": "c1",
+      "branch": "c1",
+      "branch_path": [
+        "b1",
+        "c1"
+      ],
+      "generation": 2,
+      "uncertain": false,
+      "nickname": "",
+      "birth_date": "~1740",
+      "birth_year": 1740,
+      "birth_place": "",
+      "birth_circa": false,
+      "death_date": "1807",
+      "death_year": 1807,
+      "death_place": "",
+      "burial_place": "",
+      "baptism_date": "",
+      "baptism_place": "",
+      "is_spouse": false,
+      "spouses": [
+        {
+          "id": "S3",
+          "name": "Elizabeth ROSSOUW",
+          "birth_date": "1746",
+          "birth_year": 1746,
+          "divorce_date": "",
+          "divorced": false
+        }
+      ],
+      "children_ids": [
+        "I4",
+        "I5",
+        "I449",
+        "I450",
+        "I451",
+        "I1088",
+        "I1089",
+        "I1094",
+        "I1830",
+        "I2204",
+        "I2723",
+        "I2724"
+      ],
+      "parents": [],
+      "marr_dates": [
+        "1762-10-10"
+      ],
+      "marr_places": [
+        ""
+      ],
+      "divorce_date": "",
+      "divorced": false,
+      "maiden_name": "",
+      "narrative": "Hy was die eerste Conradie wat op die plaas Harmonie in die Koo wes van die huidige Montagu gaan boer het. Die soldaat, wetenskaplike en ontdekkingsreisiger Robert Jacob Gordon het op een van sy reise in 1778 by die Conradies op Harmonie aangedoen. Gordon het die aand van 3 Desember 1778 in die donker verdwaal, en om 10 nm by \"Coenradi\" se plaas \"Harmonie\" uitgekom waar hy die nag oorgebly het. Hy is die volgende dag weer voort na sy wa wat in die veld vasgesit het. Van die boervrou \"Coenradi\" het hy 'n \"regte wilde vark, met snytande in die kaak, soos van die varke in Europa\" as 'n geskenk ontvang (duidelik 'n vlakvark). Soos sy pa en broers, was Frederik ook 'n bedrywige man - volgens die \"Wildschutte Boeken\" se indekskaarte in die Kaapse Argief, het Frederik op 10 September 1762 'n leningsplaas \"Nooyt Gedagt\" langs die Buffelsrivier geokkupieer, maar 'n jaar later het hy dit weer verlaat. Nog 'n rekord in die \"Wildschutte Boeken\" toon dat Frederik op 14 December 1762 die leningsplaas \"Elands Fonteyn\" geleë in die \"Camdebos Ruggens\" in die gebied suid van Graaff- Reinet geokkopieer het. Hy het dit in 1784 verlaat. Robert Gordon meld nie Frederik se naam of teenwoordigheid in sy dagboek nie, en dit is goed moontlik dat Frederik weg was na een van sy veeposte toe Gordon die nag by Harmonie verdwaal het - hy meld net dat hy op Harmonie oornag het en dat die boervrou die vlakvark aan hom geskenk het. [Bron: Robert Jacob Gordon - Cape Travels, 1777 to 1786]",
+      "note": "",
+      "occupation": "",
+      "events": [],
+      "fs_id": "",
+      "wt_id": ""
+    }
+  },
+  {
+    "tyd": "2026-07-31T12:59:47.505Z",
+    "volgorde": 9,
+    "rekord_id": "S3",
+    "naam": "Elizabeth ROSSOUW",
+    "tipe": "wysiging",
+    "wysigings": {
+      "death_date": {
+        "oud": "",
+        "nuut": "1806"
+      },
+      "death_year": {
+        "oud": "",
+        "nuut": 1806
+      }
+    },
+    "rekord_na": {
+      "id": "S3",
+      "ref": "0003",
+      "name": "Elizabeth ROSSOUW",
+      "given": "Elizabeth",
+      "surname": "ROSSOUW",
+      "sex": "F",
+      "family_code": "",
+      "branch": "",
+      "branch_path": [],
+      "generation": 0,
+      "uncertain": false,
+      "nickname": "",
+      "birth_date": "1746",
+      "birth_year": 1746,
+      "birth_place": "",
+      "birth_circa": false,
+      "death_date": "1806",
+      "death_year": 1806,
+      "death_place": "",
+      "burial_place": "",
+      "baptism_date": "",
+      "baptism_place": "",
+      "is_spouse": true,
+      "spouses": [
+        {
+          "id": "I3",
+          "name": "Frederik Hendrik CONRADIE",
+          "birth_date": "c.1740",
+          "birth_year": 1740,
+          "divorce_date": "",
+          "divorced": false
+        }
+      ],
+      "children_ids": [
+        "I4",
+        "I5",
+        "I449",
+        "I450",
+        "I451",
+        "I1088",
+        "I1089",
+        "I1094",
+        "I1830",
+        "I2204",
+        "I2723",
+        "I2724"
+      ],
+      "parents": [],
+      "marr_dates": [
+        "~1764"
+      ],
+      "marr_places": [
+        ""
+      ],
+      "divorce_date": "",
+      "divorced": false,
+      "maiden_name": "",
+      "narrative": "Hy was die eerste Conradie wat op die plaas Harmonie in die Koo wes van die huidige Montagu gaan boer het. Die soldaat, wetenskaplike en ontdekkingsreisiger Robert Jacob Gordon het op een van sy reise in 1778 by die Conradies op Harmonie aangedoen. Gordon het die aand van 3 Desember 1778 in die donker verdwaal, en om 10 nm by \"Coenradi\" se plaas \"Harmonie\" uitgekom waar hy die nag oorgebly het. Hy is die volgende dag weer voort na sy wa wat in die veld vasgesit het. Van die boervrou \"Coenradi\" het hy 'n \"regte wilde vark, met snytande in die kaak, soos van die varke in Europa\" as 'n geskenk ontvang (duidelik 'n vlakvark). Soos sy pa en broers, was Frederik ook 'n bedrywige man - volgens die \"Wildschutte Boeken\" se indekskaarte in die Kaapse Argief, het Frederik op 10 September 1762 'n leningsplaas \"Nooyt Gedagt\" langs die Buffelsrivier geokkupieer, maar 'n jaar later het hy dit weer verlaat. Nog 'n rekord in die \"Wildschutte Boeken\" toon dat Frederik op 14 December 1762 die leningsplaas \"Elands Fonteyn\" geleë in die \"Camdebos Ruggens\" in die gebied suid van Graaff- Reinet geokkopieer het. Hy het dit in 1784 verlaat. Robert Gordon meld nie Frederik se naam of teenwoordigheid in sy dagboek nie, en dit is goed moontlik dat Frederik weg was na een van sy veeposte toe Gordon die nag by Harmonie verdwaal het - hy meld net dat hy op Harmonie oornag het en dat die boervrou die vlakvark aan hom geskenk het. [Bron: Robert Jacob Gordon - Cape Travels, 1777 to 1786]",
+      "note": "",
+      "occupation": "",
+      "events": [],
+      "fs_id": "",
+      "wt_id": ""
+    }
+  },
+  {
+    "tyd": "2026-07-31T12:59:47.505Z",
+    "volgorde": 10,
+    "rekord_id": "I3",
+    "naam": "Frederik Hendrik CONRADIE",
+    "tipe": "wysiging",
+    "wysigings": {
+      "death_year": {
+        "oud": "1807",
+        "nuut": 1807
+      },
+      "note": {
+        "oud": "Huweliksdatum nie bevestig nie — geraamde waarde (c. 1764) bereken uit vroegste kind se geboortejaar (1765).",
+        "nuut": ""
+      }
+    },
+    "rekord_na": {
+      "id": "I3",
+      "ref": "0003",
+      "name": "Frederik Hendrik CONRADIE",
+      "given": "Frederik Hendrik",
+      "surname": "CONRADIE",
+      "sex": "M",
+      "family_code": "c1",
+      "branch": "c1",
+      "branch_path": [
+        "b1",
+        "c1"
+      ],
+      "generation": 2,
+      "uncertain": false,
+      "nickname": "",
+      "birth_date": "~1740",
+      "birth_year": 1740,
+      "birth_place": "",
+      "birth_circa": false,
+      "death_date": "1807",
+      "death_year": 1807,
+      "death_place": "",
+      "burial_place": "",
+      "baptism_date": "",
+      "baptism_place": "",
+      "is_spouse": false,
+      "spouses": [
+        {
+          "id": "S3",
+          "name": "Elizabeth ROSSOUW",
+          "birth_date": "1746",
+          "birth_year": 1746,
+          "divorce_date": "",
+          "divorced": false
+        }
+      ],
+      "children_ids": [
+        "I4",
+        "I5",
+        "I449",
+        "I450",
+        "I451",
+        "I1088",
+        "I1089",
+        "I1094",
+        "I1830",
+        "I2204",
+        "I2723",
+        "I2724"
+      ],
+      "parents": [],
+      "marr_dates": [
+        "1762-10-10"
+      ],
+      "marr_places": [
+        ""
+      ],
+      "divorce_date": "",
+      "divorced": false,
+      "maiden_name": "",
+      "narrative": "Hy was die eerste Conradie wat op die plaas Harmonie in die Koo wes van die huidige Montagu gaan boer het. Die soldaat, wetenskaplike en ontdekkingsreisiger Robert Jacob Gordon het op een van sy reise in 1778 by die Conradies op Harmonie aangedoen. Gordon het die aand van 3 Desember 1778 in die donker verdwaal, en om 10 nm by \"Coenradi\" se plaas \"Harmonie\" uitgekom waar hy die nag oorgebly het. Hy is die volgende dag weer voort na sy wa wat in die veld vasgesit het. Van die boervrou \"Coenradi\" het hy 'n \"regte wilde vark, met snytande in die kaak, soos van die varke in Europa\" as 'n geskenk ontvang (duidelik 'n vlakvark). Soos sy pa en broers, was Frederik ook 'n bedrywige man - volgens die \"Wildschutte Boeken\" se indekskaarte in die Kaapse Argief, het Frederik op 10 September 1762 'n leningsplaas \"Nooyt Gedagt\" langs die Buffelsrivier geokkupieer, maar 'n jaar later het hy dit weer verlaat. Nog 'n rekord in die \"Wildschutte Boeken\" toon dat Frederik op 14 December 1762 die leningsplaas \"Elands Fonteyn\" geleë in die \"Camdebos Ruggens\" in die gebied suid van Graaff- Reinet geokkopieer het. Hy het dit in 1784 verlaat. Robert Gordon meld nie Frederik se naam of teenwoordigheid in sy dagboek nie, en dit is goed moontlik dat Frederik weg was na een van sy veeposte toe Gordon die nag by Harmonie verdwaal het - hy meld net dat hy op Harmonie oornag het en dat die boervrou die vlakvark aan hom geskenk het. [Bron: Robert Jacob Gordon - Cape Travels, 1777 to 1786]",
+      "note": "",
+      "occupation": "",
+      "events": [],
+      "fs_id": "",
+      "wt_id": ""
+    }
   }
 ]

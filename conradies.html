@@ -7812,11 +7812,14 @@ function attachCorrectionListeners() {
       if (!r.spouses || !r.spouses.length) return;
 
       r.spouses.forEach(function(sp, i) {
-        // C-C huwelik: gade se ID begin met 'I'
-        if (!sp.id || sp.id.charAt(0) !== 'I') return;
+        // C-C huwelik: gade (S-rekord) se van is Conradie
+        if (!sp.id) return;
         var gade = indexById[sp.id];
         if (!gade) return;
         if (gade.merged_into) return;
+        var isCC = (gade.surname && gade.surname.toLowerCase() === 'conradie')
+                || (gade.name && gade.name.toUpperCase().indexOf('CONRADIE') >= 0);
+        if (!isCC) return;
 
         var huwDatum = (r.marr_dates && r.marr_dates[i]) ? r.marr_dates[i] : '';
         var huwPlek  = (r.marr_places && r.marr_places[i]) ? r.marr_places[i] : '';

@@ -8455,5 +8455,582 @@
       "fs_id": "LBWK-154",
       "wt_id": "Conradie-1178"
     }
+  },
+  {
+    "tyd": "2026-07-31T14:32:38.495Z",
+    "volgorde": 1,
+    "rekord_id": "I2725",
+    "naam": "Pieter Jacobus CONRADIE",
+    "tipe": "wysiging",
+    "wysigings": {
+      "wt_id": {
+        "oud": "",
+        "nuut": "Conradi-89"
+      }
+    },
+    "rekord_na": {
+      "id": "I2725",
+      "ref": "2725",
+      "name": "Pieter Jacobus CONRADIE",
+      "given": "Pieter Jacobus",
+      "surname": "CONRADIE",
+      "sex": "M",
+      "family_code": "c2",
+      "branch": "c2",
+      "branch_path": [
+        "b1",
+        "c2"
+      ],
+      "generation": 2,
+      "uncertain": false,
+      "nickname": "",
+      "birth_date": "1744-02-23",
+      "birth_year": 1744,
+      "birth_place": "",
+      "birth_circa": false,
+      "death_date": "",
+      "death_year": null,
+      "death_place": "",
+      "burial_place": "",
+      "baptism_date": "",
+      "baptism_place": "",
+      "is_spouse": false,
+      "spouses": [
+        {
+          "id": "S2725",
+          "name": "Catharina Maria VILJOEN",
+          "birth_date": "",
+          "birth_year": null,
+          "divorce_date": "",
+          "divorced": false
+        }
+      ],
+      "children_ids": [
+        "I2726",
+        "I2727",
+        "I2728",
+        "I2729",
+        "I3748",
+        "I4569"
+      ],
+      "parents": [],
+      "marr_dates": [
+        "1767-04-02"
+      ],
+      "marr_places": [
+        ""
+      ],
+      "divorce_date": "",
+      "divorced": false,
+      "maiden_name": "",
+      "narrative": "",
+      "note": "Hy boer op Nieuw Munster en word die stamvader van die Ceres Conradies. Baie nasate later by Richmond, Murraysburg en elders in die Karoo.",
+      "occupation": "",
+      "events": [],
+      "fs_id": "",
+      "wt_id": "Conradi-89"
+    }
+  },
+  {
+    "tyd": "2026-07-31T14:32:38.495Z",
+    "volgorde": 2,
+    "rekord_id": "I2725",
+    "naam": "Pieter Jacobus CONRADIE",
+    "tipe": "huwelik-wysiging",
+    "wysigings": {
+      "marr_dates[0]": {
+        "oud": "~1768",
+        "nuut": "1767-04-02"
+      }
+    },
+    "rekord_na": {
+      "id": "I2725",
+      "ref": "2725",
+      "name": "Pieter Jacobus CONRADIE",
+      "given": "Pieter Jacobus",
+      "surname": "CONRADIE",
+      "sex": "M",
+      "family_code": "c2",
+      "branch": "c2",
+      "branch_path": [
+        "b1",
+        "c2"
+      ],
+      "generation": 2,
+      "uncertain": false,
+      "nickname": "",
+      "birth_date": "1744-02-23",
+      "birth_year": 1744,
+      "birth_place": "",
+      "birth_circa": false,
+      "death_date": "",
+      "death_year": null,
+      "death_place": "",
+      "burial_place": "",
+      "baptism_date": "",
+      "baptism_place": "",
+      "is_spouse": false,
+      "spouses": [
+        {
+          "id": "S2725",
+          "name": "Catharina Maria VILJOEN",
+          "birth_date": "",
+          "birth_year": null,
+          "divorce_date": "",
+          "divorced": false
+        }
+      ],
+      "children_ids": [
+        "I2726",
+        "I2727",
+        "I2728",
+        "I2729",
+        "I3748",
+        "I4569"
+      ],
+      "parents": [],
+      "marr_dates": [
+        "1767-04-02"
+      ],
+      "marr_places": [
+        ""
+      ],
+      "divorce_date": "",
+      "divorced": false,
+      "maiden_name": "",
+      "narrative": "",
+      "note": "Hy boer op Nieuw Munster en word die stamvader van die Ceres Conradies. Baie nasate later by Richmond, Murraysburg en elders in die Karoo.",
+      "occupation": "",
+      "events": [],
+      "fs_id": "",
+      "wt_id": "Conradi-89"
+    }
+  },
+  {
+    "tyd": "2026-07-31T14:32:38.495Z",
+    "volgorde": 3,
+    "rekord_id": "I3748",
+    "naam": "Willem Johannes CONRADIE",
+    "tipe": "wysiging",
+    "wysigings": {
+      "death_year": {
+        "oud": "1851",
+        "nuut": 1851
+      },
+      "note": {
+        "oud": "Huweliksdatum nie bevestig nie — geraamde waarde (c. 1799) bereken uit vroegste kind se geboortejaar (1800).",
+        "nuut": ""
+      }
+    },
+    "rekord_na": {
+      "id": "I3748",
+      "ref": "3748",
+      "name": "Willem Johannes CONRADIE",
+      "given": "Willem Johannes",
+      "surname": "CONRADIE",
+      "sex": "M",
+      "family_code": "c2d5",
+      "branch": "c2",
+      "branch_path": [
+        "b1",
+        "c2",
+        "c2d5"
+      ],
+      "generation": 3,
+      "uncertain": false,
+      "nickname": "",
+      "birth_date": "1776",
+      "birth_year": 1776,
+      "birth_place": "",
+      "birth_circa": false,
+      "death_date": "1851",
+      "death_year": 1851,
+      "death_place": "by Richmond?",
+      "burial_place": "",
+      "baptism_date": "",
+      "baptism_place": "",
+      "is_spouse": false,
+      "spouses": [
+        {
+          "id": "S3748",
+          "name": "Johanna Catharina VAN DER MERWE",
+          "birth_date": "",
+          "birth_year": null,
+          "divorce_date": "",
+          "divorced": false
+        },
+        {
+          "id": "S7290",
+          "name": "Anna Susanna NAUDE",
+          "birth_date": "",
+          "birth_year": null,
+          "divorce_date": "",
+          "divorced": false
+        }
+      ],
+      "children_ids": [
+        "I3749",
+        "I4184",
+        "I4268",
+        "I4269",
+        "I4295",
+        "I4296",
+        "I4472",
+        "I4498",
+        "I4499",
+        "I4541",
+        "I4542",
+        "I4543",
+        "I4544"
+      ],
+      "parents": [
+        {
+          "id": "I2725",
+          "name": "Pieter Jacobus CONRADIE",
+          "role": "father"
+        },
+        {
+          "id": "S2725",
+          "name": "Catharina Maria VILJOEN",
+          "role": "mother"
+        }
+      ],
+      "marr_dates": [
+        "1807-05-10",
+        "1798-09-09"
+      ],
+      "marr_places": [
+        "",
+        ""
+      ],
+      "divorce_date": "",
+      "divorced": false,
+      "maiden_name": "",
+      "narrative": "Anna Susanna is d.v. Jacob NAUDE - sy trou weer op 03-03-1811 met Christiaan BOTMA; e4 is gebore ongeveer 6 mnde na d5 se 2de huwelik. Getroud met Anna Susanna NAUDE op 1798-09-09.",
+      "note": "",
+      "occupation": "",
+      "events": [],
+      "fs_id": "",
+      "wt_id": "Conradie-52",
+      "huwelik": "Anna Susanna NAUDE (1798-09-09)"
+    }
+  },
+  {
+    "tyd": "2026-07-31T14:32:38.495Z",
+    "volgorde": 4,
+    "rekord_id": "I3748",
+    "naam": "Willem Johannes CONRADIE",
+    "tipe": "huwelik-wysiging",
+    "wysigings": {
+      "marr_dates[0]": {
+        "oud": "~1799",
+        "nuut": "1807-05-10"
+      }
+    },
+    "rekord_na": {
+      "id": "I3748",
+      "ref": "3748",
+      "name": "Willem Johannes CONRADIE",
+      "given": "Willem Johannes",
+      "surname": "CONRADIE",
+      "sex": "M",
+      "family_code": "c2d5",
+      "branch": "c2",
+      "branch_path": [
+        "b1",
+        "c2",
+        "c2d5"
+      ],
+      "generation": 3,
+      "uncertain": false,
+      "nickname": "",
+      "birth_date": "1776",
+      "birth_year": 1776,
+      "birth_place": "",
+      "birth_circa": false,
+      "death_date": "1851",
+      "death_year": 1851,
+      "death_place": "by Richmond?",
+      "burial_place": "",
+      "baptism_date": "",
+      "baptism_place": "",
+      "is_spouse": false,
+      "spouses": [
+        {
+          "id": "S3748",
+          "name": "Johanna Catharina VAN DER MERWE",
+          "birth_date": "",
+          "birth_year": null,
+          "divorce_date": "",
+          "divorced": false
+        },
+        {
+          "id": "S7290",
+          "name": "Anna Susanna NAUDE",
+          "birth_date": "",
+          "birth_year": null,
+          "divorce_date": "",
+          "divorced": false
+        }
+      ],
+      "children_ids": [
+        "I3749",
+        "I4184",
+        "I4268",
+        "I4269",
+        "I4295",
+        "I4296",
+        "I4472",
+        "I4498",
+        "I4499",
+        "I4541",
+        "I4542",
+        "I4543",
+        "I4544"
+      ],
+      "parents": [
+        {
+          "id": "I2725",
+          "name": "Pieter Jacobus CONRADIE",
+          "role": "father"
+        },
+        {
+          "id": "S2725",
+          "name": "Catharina Maria VILJOEN",
+          "role": "mother"
+        }
+      ],
+      "marr_dates": [
+        "1807-05-10",
+        "1798-09-09"
+      ],
+      "marr_places": [
+        "",
+        ""
+      ],
+      "divorce_date": "",
+      "divorced": false,
+      "maiden_name": "",
+      "narrative": "Anna Susanna is d.v. Jacob NAUDE - sy trou weer op 03-03-1811 met Christiaan BOTMA; e4 is gebore ongeveer 6 mnde na d5 se 2de huwelik. Getroud met Anna Susanna NAUDE op 1798-09-09.",
+      "note": "",
+      "occupation": "",
+      "events": [],
+      "fs_id": "",
+      "wt_id": "Conradie-52",
+      "huwelik": "Anna Susanna NAUDE (1798-09-09)"
+    }
+  },
+  {
+    "tyd": "2026-07-31T14:32:38.495Z",
+    "volgorde": 5,
+    "rekord_id": "I3748",
+    "naam": "Willem Johannes CONRADIE",
+    "tipe": "nuwe_huwelik_gade",
+    "wysigings": {
+      "huwelik": {
+        "nuut": "Anna Susanna NAUDE (1798-09-09)"
+      }
+    },
+    "rekord_na": {
+      "id": "I3748",
+      "ref": "3748",
+      "name": "Willem Johannes CONRADIE",
+      "given": "Willem Johannes",
+      "surname": "CONRADIE",
+      "sex": "M",
+      "family_code": "c2d5",
+      "branch": "c2",
+      "branch_path": [
+        "b1",
+        "c2",
+        "c2d5"
+      ],
+      "generation": 3,
+      "uncertain": false,
+      "nickname": "",
+      "birth_date": "1776",
+      "birth_year": 1776,
+      "birth_place": "",
+      "birth_circa": false,
+      "death_date": "1851",
+      "death_year": 1851,
+      "death_place": "by Richmond?",
+      "burial_place": "",
+      "baptism_date": "",
+      "baptism_place": "",
+      "is_spouse": false,
+      "spouses": [
+        {
+          "id": "S3748",
+          "name": "Johanna Catharina VAN DER MERWE",
+          "birth_date": "",
+          "birth_year": null,
+          "divorce_date": "",
+          "divorced": false
+        },
+        {
+          "id": "S7290",
+          "name": "Anna Susanna NAUDE",
+          "birth_date": "",
+          "birth_year": null,
+          "divorce_date": "",
+          "divorced": false
+        }
+      ],
+      "children_ids": [
+        "I3749",
+        "I4184",
+        "I4268",
+        "I4269",
+        "I4295",
+        "I4296",
+        "I4472",
+        "I4498",
+        "I4499",
+        "I4541",
+        "I4542",
+        "I4543",
+        "I4544"
+      ],
+      "parents": [
+        {
+          "id": "I2725",
+          "name": "Pieter Jacobus CONRADIE",
+          "role": "father"
+        },
+        {
+          "id": "S2725",
+          "name": "Catharina Maria VILJOEN",
+          "role": "mother"
+        }
+      ],
+      "marr_dates": [
+        "1807-05-10",
+        "1798-09-09"
+      ],
+      "marr_places": [
+        "",
+        ""
+      ],
+      "divorce_date": "",
+      "divorced": false,
+      "maiden_name": "",
+      "narrative": "Anna Susanna is d.v. Jacob NAUDE - sy trou weer op 03-03-1811 met Christiaan BOTMA; e4 is gebore ongeveer 6 mnde na d5 se 2de huwelik. Getroud met Anna Susanna NAUDE op 1798-09-09.",
+      "note": "",
+      "occupation": "",
+      "events": [],
+      "fs_id": "",
+      "wt_id": "Conradie-52",
+      "huwelik": "Anna Susanna NAUDE (1798-09-09)"
+    }
+  },
+  {
+    "tyd": "2026-07-31T14:32:38.495Z",
+    "volgorde": 6,
+    "rekord_id": "I3748",
+    "naam": "Willem Johannes CONRADIE",
+    "tipe": "wysiging",
+    "wysigings": {
+      "death_year": {
+        "oud": "1851",
+        "nuut": 1851
+      },
+      "wt_id": {
+        "oud": "",
+        "nuut": "Conradie-52"
+      }
+    },
+    "rekord_na": {
+      "id": "I3748",
+      "ref": "3748",
+      "name": "Willem Johannes CONRADIE",
+      "given": "Willem Johannes",
+      "surname": "CONRADIE",
+      "sex": "M",
+      "family_code": "c2d5",
+      "branch": "c2",
+      "branch_path": [
+        "b1",
+        "c2",
+        "c2d5"
+      ],
+      "generation": 3,
+      "uncertain": false,
+      "nickname": "",
+      "birth_date": "1776",
+      "birth_year": 1776,
+      "birth_place": "",
+      "birth_circa": false,
+      "death_date": "1851",
+      "death_year": 1851,
+      "death_place": "by Richmond?",
+      "burial_place": "",
+      "baptism_date": "",
+      "baptism_place": "",
+      "is_spouse": false,
+      "spouses": [
+        {
+          "id": "S3748",
+          "name": "Johanna Catharina VAN DER MERWE",
+          "birth_date": "",
+          "birth_year": null,
+          "divorce_date": "",
+          "divorced": false
+        },
+        {
+          "id": "S7290",
+          "name": "Anna Susanna NAUDE",
+          "birth_date": "",
+          "birth_year": null,
+          "divorce_date": "",
+          "divorced": false
+        }
+      ],
+      "children_ids": [
+        "I3749",
+        "I4184",
+        "I4268",
+        "I4269",
+        "I4295",
+        "I4296",
+        "I4472",
+        "I4498",
+        "I4499",
+        "I4541",
+        "I4542",
+        "I4543",
+        "I4544"
+      ],
+      "parents": [
+        {
+          "id": "I2725",
+          "name": "Pieter Jacobus CONRADIE",
+          "role": "father"
+        },
+        {
+          "id": "S2725",
+          "name": "Catharina Maria VILJOEN",
+          "role": "mother"
+        }
+      ],
+      "marr_dates": [
+        "1807-05-10",
+        "1798-09-09"
+      ],
+      "marr_places": [
+        "",
+        ""
+      ],
+      "divorce_date": "",
+      "divorced": false,
+      "maiden_name": "",
+      "narrative": "Anna Susanna is d.v. Jacob NAUDE - sy trou weer op 03-03-1811 met Christiaan BOTMA; e4 is gebore ongeveer 6 mnde na d5 se 2de huwelik. Getroud met Anna Susanna NAUDE op 1798-09-09.",
+      "note": "",
+      "occupation": "",
+      "events": [],
+      "fs_id": "",
+      "wt_id": "Conradie-52",
+      "huwelik": "Anna Susanna NAUDE (1798-09-09)"
+    }
   }
 ]

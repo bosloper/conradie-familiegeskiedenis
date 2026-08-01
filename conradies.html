@@ -4115,7 +4115,15 @@ function toonVoorvaderModal(id) {
     inhoud.innerHTML = ketting.map((stap, i) => {
       const isLaaste = i === ketting.length - 1;
       const naam = stap.persoon
-        ? `<span class="vv-naam" onclick="sluitVoorvaderModal();openPanel('${stap.persoon.id}')">${stap.persoon.name}</span>`
+        ? (() => {
+            const p = stap.persoon;
+            const gebJaar = p.birth_year || (p.birth_date ? p.birth_date.slice(0,4) : '');
+            const sterfJaar = p.death_year || (p.death_date ? p.death_date.slice(0,4) : '');
+            const jare = gebJaar || sterfJaar
+              ? ` <span style="font-size:0.78rem;color:var(--muted);font-style:italic;">(${gebJaar || '?'}–${sterfJaar || '?'})</span>`
+              : '';
+            return `<span class="vv-naam" onclick="sluitVoorvaderModal();openPanel('${p.id}')">${p.name}</span>${jare}`;
+          })()
         : `<span style="color:var(--muted);font-size:0.85rem">Onbekend</span>`;
       const leesKnoppie = (stap.persoon && stap.persoon.narrative)
         ? `<button onclick="sluitVoorvaderModal();openPanel('${stap.persoon.id}')" style="margin-left:0.6rem;padding:0.15rem 0.55rem;background:var(--sepia);color:var(--parchment);border:none;border-radius:3px;cursor:pointer;font-size:0.78rem;font-family:serif;vertical-align:middle;">&#128218; Lees meer</button>`
@@ -5256,7 +5264,7 @@ function attachCorrectionListeners() {
     var html = '<div style="max-width:720px;margin:0 auto;padding:1rem;">';
     html += '<div style="display:flex;align-items:baseline;gap:0.7rem;margin-bottom:0.9rem;">';
     html += '<h2 style="color:var(--sepia-light);font-size:1.2rem;margin:0;">✏️ Admin</h2>';
-    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-19-0</span>';
+    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-20-0</span>';
     html += '</div>';
 
     // ── Publiek-inligtingspaneel (standaard oop) ──

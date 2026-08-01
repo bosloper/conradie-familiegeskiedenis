@@ -2459,7 +2459,20 @@ body.stamvader-aktief .tab-btn[data-tab="search"] {
       </div>
     </div>
 
-    <!-- ── 6. STUUR KNOPPIES ── -->
+    <!-- ── 6. DEEL-OPSIES + STUUR KNOPPIES ── -->
+    <div style="margin-bottom:0.6rem;padding:0.5rem 0.6rem;background:#1a1208;border:1px solid #3d3020;border-radius:5px;">
+      <div style="font-size:0.75rem;color:#8a7a5a;margin-bottom:0.35rem;">Sluit in by boodskap:</div>
+      <div style="display:flex;flex-wrap:wrap;gap:0.4rem 1rem;font-size:0.82rem;color:#c8b890;">
+        <label style="display:flex;align-items:center;gap:0.3rem;cursor:pointer;">
+          <input type="checkbox" id="deel-opsie-narratief" checked> Narratief</label>
+        <label style="display:flex;align-items:center;gap:0.3rem;cursor:pointer;">
+          <input type="checkbox" id="deel-opsie-nota" checked> Nota</label>
+        <label style="display:flex;align-items:center;gap:0.3rem;cursor:pointer;">
+          <input type="checkbox" id="deel-opsie-tydlyn" checked> Tydlyn</label>
+        <label style="display:flex;align-items:center;gap:0.3rem;cursor:pointer;">
+          <input type="checkbox" id="deel-opsie-voorvader" checked> Voorvaderketting</label>
+      </div>
+    </div>
     <div class="vm-stuur-knoppies">
       <button class="vm-btn vm-btn-wa" onclick="vmStuurWA(false)">
         💬 WhatsApp (App)
@@ -4936,6 +4949,51 @@ function vmBouBoodskap(nuutPersAppart) {
   if (kontriKode)    msg += 'INDIENER_KODE: '    + kontriKode   + '\n';
   if (kontriKontak)  msg += 'INDIENER_KONTAK: '  + kontriKontak + '\n';
 
+  // Konteks-afdelings (opsioneel via skakelaars)
+  var deelOpsNarr = document.getElementById('deel-opsie-narratief');
+  var deelOpsNota = document.getElementById('deel-opsie-nota');
+  var deelOpsTydl = document.getElementById('deel-opsie-tydlyn');
+  var deelOpsVv   = document.getElementById('deel-opsie-voorvader');
+
+  if (deelOpsNarr && deelOpsNarr.checked && r.narrative) {
+    msg += '---\nNARRATIEF:\n' + r.narrative + '\n';
+  }
+  if (deelOpsNota && deelOpsNota.checked && r.note) {
+    msg += '---\nNOTA:\n' + r.note + '\n';
+  }
+  if (deelOpsTydl && deelOpsTydl.checked) {
+    var tydlLyne = [];
+    function _jU(s) { if (!s) return null; var m = String(s).match(/\d{4}/); return m ? +m[0] : null; }
+    function _dl(s) { return s ? s.replace(/^(\d{4})-(\d{2})-(\d{2})$/,'$3/$2/$1').replace(/^(\d{4})-(\d{2})$/,'$2/$1').replace(/^~(\d{4})$/,'omstreeks $1') : ''; }
+    if (r.birth_date||r.birth_year) tydlLyne.push((_jU(r.birth_date)||r.birth_year||'?') + ' Gebore' + (r.birth_place ? ', '+r.birth_place : ''));
+    if (r.spouses) r.spouses.forEach(function(sp,i) {
+      var md = r.marr_dates && r.marr_dates[i] ? r.marr_dates[i] : null;
+      tydlLyne.push((_jU(md)||'?') + ' Getroud: ' + sp.name);
+    });
+    if (r.death_date||r.death_year) tydlLyne.push((_jU(r.death_date)||r.death_year||'?') + ' Oorlede' + (r.death_place ? ', '+r.death_place : ''));
+    if (r.events) r.events.forEach(function(ev) {
+      var _evT = window.CONRADIE_EVENT_TIPES || [];
+      var t = _evT.find(function(x){return x.kode===ev.type;});
+      if (!t||!t.printbaar) return;
+      tydlLyne.push((ev.year||'?') + ' ' + (t.naam||ev.type) + (ev.text?' — '+ev.text:''));
+    });
+    if (tydlLyne.length) msg += '---\nTYDLYN:\n' + tydlLyne.join('\n') + '\n';
+  }
+  if (deelOpsVv && deelOpsVv.checked) {
+    var vvKetting = bouwVoorvaderKetting(r.id);
+    if (vvKetting && vvKetting.length > 1) {
+      var vvLyne = vvKetting.map(function(stap, vi) {
+        var p = stap.persoon;
+        var pNaam = p ? (p.name||'?') : 'Onbekend';
+        var gebJ = p ? (p.birth_year||(p.birth_date?p.birth_date.slice(0,4):'')) : '';
+        var sterfJ = p ? (p.death_year||(p.death_date?p.death_date.slice(0,4):'')) : '';
+        var jare = (gebJ||sterfJ) ? ' ('+(gebJ||'?')+'–'+(sterfJ||'?')+')' : '';
+        return (vi+1) + '. ' + pNaam + jare;
+      });
+      msg += '---\nVOORVADERKETTING:\n' + vvLyne.join('\n') + '\n';
+    }
+  }
+
   // Nuwe persoon (apart vir e-pos)
   if (nuutPersAppart) {
     var npNaam      = get('vm-np-naam');
@@ -5298,7 +5356,7 @@ function attachCorrectionListeners() {
     var html = '<div style="max-width:720px;margin:0 auto;padding:1rem;">';
     html += '<div style="display:flex;align-items:baseline;gap:0.7rem;margin-bottom:0.9rem;">';
     html += '<h2 style="color:var(--sepia-light);font-size:1.2rem;margin:0;">✏️ Admin</h2>';
-    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-21-0</span>';
+    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-22-0</span>';
     html += '</div>';
 
     // ── Publiek-inligtingspaneel (standaard oop) ──

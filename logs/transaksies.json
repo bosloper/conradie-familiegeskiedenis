@@ -10052,5 +10052,137 @@
       "fs_id": "",
       "wt_id": ""
     }
+  },
+  {
+    "tyd": "2026-08-01T21:09:27.539Z",
+    "volgorde": 1,
+    "rekord_id": "S4011",
+    "naam": "Hermanus MacDonald DE VRIES",
+    "tipe": "wysiging",
+    "wysigings": {
+      "wt_id": {
+        "oud": "",
+        "nuut": "De_Vries-4538"
+      }
+    },
+    "rekord_na": {
+      "id": "S4011",
+      "ref": "4011",
+      "name": "Hermanus MacDonald DE VRIES",
+      "given": "Hermanus MacDonald",
+      "surname": "DE VRIES",
+      "sex": "",
+      "family_code": "",
+      "branch": "",
+      "branch_path": [],
+      "generation": 0,
+      "uncertain": false,
+      "nickname": "Mac",
+      "birth_date": "1908-03-22",
+      "birth_year": 1908,
+      "birth_place": "Springbok, Namakwaland, Kaapkolonie",
+      "birth_circa": false,
+      "death_date": "1993-10-09",
+      "death_year": null,
+      "death_place": "Tweeling, OVS",
+      "burial_place": "TWEELING, OVS, hoofbegraafplaas",
+      "baptism_date": "",
+      "baptism_place": "",
+      "is_spouse": true,
+      "spouses": [
+        {
+          "id": "I4011",
+          "name": "Anna Maria CONRADIE",
+          "birth_date": "1916-06-04",
+          "birth_year": 1916,
+          "divorce_date": "",
+          "divorced": false
+        }
+      ],
+      "children_ids": [],
+      "parents": [],
+      "marr_dates": [
+        "1940-09-01"
+      ],
+      "marr_places": [
+        "Johannesburg. Transvaal"
+      ],
+      "divorce_date": "",
+      "divorced": false,
+      "maiden_name": "",
+      "narrative": "Ingetroude lid van die Conradie familie.",
+      "note": "Skoolopleiding op plaasskool in Namakwaland. Hy het as jong seun dikwels saam met die vee getrek agter weiding aan en was dikwels maande lank in die veld. Gedurende die \"Depressiejare\" ~1929 tot 1936, het hy saam met sy sy oom (sy moeder se jonger broer), Freddie Macdonald, transport gery vanaf Springbok en Upington na die Kalahari. Oom Freddie het later sy eie lewensreis geboekstaaf in 5 boeke onder die naam Kalahari Mac.",
+      "occupation": "Motorwerktuigkundige, motorhawe-eienaar, dorpsraadlid",
+      "district": "",
+      "events": [],
+      "fs_id": "GZLS-KS6",
+      "wt_id": "De_Vries-4538"
+    }
+  },
+  {
+    "tyd": "2026-08-01T21:09:27.539Z",
+    "volgorde": 2,
+    "rekord_id": "S4011",
+    "naam": "Hermanus MacDonald DE VRIES",
+    "tipe": "wysiging",
+    "wysigings": {
+      "note": {
+        "oud": "Skoolopleiding op plaasskool in Namakwaland. Hy het as jong seun dikwels saam met die vee getrek agter weiding aan en was dikwels maande lank in die veld.",
+        "nuut": "Skoolopleiding op plaasskool in Namakwaland. Hy het as jong seun dikwels saam met die vee getrek agter weiding aan en was dikwels maande lank in die veld. Gedurende die \"Depressiejare\" ~1929 tot 1936, het hy saam met sy sy oom (sy moeder se jonger broer), Freddie Macdonald, transport gery vanaf Springbok en Upington na die Kalahari. Oom Freddie het later sy eie lewensreis geboekstaaf in 5 boeke onder die naam Kalahari Mac."
+      }
+    },
+    "rekord_na": {
+      "id": "S4011",
+      "ref": "4011",
+      "name": "Hermanus MacDonald DE VRIES",
+      "given": "Hermanus MacDonald",
+      "surname": "DE VRIES",
+      "sex": "",
+      "family_code": "",
+      "branch": "",
+      "branch_path": [],
+      "generation": 0,
+      "uncertain": false,
+      "nickname": "Mac",
+      "birth_date": "1908-03-22",
+      "birth_year": 1908,
+      "birth_place": "Springbok, Namakwaland, Kaapkolonie",
+      "birth_circa": false,
+      "death_date": "1993-10-09",
+      "death_year": null,
+      "death_place": "Tweeling, OVS",
+      "burial_place": "TWEELING, OVS, hoofbegraafplaas",
+      "baptism_date": "",
+      "baptism_place": "",
+      "is_spouse": true,
+      "spouses": [
+        {
+          "id": "I4011",
+          "name": "Anna Maria CONRADIE",
+          "birth_date": "1916-06-04",
+          "birth_year": 1916,
+          "divorce_date": "",
+          "divorced": false
+        }
+      ],
+      "children_ids": [],
+      "parents": [],
+      "marr_dates": [
+        "1940-09-01"
+      ],
+      "marr_places": [
+        "Johannesburg. Transvaal"
+      ],
+      "divorce_date": "",
+      "divorced": false,
+      "maiden_name": "",
+      "narrative": "Ingetroude lid van die Conradie familie.",
+      "note": "Skoolopleiding op plaasskool in Namakwaland. Hy het as jong seun dikwels saam met die vee getrek agter weiding aan en was dikwels maande lank in die veld. Gedurende die \"Depressiejare\" ~1929 tot 1936, het hy saam met sy sy oom (sy moeder se jonger broer), Freddie Macdonald, transport gery vanaf Springbok en Upington na die Kalahari. Oom Freddie het later sy eie lewensreis geboekstaaf in 5 boeke onder die naam Kalahari Mac.",
+      "occupation": "Motorwerktuigkundige, motorhawe-eienaar, dorpsraadlid",
+      "district": "",
+      "events": [],
+      "fs_id": "GZLS-KS6",
+      "wt_id": "De_Vries-4538"
+    }
   }
 ]

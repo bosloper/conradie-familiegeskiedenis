@@ -9032,5 +9032,248 @@
       "wt_id": "Conradie-52",
       "huwelik": "Anna Susanna NAUDE (1798-09-09)"
     }
+  },
+  {
+    "tyd": "2026-08-01T08:34:51.892Z",
+    "volgorde": 1,
+    "rekord_id": "I2725",
+    "naam": "Pieter Jacobus CONRADIE",
+    "tipe": "wysiging",
+    "wysigings": {
+      "note": {
+        "oud": "Hy boer op Nieuw Munster en word die stamvader van die Ceres Conradies. Baie nasate later by Richmond, Murraysburg en elders in die Karoo.",
+        "nuut": "Baie nasate later by Richmond, Murraysburg en elders in die Karoo."
+      },
+      "narrative": {
+        "oud": "",
+        "nuut": "Hy boer op Nieuw Munster en word die stamvader van die Ceres Conradies."
+      }
+    },
+    "rekord_na": {
+      "id": "I2725",
+      "ref": "2725",
+      "name": "Pieter Jacobus CONRADIE",
+      "given": "Pieter Jacobus",
+      "surname": "CONRADIE",
+      "sex": "M",
+      "family_code": "c2",
+      "branch": "c2",
+      "branch_path": [
+        "b1",
+        "c2"
+      ],
+      "generation": 2,
+      "uncertain": false,
+      "nickname": "",
+      "birth_date": "1744-02-23",
+      "birth_year": 1744,
+      "birth_place": "",
+      "birth_circa": false,
+      "death_date": "",
+      "death_year": null,
+      "death_place": "",
+      "burial_place": "",
+      "baptism_date": "",
+      "baptism_place": "",
+      "is_spouse": false,
+      "spouses": [
+        {
+          "id": "S2725",
+          "name": "Catharina Maria VILJOEN",
+          "birth_date": "",
+          "birth_year": null,
+          "divorce_date": "",
+          "divorced": false
+        }
+      ],
+      "children_ids": [
+        "I2726",
+        "I2727",
+        "I2728",
+        "I2729",
+        "I3748",
+        "I4569"
+      ],
+      "parents": [],
+      "marr_dates": [
+        "1767-04-02"
+      ],
+      "marr_places": [
+        ""
+      ],
+      "divorce_date": "",
+      "divorced": false,
+      "maiden_name": "",
+      "narrative": "Hy boer op Nieuw Munster en word die stamvader van die Ceres Conradies.",
+      "note": "Baie nasate later by Richmond, Murraysburg en elders in die Karoo.",
+      "occupation": "",
+      "events": [],
+      "fs_id": "",
+      "wt_id": "Conradi-89"
+    }
+  },
+  {
+    "tyd": "2026-08-01T08:34:51.892Z",
+    "volgorde": 2,
+    "rekord_id": "I4011",
+    "naam": "Anna Maria CONRADIE",
+    "tipe": "wysiging",
+    "wysigings": {
+      "death_year": {
+        "oud": "1993",
+        "nuut": 1993
+      },
+      "note": {
+        "oud": "Sy begin haar opleiding as verpleegsuster in Bloemfontein begin kort na haar 19de verjaardag, wat op daardie stadium die minimum-ouderdom vir die beroep was. Na 3-jaar opleiding behaal sy ook haar kwalifikasie as kraamsuster in Port Elizabeth.\n\nSy en Mac trou in die jaar nadat sy haar opleiding voltooi het en sy was lank werksaam as Suster in Kakamas Hospitaal (Ongeveer 1940 tot 1954).\nIn 1954 koop Mac 'n suiwelplaas in Heidelberg, Tvl en hulle verhuis na Transvaal. Sy is verpleegsuster en kraamsuster by AG Visser-hospitaal in Heidelberg. Die gesin se seun word hier gebore.\nMac koop 'n vulstasie en werkswinkel in Greylingstad in 1969 en hul verhuis daarheen. Sy behartig die finansiële bestuur en administrasie van die besigheid.\nIn 1977 verhuis hulle na Tweeling waar sy 'n patentemedisyne-onderneming koop en bestuur. Mac en sy skoonseun bedryf 'n vulstasie en werkswinkel.",
+        "nuut": "Sy begin haar opleiding as verpleegsuster in Bloemfontein kort na haar 19de verjaardag, wat op daardie stadium die minimum-ouderdom vir die beroep was. Na 3-jaar opleiding behaal sy ook haar kwalifikasie as kraamsuster in Port Elizabeth.\n\nSy en Mac trou in die jaar nadat sy haar opleiding voltooi het en sy was lank werksaam as Suster in Kakamas Hospitaal (Ongeveer 1940 tot 1954).\n\nIn 1954 koop Mac 'n suiwelplaas in Heidelberg, Tvl en hulle verhuis na Transvaal. Sy is verpleegsuster en kraamsuster by AG Visser-hospitaal in Heidelberg. Die gesin se seun word hier gebore.\n\nMac koop 'n vulstasie en werkswinkel in Greylingstad in 1969 en hul verhuis daarheen. Sy behartig die finansiële bestuur en administrasie van die besigheid.\n\nIn 1977 verhuis hulle na Tweeling waar sy 'n patentemedisyne-onderneming koop en bestuur. Mac en sy skoonseun bedryf 'n vulstasie en werkswinkel."
+      }
+    },
+    "rekord_na": {
+      "id": "I4011",
+      "ref": "4011",
+      "name": "Anna Maria CONRADIE",
+      "given": "Anna Maria",
+      "surname": "CONRADIE",
+      "sex": "F",
+      "family_code": "c2d5e1f8g1h1i3",
+      "branch": "c2",
+      "branch_path": [
+        "b1",
+        "c2",
+        "c2d5",
+        "c2d5e1",
+        "c2d5e1f8",
+        "c2d5e1f8g1",
+        "c2d5e1f8g1h1",
+        "c2d5e1f8g1h1i3"
+      ],
+      "generation": 8,
+      "uncertain": false,
+      "nickname": "Annatjie",
+      "birth_date": "1916-06-04",
+      "birth_year": 1916,
+      "birth_place": "Kenhardt, Kaapprovinsie",
+      "birth_circa": false,
+      "death_date": "2005-08-02",
+      "death_year": 1993,
+      "death_place": "Springs, Gauteng",
+      "burial_place": "Veras, nis by NG Gemeente Springs-Oos",
+      "baptism_date": "",
+      "baptism_place": "",
+      "is_spouse": false,
+      "spouses": [
+        {
+          "id": "S4011",
+          "name": "Hermanus MacDonald DE VRIES",
+          "birth_date": "1908-03-22",
+          "birth_year": null,
+          "divorce_date": "",
+          "divorced": false
+        }
+      ],
+      "children_ids": [],
+      "parents": [
+        {
+          "id": "I4001",
+          "name": "Cornelius Johannes CONRADIE",
+          "role": "father"
+        },
+        {
+          "id": "S4001",
+          "name": "Maria Magdalena Elizabeth LACOCK",
+          "role": "mother"
+        }
+      ],
+      "marr_dates": [
+        "1940-09-01"
+      ],
+      "marr_places": [
+        "Johannesburg. Transvaal"
+      ],
+      "divorce_date": "",
+      "divorced": false,
+      "maiden_name": "",
+      "narrative": "",
+      "note": "Sy begin haar opleiding as verpleegsuster in Bloemfontein kort na haar 19de verjaardag, wat op daardie stadium die minimum-ouderdom vir die beroep was. Na 3-jaar opleiding behaal sy ook haar kwalifikasie as kraamsuster in Port Elizabeth.\n\nSy en Mac trou in die jaar nadat sy haar opleiding voltooi het en sy was lank werksaam as Suster in Kakamas Hospitaal (Ongeveer 1940 tot 1954).\n\nIn 1954 koop Mac 'n suiwelplaas in Heidelberg, Tvl en hulle verhuis na Transvaal. Sy is verpleegsuster en kraamsuster by AG Visser-hospitaal in Heidelberg. Die gesin se seun word hier gebore.\n\nMac koop 'n vulstasie en werkswinkel in Greylingstad in 1969 en hul verhuis daarheen. Sy behartig die finansiële bestuur en administrasie van die besigheid.\n\nIn 1977 verhuis hulle na Tweeling waar sy 'n patentemedisyne-onderneming koop en bestuur. Mac en sy skoonseun bedryf 'n vulstasie en werkswinkel.",
+      "occupation": "Verpleegkundige (verpleegsuster), boervrou, sakevrou",
+      "district": "",
+      "events": [
+        {
+          "year": "1933",
+          "type": "MATRIEK",
+          "text": "Matrikuleer aan Kakamas Hoërskool"
+        },
+        {
+          "year": "1938",
+          "type": "KWALIFIKASIE",
+          "text": "Voltooi opleiding en slaag alle eksamens om te kwalifiseer as Algemene Verpleegsuster"
+        },
+        {
+          "year": "1939",
+          "type": "KWALIFIKASIE",
+          "text": "Voltooi verderre opleiding en slaag alle eksamens om te kwalifiseer as Kraamsuster"
+        },
+        {
+          "year": "1940",
+          "type": "VERHUISING",
+          "text": "Eerste huis",
+          "bestemming": "Neilersdrif (naby Keimoes), Kaapprovinsie"
+        },
+        {
+          "year": "1941",
+          "type": "KIND_ANDER_VAN",
+          "text": "Mariaan",
+          "ander_van": "de Vries"
+        },
+        {
+          "year": "1943",
+          "type": "KIND_ANDER_VAN",
+          "text": "Charlotte Sonia",
+          "ander_van": "de Vries"
+        },
+        {
+          "year": "1954",
+          "type": "VERHUISING",
+          "text": "Koop plaas Bothaskraal",
+          "bestemming": "Heidelberg, Tvl"
+        },
+        {
+          "year": "1955",
+          "type": "KIND_ANDER_VAN",
+          "text": "Andries Petrus",
+          "ander_van": "de Vries"
+        },
+        {
+          "year": "1969",
+          "type": "VERHUISING",
+          "text": "Koop vulstasie en werkswinkel",
+          "bestemming": "Greylingstad, Tvl"
+        },
+        {
+          "year": "1969",
+          "type": "WERK",
+          "text": "Administratiewe Bestuurder by familiebesigheid in Greylingstad"
+        },
+        {
+          "year": "1977",
+          "type": "VERHUISING",
+          "text": "Koop Patente-medisynewinkel",
+          "bestemming": "Tweeling, OVS"
+        },
+        {
+          "year": "1977",
+          "type": "WERK",
+          "text": "Eienaar en bestuurder van eie onderneming"
+        },
+        {
+          "year": "1997",
+          "type": "VERHUISING",
+          "text": "Na oudste dogter",
+          "bestemming": "Endicott, Springs, Gauteng"
+        }
+      ],
+      "fs_id": "LBWK-154",
+      "wt_id": "Conradie-1178"
+    }
   }
 ]

@@ -735,6 +735,26 @@ main {
   border-top: 1px solid var(--sepia-light);
   margin: 0.6rem 0;
 }
+.sb-blok.gade {
+  background: #c47a8a;
+}
+.sb-blok.gade:hover { background: #a85f72; }
+.sb-blok .sb-dna-pct {
+  display: block;
+  font-size: 0.68rem;
+  opacity: 0.85;
+  margin-top: 0.1rem;
+}
+#sb-dna-knop {
+  position: absolute;
+  top: 0.7rem; right: 2.6rem;
+  background: none; border: none;
+  font-size: 1.1rem; cursor: pointer;
+  color: var(--muted);
+  padding: 0;
+  line-height: 1;
+}
+#sb-dna-knop.aktief { color: var(--forest); }
 
 /* Empty state */
 .empty-state {
@@ -2103,6 +2123,7 @@ body.stamvader-aktief .tab-btn[data-tab="search"] {
 <div id="stamboom-modal">
   <div id="stamboom-modal-boks">
     <button id="sb-sluit" onclick="sluitStamboomModal()">✕</button>
+    <button id="sb-dna-knop" onclick="sbToggleDna()" title="Wys DNA-persentasies">🧬</button>
     <h2>🌿 Mini-stamboom</h2>
     <div id="sb-inhoud"></div>
   </div>
@@ -4123,21 +4144,46 @@ function sluitStamboomModal() {
   document.getElementById('stamboom-modal').classList.remove('oop');
 }
 
-function bouStamboomBlok(rek, isHuidig) {
+window._sbDnaModus = false;
+window._sbHuidigeId = null;
+
+function sbToggleDna() {
+  window._sbDnaModus = !window._sbDnaModus;
+  var knop = document.getElementById('sb-dna-knop');
+  if (knop) knop.classList.toggle('aktief', window._sbDnaModus);
+  if (window._sbHuidigeId) toonStamboomModal(window._sbHuidigeId);
+}
+
+function bouStamboomBlok(rek, rol, parentIds) {
+  // rol: 'huidig' | 'ouer' | 'grootjgr' | 'broer' | 'halfbroer' | 'gade' | 'kind' | null
   if (!rek) {
     return '<span class="sb-blok onbekend">Onbekend</span>';
   }
-  var klas = 'sb-blok' + (isHuidig ? ' huidig' : '');
+  var klas = 'sb-blok';
+  if (rol === 'huidig') klas += ' huidig';
+  else if (rol === 'gade') klas += ' gade';
   var kortNaam = rek.given || rek.name || '?';
-  return '<button class="' + klas + '" onclick="sluitStamboomModal();openPanel(\'' + rek.id + '\')">' + kortNaam + '</button>';
+  var dnaHTML = '';
+  if (window._sbDnaModus) {
+    var pct = '';
+    if (rol === 'huidig') pct = '—';
+    else if (rol === 'ouer') pct = '50%';
+    else if (rol === 'grootjgr') pct = '25%';
+    else if (rol === 'broer') pct = '50%';
+    else if (rol === 'halfbroer') pct = '25%';
+    else if (rol === 'gade') pct = '0%';
+    else if (rol === 'kind') pct = '50%';
+    if (pct) dnaHTML = '<span class="sb-dna-pct">' + pct + '</span>';
+  }
+  return '<button class="' + klas + '" onclick="sluitStamboomModal();openPanel(\'' + rek.id + '\')">' + kortNaam + dnaHTML + '</button>';
 }
 
 function toonStamboomModal(id) {
   var r = indexById[id];
   if (!r) return;
+  window._sbHuidigeId = id;
 
   var rye = [];
-  var MAX_BROERS = 5; // persoon + 4 ander
 
   // --- RY 1: GROOTOUERS ---
   var grootouers = [];
@@ -4150,7 +4196,7 @@ function toonStamboomModal(id) {
     }
   });
   if (grootouers.length > 0) {
-    var goBlokke = grootouers.map(function(go) { return bouStamboomBlok(go, false); }).join('');
+    var goBlokke = grootouers.map(function(go) { return bouStamboomBlok(go, 'grootjgr'); }).join('');
     rye.push('<div class="sb-ry"><div class="sb-ry-titel">Grootouers</div><div class="sb-blokke">' + goBlokke + '</div></div>');
     rye.push('<hr class="sb-skeier">');
   }
@@ -4159,9 +4205,8 @@ function toonStamboomModal(id) {
   var ouers = r.parents || [];
   if (ouers.length > 0) {
     var ouerHTML = '<div class="sb-ry"><div class="sb-ry-titel">Ouers</div>';
-    // Groepeer as pare: aanvaar eerste twee as 'n paar (vader × moeder)
     var ouerBlokke = ouers.map(function(oRef) {
-      return bouStamboomBlok(indexById[oRef.id] || null, false);
+      return bouStamboomBlok(indexById[oRef.id] || null, 'ouer');
     });
     ouerHTML += '<div class="sb-paar">' + ouerBlokke.join('<span class="sb-kruis">×</span>') + '</div>';
     ouerHTML += '</div>';
@@ -4169,46 +4214,103 @@ function toonStamboomModal(id) {
     rye.push('<hr class="sb-skeier">');
   }
 
-  // --- RY 3: PERSOON + BROERS/SUSTERS ---
+  // --- RY 3: GESIN (broers/susters + persoon + gades) ---
+  // Bou broerslys met half-broer-deteksie
+  var rParentIds = (r.parents || []).map(function(p) { return p.id; });
   var broersLys = [];
   if (ouers.length > 0) {
     var eersteOuer = indexById[ouers[0].id];
     if (eersteOuer && eersteOuer.children_ids) {
       eersteOuer.children_ids.forEach(function(kId) {
-        if (kId !== id) broersLys.push(indexById[kId] || null);
+        if (kId === id) return;
+        var broer = indexById[kId];
+        if (!broer) { broersLys.push({ rek: null, rol: 'broer' }); return; }
+        var bParentIds = (broer.parents || []).map(function(p) { return p.id; });
+        var gedeeld = rParentIds.filter(function(pid) { return bParentIds.indexOf(pid) !== -1; }).length;
+        broersLys.push({ rek: broer, rol: gedeeld >= 2 ? 'broer' : 'halfbroer' });
       });
     }
   }
+
+  // Gades van die persoon
+  var gades = (r.spouses || []).map(function(sp) {
+    return indexById[sp.id] || null;
+  });
+
   var gesinsHTML = '<div class="sb-ry"><div class="sb-ry-titel">Gesin</div><div class="sb-blokke">';
-  gesinsHTML += bouStamboomBlok(r, true); // die persoon self
+  // Broers/susters voor die persoon (max 3)
   var sigbaar = 0;
-  for (var i = 0; i < broersLys.length && sigbaar < 4; i++) {
-    gesinsHTML += bouStamboomBlok(broersLys[i], false);
+  for (var i = 0; i < broersLys.length && sigbaar < 3; i++) {
+    gesinsHTML += bouStamboomBlok(broersLys[i].rek, broersLys[i].rol);
     sigbaar++;
   }
   var ekstra = broersLys.length - sigbaar;
+  // Persoon self
+  gesinsHTML += bouStamboomBlok(r, 'huidig');
+  // Gades
+  if (gades.length > 0) {
+    gades.forEach(function(gade) {
+      gesinsHTML += '<span class="sb-kruis">×</span>';
+      gesinsHTML += bouStamboomBlok(gade, 'gade');
+    });
+  }
   if (ekstra > 0) {
-    gesinsHTML += '<span class="sb-meer">+' + ekstra + ' meer</span>';
+    gesinsHTML += '<span class="sb-meer">+' + ekstra + ' meer broers/susters</span>';
   }
   gesinsHTML += '</div></div>';
   rye.push(gesinsHTML);
 
-  // --- RY 4: KINDERS ---
+  // --- RY 4+: KINDERS (per huwelik as veelhuwelik) ---
   if (r.children_ids && r.children_ids.length > 0) {
     rye.push('<hr class="sb-skeier">');
-    var kindHTML = '<div class="sb-ry"><div class="sb-ry-titel">Kinders</div><div class="sb-blokke">';
-    var kindSigbaar = 0;
-    for (var j = 0; j < r.children_ids.length && kindSigbaar < 6; j++) {
-      var kind = indexById[r.children_ids[j]];
-      kindHTML += bouStamboomBlok(kind || null, false);
-      kindSigbaar++;
+
+    // Groepeer kinders per gade
+    var kindGroepe = [];
+    if (gades.length <= 1) {
+      // Enkelvoudige huwelik — een groep, geen gade-titel
+      kindGroepe.push({ titel: 'Kinders', ids: r.children_ids });
+    } else {
+      // Veelhuwelik — groepeer per gade via kind se parents[]
+      gades.forEach(function(gade, gi) {
+        if (!gade) return;
+        var gadeKinders = r.children_ids.filter(function(kId) {
+          var kind = indexById[kId];
+          if (!kind) return false;
+          return (kind.parents || []).some(function(p) { return p.id === gade.id; });
+        });
+        if (gadeKinders.length > 0) {
+          var gadeTitel = 'Kinders (× ' + (gade.given || gade.name || 'Gade ' + (gi + 1)) + ')';
+          kindGroepe.push({ titel: gadeTitel, ids: gadeKinders });
+        }
+      });
+      // Kinders sonder koppelbare gade (onbekend)
+      var gekoppeld = kindGroepe.reduce(function(acc, g) { return acc.concat(g.ids); }, []);
+      var ongekoppeld = r.children_ids.filter(function(kId) { return gekoppeld.indexOf(kId) === -1; });
+      if (ongekoppeld.length > 0) {
+        kindGroepe.push({ titel: 'Kinders (gade onseker)', ids: ongekoppeld });
+      }
+      // Terugval: as groepering niks opgelewer het nie
+      if (kindGroepe.length === 0) {
+        kindGroepe.push({ titel: 'Kinders', ids: r.children_ids });
+      }
     }
-    var ekstraKinders = r.children_ids.length - kindSigbaar;
-    if (ekstraKinders > 0) {
-      kindHTML += '<span class="sb-meer">+' + ekstraKinders + ' meer</span>';
-    }
-    kindHTML += '</div></div>';
-    rye.push(kindHTML);
+
+    kindGroepe.forEach(function(groep, gi) {
+      if (gi > 0) rye.push('<hr class="sb-skeier">');
+      var kindHTML = '<div class="sb-ry"><div class="sb-ry-titel">' + groep.titel + '</div><div class="sb-blokke">';
+      var kindSigbaar = 0;
+      for (var j = 0; j < groep.ids.length && kindSigbaar < 6; j++) {
+        var kind = indexById[groep.ids[j]];
+        kindHTML += bouStamboomBlok(kind || null, 'kind');
+        kindSigbaar++;
+      }
+      var ekstraKinders = groep.ids.length - kindSigbaar;
+      if (ekstraKinders > 0) {
+        kindHTML += '<span class="sb-meer">+' + ekstraKinders + ' meer</span>';
+      }
+      kindHTML += '</div></div>';
+      rye.push(kindHTML);
+    });
   }
 
   var inhoud = document.getElementById('sb-inhoud');
@@ -5165,7 +5267,7 @@ function attachCorrectionListeners() {
     var html = '<div style="max-width:720px;margin:0 auto;padding:1rem;">';
     html += '<div style="display:flex;align-items:baseline;gap:0.7rem;margin-bottom:0.9rem;">';
     html += '<h2 style="color:var(--sepia-light);font-size:1.2rem;margin:0;">✏️ Admin</h2>';
-    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-18-0</span>';
+    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-19-0</span>';
     html += '</div>';
 
     // ── Publiek-inligtingspaneel (standaard oop) ──

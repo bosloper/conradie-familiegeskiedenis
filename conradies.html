@@ -3037,12 +3037,24 @@ function closePanel() {
 }
 
 function oopDrukSkerp(r) {
-  var html = buildDrukHTML(r);
-  document.getElementById('druk-skerp-inhoud').innerHTML = html;
+  window._drukRek = r;
+  drukHerbou();
   document.getElementById('druk-skerp').style.display = 'block';
   document.body.classList.add('druk-aktief');
   document.body.style.overflow = 'hidden';
   window.scrollTo(0, 0);
+}
+
+function drukHerbou() {
+  var r = window._drukRek;
+  if (!r) return;
+  var opsies = {
+    narratief: document.getElementById('druk-opsie-narratief') ? document.getElementById('druk-opsie-narratief').checked : true,
+    nota:      document.getElementById('druk-opsie-nota')      ? document.getElementById('druk-opsie-nota').checked      : true,
+    tydlyn:    document.getElementById('druk-opsie-tydlyn')    ? document.getElementById('druk-opsie-tydlyn').checked    : true,
+    voorvader: document.getElementById('druk-opsie-voorvader') ? document.getElementById('druk-opsie-voorvader').checked  : true
+  };
+  document.getElementById('druk-skerp-inhoud').innerHTML = buildDrukHTML(r, opsies);
 }
 
 function sluitDrukSkerp() {
@@ -3096,7 +3108,8 @@ function drukNou() {
   drukVenster.focus();
 }
 
-function buildDrukHTML(r) {
+function buildDrukHTML(r, opsies) {
+  opsies = opsies || { narratief: true, nota: true, tydlyn: true, voorvader: true };
   const esc = s => (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   const dl = s => s ? s.replace(/^(\d{4})-(\d{2})-(\d{2})$/, '$3/$2/$1')
                        .replace(/^(\d{4})-(\d{2})$/, '$2/$1')
@@ -3198,16 +3211,37 @@ function buildDrukHTML(r) {
     });
   }
   gebeure2.sort((a,b) => { if (!a.j&&!b.j) return 0; if (!a.j) return 1; if (!b.j) return -1; return a.j-b.j; });
-  if (gebeure2.length) {
+  if (opsies.tydlyn && gebeure2.length) {
     html += '<h2>Tydlyn</h2>';
     gebeure2.forEach(g => {
       html += '<div class="ry">' + esc(g.t) + (g.j ? ' ' + g.j : '') + (g.d ? ' — ' + esc(g.d) : '') + '</div>';
     });
   }
 
-  // Aantekening
-  if (r.narrative) {
+  // Aantekening (narratief)
+  if (opsies.narratief && r.narrative) {
     html += '<h2>Aantekening</h2><div class="druk-ry" style="font-style:italic">' + esc(r.narrative) + '</div>';
+  }
+
+  // Nota
+  if (opsies.nota && r.note) {
+    html += '<h2>Nota</h2><div class="druk-ry">' + esc(r.note) + '</div>';
+  }
+
+  // Voorvaderketting
+  if (opsies.voorvader) {
+    var vvKetting = bouwVoorvaderKetting(r.id);
+    if (vvKetting && vvKetting.length > 1) {
+      html += '<h2>Voorvaderketting</h2>';
+      vvKetting.forEach(function(stap, vi) {
+        var p = stap.persoon;
+        var pNaam = p ? (p.name || '?') : 'Onbekend';
+        var gebJ = p ? (p.birth_year || (p.birth_date ? p.birth_date.slice(0,4) : '')) : '';
+        var sterfJ = p ? (p.death_year || (p.death_date ? p.death_date.slice(0,4) : '')) : '';
+        var jare = (gebJ || sterfJ) ? ' (' + (gebJ||'?') + '\u2013' + (sterfJ||'?') + ')' : '';
+        html += '<div class="druk-ry">' + (vi + 1) + '. ' + esc(pNaam) + esc(jare) + ' <span style="font-size:9pt;color:#888;">' + esc(stap.kode) + '</span></div>';
+      });
+    }
   }
 
   html += '<div class="druk-voetnoot">Conradie Familiegeskiedenis · ' + new Date().toLocaleDateString('af-ZA') + '<br>🔗 bosloper.github.io/conradie-familiegeskiedenis#' + esc(r.id) + '</div>';
@@ -5264,7 +5298,7 @@ function attachCorrectionListeners() {
     var html = '<div style="max-width:720px;margin:0 auto;padding:1rem;">';
     html += '<div style="display:flex;align-items:baseline;gap:0.7rem;margin-bottom:0.9rem;">';
     html += '<h2 style="color:var(--sepia-light);font-size:1.2rem;margin:0;">✏️ Admin</h2>';
-    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-20-0</span>';
+    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-21-0</span>';
     html += '</div>';
 
     // ── Publiek-inligtingspaneel (standaard oop) ──
@@ -9557,16 +9591,27 @@ function attachCorrectionListeners() {
 
 <!-- DRUK-SKERP: direkte kind van body sodat druk-aktief CSS korrek werk -->
 <div id="druk-skerp">
-  <div style="display:flex;justify-content:space-between;align-items:center;
-    border-bottom:1px solid #ccc;padding-bottom:0.7rem;margin-bottom:1rem;
-    position:sticky;top:0;background:#fff;z-index:1;padding-top:0.5rem;">
-    <button onclick="sluitDrukSkerp()" style="font-size:1rem;background:#c0392b;color:#fff;border:none;
-      padding:0.4rem 1rem;cursor:pointer;border-radius:3px;font-weight:bold;">✕ Sluit</button>
-    <button onclick="drukNou()" style="font-size:0.85rem;background:#2d4a2a;color:#fff;
-      border:none;padding:0.4rem 1rem;cursor:pointer;border-radius:3px;">🖨️ Druk / PDF</button>
+  <div style="position:sticky;top:0;background:#fff;z-index:1;
+    border-bottom:1px solid #ccc;padding:0.5rem 0 0.6rem;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+      <button onclick="sluitDrukSkerp()" style="font-size:1rem;background:#c0392b;color:#fff;border:none;
+        padding:0.4rem 1rem;cursor:pointer;border-radius:3px;font-weight:bold;">✕ Sluit</button>
+      <button onclick="drukNou()" style="font-size:0.85rem;background:#2d4a2a;color:#fff;
+        border:none;padding:0.4rem 1rem;cursor:pointer;border-radius:3px;">🖨️ Druk / PDF</button>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:0.5rem 1rem;font-size:0.82rem;color:#444;padding:0 0.2rem;">
+      <label style="display:flex;align-items:center;gap:0.3rem;cursor:pointer;">
+        <input type="checkbox" id="druk-opsie-narratief" checked onchange="drukHerbou()"> Narratief</label>
+      <label style="display:flex;align-items:center;gap:0.3rem;cursor:pointer;">
+        <input type="checkbox" id="druk-opsie-nota" checked onchange="drukHerbou()"> Nota</label>
+      <label style="display:flex;align-items:center;gap:0.3rem;cursor:pointer;">
+        <input type="checkbox" id="druk-opsie-tydlyn" checked onchange="drukHerbou()"> Tydlyn</label>
+      <label style="display:flex;align-items:center;gap:0.3rem;cursor:pointer;">
+        <input type="checkbox" id="druk-opsie-voorvader" checked onchange="drukHerbou()"> Voorvaderketting</label>
+    </div>
   </div>
   <div id="druk-skerp-inhoud" style="font-family:Georgia,serif;font-size:12pt;color:#000;
-    max-width:680px;margin:0 auto;line-height:1.6;"></div>
+    max-width:680px;margin:0 auto;line-height:1.6;padding-top:0.8rem;"></div>
 </div>
 
 </body>

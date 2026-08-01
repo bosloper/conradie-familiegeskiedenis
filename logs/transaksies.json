@@ -9599,5 +9599,213 @@
       "fs_id": "LBWK-154",
       "wt_id": "Conradie-1178"
     }
+  },
+  {
+    "tyd": "2026-08-01T13:27:52.892Z",
+    "volgorde": 1,
+    "rekord_id": "I2",
+    "naam": "Johann Henricus CONRADIE",
+    "tipe": "huwelik-wysiging",
+    "wysigings": {
+      "marr_dates[0]": {
+        "oud": "",
+        "nuut": "~1739"
+      }
+    },
+    "rekord_na": {
+      "id": "I2",
+      "ref": "0002",
+      "name": "Johann Henricus CONRADIE",
+      "given": "Johann Henricus",
+      "surname": "CONRADIE",
+      "sex": "M",
+      "family_code": "b1",
+      "branch": "b1",
+      "branch_path": [
+        "b1"
+      ],
+      "generation": 1,
+      "uncertain": false,
+      "nickname": "",
+      "birth_date": "1710",
+      "birth_year": 1710,
+      "birth_place": "",
+      "birth_circa": false,
+      "death_date": "1776-07-18",
+      "death_year": 1776,
+      "death_place": "",
+      "burial_place": "",
+      "baptism_date": "",
+      "baptism_place": "",
+      "is_spouse": false,
+      "spouses": [
+        {
+          "id": "S2",
+          "name": "Rosa SWANEPOEL",
+          "birth_date": "1721",
+          "birth_year": null,
+          "divorce_date": "",
+          "divorced": false
+        }
+      ],
+      "children_ids": [
+        "I3",
+        "I2725",
+        "I4570",
+        "I6135",
+        "I6136",
+        "I6668",
+        "I6669"
+      ],
+      "parents": [],
+      "marr_dates": [
+        "~1739"
+      ],
+      "marr_places": [
+        ""
+      ],
+      "divorce_date": "",
+      "divorced": false,
+      "maiden_name": "",
+      "narrative": "Johannes Henricus CONRADIE, die stamvader se eerste seun, is op 21 September 1710 in Kaapstad gedoop — sy doopinskrywing lui: \"Johannes Henricus van Fredrik Conradi van Marpurg, en Hermina Hermansz. di Getuigen Robbert Robbertsz. en Neeltje Slabbaarts.\" Hy is op 19 Julie 1737 in Stellenbosch met Rosa SWANEPOEL getroud en het op 18 Julie 1776 in Tulbagh oorlede. Rosa SWANEPOEL is op 21 April 1767 in Tulbagh oorlede.\n\nMet sy troue was hy 'n burger van Drakenstein. Rosa was die 4de kind en enigste d/v Pieter Janz. SWANEPOEL, wat voor 1700 hier van Gelderland (Nederland) aan gekom het; hy is op 01.05.1712 met Maria Sibella SACHS getroud. Rosa het 7 broers gehad. Rosa se vader was die eerste eienaar van die leenplaas Nieuw Munster naby die huidige dorp Wolseley. Pieter SWANEPOEL het sy leenplaas vernoem na sy geboortedorp Nieuwmunster in die teenwoordige Wes-Vlaandere). Johannes Hendrik CONRADIE bekom op 26 Oktober 1747 oordrag van die plaas Nieuw Munster, wat tot toe die leenplaas van sy skoonvader, Pieter Janz. SWANEPOEL was. Volgens die \"Wildschutte Boeken\" in die Kaapse Argief, het Johann versoek dat hy beeste mag laat wei \"De Wilde Paerd Clooff over Claasvoogts Rievier\". Hierdie lengingsplaas is op 2 Mei 1739 aan hom toegestaan, maar teen 1750 het hy reeds \"Wildepaarde Cloof\" verlaat, (want hy boer toe op Nieu Munster), en Wildepaarde Cloof is op 27 Nov 1750 aan die weduwee van Matthys CALLETZ toegeken. [Wilde Perde Kloof is die gedeelte bo teen die berg se kant tussen die Klaas Voogds Rivier Oos en Ashton]. Bronne: Kaapse Argief RLR 10/1 p.39 en RLR 12/2 p.254. Letop: 3 seuns van Johannes (c1, c3 en c5) boer almal in die Montagu / Robertson / Klaasvoogts omgewing, maar die 2de seun (c2) boer later as die tweede geslag voort op Nieuw Munster.",
+      "note": "Die huweliksdatum is nie bekend nie. Dit word afgelei van die geboortejaar van hul eerste kind.",
+      "occupation": "",
+      "events": [],
+      "fs_id": "",
+      "wt_id": "Conradi-90"
+    }
+  },
+  {
+    "tyd": "2026-08-01T13:27:52.892Z",
+    "volgorde": 2,
+    "rekord_id": "I2",
+    "naam": "Johann Henricus CONRADIE",
+    "tipe": "wysiging",
+    "wysigings": {
+      "death_year": {
+        "oud": "1776",
+        "nuut": 1776
+      },
+      "note": {
+        "oud": "",
+        "nuut": "Die huweliksdatum is nie bekend nie. Dit word afgelei van die geboortejaar van hul eerste kind."
+      }
+    },
+    "rekord_na": {
+      "id": "I2",
+      "ref": "0002",
+      "name": "Johann Henricus CONRADIE",
+      "given": "Johann Henricus",
+      "surname": "CONRADIE",
+      "sex": "M",
+      "family_code": "b1",
+      "branch": "b1",
+      "branch_path": [
+        "b1"
+      ],
+      "generation": 1,
+      "uncertain": false,
+      "nickname": "",
+      "birth_date": "1710",
+      "birth_year": 1710,
+      "birth_place": "",
+      "birth_circa": false,
+      "death_date": "1776-07-18",
+      "death_year": 1776,
+      "death_place": "",
+      "burial_place": "",
+      "baptism_date": "",
+      "baptism_place": "",
+      "is_spouse": false,
+      "spouses": [
+        {
+          "id": "S2",
+          "name": "Rosa SWANEPOEL",
+          "birth_date": "1721",
+          "birth_year": null,
+          "divorce_date": "",
+          "divorced": false
+        }
+      ],
+      "children_ids": [
+        "I3",
+        "I2725",
+        "I4570",
+        "I6135",
+        "I6136",
+        "I6668",
+        "I6669"
+      ],
+      "parents": [],
+      "marr_dates": [
+        "~1739"
+      ],
+      "marr_places": [
+        ""
+      ],
+      "divorce_date": "",
+      "divorced": false,
+      "maiden_name": "",
+      "narrative": "Johannes Henricus CONRADIE, die stamvader se eerste seun, is op 21 September 1710 in Kaapstad gedoop — sy doopinskrywing lui: \"Johannes Henricus van Fredrik Conradi van Marpurg, en Hermina Hermansz. di Getuigen Robbert Robbertsz. en Neeltje Slabbaarts.\" Hy is op 19 Julie 1737 in Stellenbosch met Rosa SWANEPOEL getroud en het op 18 Julie 1776 in Tulbagh oorlede. Rosa SWANEPOEL is op 21 April 1767 in Tulbagh oorlede.\n\nMet sy troue was hy 'n burger van Drakenstein. Rosa was die 4de kind en enigste d/v Pieter Janz. SWANEPOEL, wat voor 1700 hier van Gelderland (Nederland) aan gekom het; hy is op 01.05.1712 met Maria Sibella SACHS getroud. Rosa het 7 broers gehad. Rosa se vader was die eerste eienaar van die leenplaas Nieuw Munster naby die huidige dorp Wolseley. Pieter SWANEPOEL het sy leenplaas vernoem na sy geboortedorp Nieuwmunster in die teenwoordige Wes-Vlaandere). Johannes Hendrik CONRADIE bekom op 26 Oktober 1747 oordrag van die plaas Nieuw Munster, wat tot toe die leenplaas van sy skoonvader, Pieter Janz. SWANEPOEL was. Volgens die \"Wildschutte Boeken\" in die Kaapse Argief, het Johann versoek dat hy beeste mag laat wei \"De Wilde Paerd Clooff over Claasvoogts Rievier\". Hierdie lengingsplaas is op 2 Mei 1739 aan hom toegestaan, maar teen 1750 het hy reeds \"Wildepaarde Cloof\" verlaat, (want hy boer toe op Nieu Munster), en Wildepaarde Cloof is op 27 Nov 1750 aan die weduwee van Matthys CALLETZ toegeken. [Wilde Perde Kloof is die gedeelte bo teen die berg se kant tussen die Klaas Voogds Rivier Oos en Ashton]. Bronne: Kaapse Argief RLR 10/1 p.39 en RLR 12/2 p.254. Letop: 3 seuns van Johannes (c1, c3 en c5) boer almal in die Montagu / Robertson / Klaasvoogts omgewing, maar die 2de seun (c2) boer later as die tweede geslag voort op Nieuw Munster.",
+      "note": "Die huweliksdatum is nie bekend nie. Dit word afgelei van die geboortejaar van hul eerste kind.",
+      "occupation": "",
+      "events": [],
+      "fs_id": "",
+      "wt_id": "Conradi-90"
+    }
+  },
+  {
+    "tyd": "2026-08-01T13:27:52.892Z",
+    "volgorde": 3,
+    "rekord_id": "I6670",
+    "naam": "Frederik CONRADIE",
+    "tipe": "wysiging",
+    "wysigings": {
+      "note": {
+        "oud": "",
+        "nuut": "Daar is geen bevestigde inligting oor hierdie seun beskikbaar nie."
+      }
+    },
+    "rekord_na": {
+      "id": "I6670",
+      "ref": "6670",
+      "name": "Frederik CONRADIE",
+      "given": "Frederik",
+      "surname": "CONRADIE",
+      "sex": "M",
+      "family_code": "b2",
+      "branch": "",
+      "branch_path": [
+        "b2"
+      ],
+      "generation": 1,
+      "uncertain": false,
+      "nickname": "",
+      "birth_date": "~1716",
+      "birth_year": 1716,
+      "birth_place": "",
+      "birth_circa": false,
+      "death_date": "",
+      "death_year": null,
+      "death_place": "",
+      "burial_place": "",
+      "baptism_date": "",
+      "baptism_place": "",
+      "is_spouse": false,
+      "spouses": [],
+      "children_ids": [],
+      "parents": [],
+      "marr_dates": [],
+      "marr_places": [],
+      "divorce_date": "",
+      "divorced": false,
+      "maiden_name": "",
+      "narrative": "waarskynlik jonk oorlede.",
+      "note": "Daar is geen bevestigde inligting oor hierdie seun beskikbaar nie.",
+      "occupation": "",
+      "events": [],
+      "fs_id": "",
+      "wt_id": ""
+    }
   }
 ]

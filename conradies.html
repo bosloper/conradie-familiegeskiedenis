@@ -4154,8 +4154,7 @@ function sbToggleDna() {
   if (window._sbHuidigeId) toonStamboomModal(window._sbHuidigeId);
 }
 
-function bouStamboomBlok(rek, rol, parentIds) {
-  // rol: 'huidig' | 'ouer' | 'grootjgr' | 'broer' | 'halfbroer' | 'gade' | 'kind' | null
+function bouStamboomBlok(rek, rol) {
   if (!rek) {
     return '<span class="sb-blok onbekend">Onbekend</span>';
   }
@@ -4215,7 +4214,6 @@ function toonStamboomModal(id) {
   }
 
   // --- RY 3: GESIN (broers/susters + persoon + gades) ---
-  // Bou broerslys met half-broer-deteksie
   var rParentIds = (r.parents || []).map(function(p) { return p.id; });
   var broersLys = [];
   if (ouers.length > 0) {
@@ -4232,22 +4230,18 @@ function toonStamboomModal(id) {
     }
   }
 
-  // Gades van die persoon
   var gades = (r.spouses || []).map(function(sp) {
     return indexById[sp.id] || null;
   });
 
   var gesinsHTML = '<div class="sb-ry"><div class="sb-ry-titel">Gesin</div><div class="sb-blokke">';
-  // Broers/susters voor die persoon (max 3)
   var sigbaar = 0;
   for (var i = 0; i < broersLys.length && sigbaar < 3; i++) {
     gesinsHTML += bouStamboomBlok(broersLys[i].rek, broersLys[i].rol);
     sigbaar++;
   }
   var ekstra = broersLys.length - sigbaar;
-  // Persoon self
   gesinsHTML += bouStamboomBlok(r, 'huidig');
-  // Gades
   if (gades.length > 0) {
     gades.forEach(function(gade) {
       gesinsHTML += '<span class="sb-kruis">×</span>';
@@ -4264,13 +4258,10 @@ function toonStamboomModal(id) {
   if (r.children_ids && r.children_ids.length > 0) {
     rye.push('<hr class="sb-skeier">');
 
-    // Groepeer kinders per gade
     var kindGroepe = [];
     if (gades.length <= 1) {
-      // Enkelvoudige huwelik — een groep, geen gade-titel
       kindGroepe.push({ titel: 'Kinders', ids: r.children_ids });
     } else {
-      // Veelhuwelik — groepeer per gade via kind se parents[]
       gades.forEach(function(gade, gi) {
         if (!gade) return;
         var gadeKinders = r.children_ids.filter(function(kId) {
@@ -4283,13 +4274,11 @@ function toonStamboomModal(id) {
           kindGroepe.push({ titel: gadeTitel, ids: gadeKinders });
         }
       });
-      // Kinders sonder koppelbare gade (onbekend)
       var gekoppeld = kindGroepe.reduce(function(acc, g) { return acc.concat(g.ids); }, []);
       var ongekoppeld = r.children_ids.filter(function(kId) { return gekoppeld.indexOf(kId) === -1; });
       if (ongekoppeld.length > 0) {
         kindGroepe.push({ titel: 'Kinders (gade onseker)', ids: ongekoppeld });
       }
-      // Terugval: as groepering niks opgelewer het nie
       if (kindGroepe.length === 0) {
         kindGroepe.push({ titel: 'Kinders', ids: r.children_ids });
       }
@@ -5271,7 +5260,9 @@ function attachCorrectionListeners() {
     html += '</div>';
 
     // ── Publiek-inligtingspaneel (standaard oop) ──
-    html += '<details open style="background:#1a1208;border:1px solid #8b691455;border-radius:6px;padding:0.6rem 0.9rem;margin-bottom:0.9rem;">';
+    html += adminOntsluit
+      ? '<details style="background:#1a1208;border:1px solid #8b691455;border-radius:6px;padding:0.6rem 0.9rem;margin-bottom:0.9rem;">'
+      : '<details open style="background:#1a1208;border:1px solid #8b691455;border-radius:6px;padding:0.6rem 0.9rem;margin-bottom:0.9rem;">';
     html += '<summary style="color:#c49a3a;font-size:0.88rem;font-weight:bold;cursor:pointer;list-style:none;">📖 Oor hierdie databasis</summary>';
     html += '<div style="color:#e8dfc8;font-size:0.82rem;line-height:1.7;margin-top:0.5rem;">';
     html += '<p style="margin:0 0 0.5rem 0;">Die <strong style="color:#c49a3a">Conradie Stamboom</strong> is \'n lewende genealogiese databasis van alle bekende afstammelinge van stamvader <strong>Friedrich Henrich Conradie</strong> (gebore 1668, Marburg, Duitsland). Tans bevat dit meer as 11 000 rekords.</p>';
@@ -5328,16 +5319,16 @@ function attachCorrectionListeners() {
         { id:'taak-datumtoets', ikoon:'🗓️', naam:'Datumtoets',         kleur:'#5a8a6a' },
         { id:'taak-cchuw',      ikoon:'💍', naam:'C-C Huwelike',        kleur:'#8a3a5a' }
       ];
-      html += '<div style="background:#0e150e;border:1px solid #2d4a2d;border-radius:6px;padding:0.5rem;margin-bottom:1rem;">';
-      html += '<div style="color:#4a7a4a;font-size:0.73rem;letter-spacing:0.06em;margin-bottom:0.4rem;">DATABASIS-ADMINISTRASIE</div>';
-      html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.4rem;">';
+      html += '<details style="background:#0e150e;border:1px solid #2d4a2d;border-radius:6px;padding:0.5rem;margin-bottom:1rem;">';
+      html += '<summary style="color:#4a7a4a;font-size:0.73rem;letter-spacing:0.06em;cursor:pointer;list-style:none;margin-bottom:0.4rem;">&#9656; DATABASIS-ADMINISTRASIE</summary>';
+      html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.4rem;margin-top:0.3rem;">';
       takeAdmin.forEach(function(t) {
         html += '<button onclick="admTaakKies(\'' + t.id + '\')" id="btn-' + t.id + '" ' +
           'style="padding:0.6rem 0.5rem;background:#080e08;color:' + t.kleur + ';' +
           'border:1px solid ' + t.kleur + '44;border-radius:5px;cursor:pointer;font-size:0.88rem;text-align:left;">' +
           t.ikoon + ' ' + t.naam + '</button>';
       });
-      html += '</div></div>';
+      html += '</div></details>';
 
       // ── Status & Hangende teller ──
       html += '<div id="adm-status" style="color:var(--sepia-light);font-size:0.85rem;min-height:1.1rem;margin-bottom:0.6rem;"></div>';
@@ -6647,9 +6638,18 @@ function attachCorrectionListeners() {
     var teller = document.getElementById('adm-patch-teller');
     if (teller) teller.textContent = ' (' + log.length + ' hangend)';
 
-    var html = '<table style="width:100%;border-collapse:collapse;font-size:0.82rem;">';
+    var merkAan = !window._merkBlokkeer;
+    var html = '<div style="margin-bottom:0.5rem;display:flex;align-items:center;gap:0.6rem;">';
+    html += '<button onclick="window._merkBlokkeer=' + (merkAan ? 'true' : 'false') + ';patchLogBouAfdeling();" ' +
+      'style="padding:0.3rem 0.7rem;background:' + (merkAan ? '#5a3a1a' : '#1a3a1a') + ';color:#e8dfc8;border:1px solid #6a5a3a;border-radius:4px;cursor:pointer;font-size:0.78rem;">' +
+      (merkAan ? '\uD83D\uDD12 Sluit merk-af' : '\uD83D\uDD13 Aktiveer merk') + '</button>';
+    html += merkAan
+      ? '<span style="font-size:0.75rem;color:#8a7a5a;">Merk inskrywings om te verwyder</span>'
+      : '<span style="font-size:0.75rem;color:#8a6a2a;">\u26a0\ufe0f Merk gedeaktiveer \u2014 geen onbedoelde verwyderings</span>';
+    html += '</div>';
+    html += '<table style="width:100%;border-collapse:collapse;font-size:0.82rem;">';
     html += '<tr style="color:#c49a3a;border-bottom:1px solid #3d3020;">';
-    html += '<th style="padding:0.3rem 0.4rem;text-align:center;">✓</th>';
+    if (merkAan) html += '<th style="padding:0.3rem 0.4rem;text-align:center;">\u2713</th>';
     html += '<th style="text-align:left;padding:0.3rem 0.4rem;">Tyd</th>';
     html += '<th style="text-align:left;padding:0.3rem 0.4rem;">Rekord</th>';
     html += '<th style="text-align:left;padding:0.3rem 0.4rem;">Velde</th></tr>';
@@ -6661,9 +6661,11 @@ function attachCorrectionListeners() {
           ? '\uD83D\uDCC5 ' + Object.keys(item.wysigings || {}).length + ' datum(s) genormaliseer'
           : (Object.keys(item.wysigings || {}).join(', ') || item.tipe || '?');
       html += '<tr style="border-bottom:1px solid #2a2010;color:#c8b890;">';
-      html += '<td style="padding:0.3rem 0.4rem;text-align:center;">' +
-        '<input type="checkbox" class="patch-merk" data-indeks="' + i + '" ' +
-        'style="width:1.1rem;height:1.1rem;cursor:pointer;accent-color:#c49a3a;"></td>';
+      if (merkAan) {
+        html += '<td style="padding:0.3rem 0.4rem;text-align:center;">' +
+          '<input type="checkbox" class="patch-merk" data-indeks="' + i + '" ' +
+          'style="width:1.1rem;height:1.1rem;cursor:pointer;accent-color:#c49a3a;"></td>';
+      }
       html += '<td style="padding:0.3rem 0.4rem;">' + tyd + '</td>';
       html += '<td style="padding:0.3rem 0.4rem;">' + (item.naam || item.rekord_id) + '</td>';
       html += '<td style="padding:0.3rem 0.4rem;">' + velde + '</td>';
@@ -6671,10 +6673,12 @@ function attachCorrectionListeners() {
     });
     html += '</table>';
     html += '<div style="margin-top:0.6rem;display:flex;gap:0.5rem;flex-wrap:wrap;">';
-    html += '<button onclick="patchLogVerwyder()" style="padding:0.35rem 0.8rem;background:#6a2a1a;color:#f0c8b0;border:none;border-radius:4px;cursor:pointer;font-size:0.82rem;">🗑️ Verwyder gemerkdes</button>';
-    html += '<button onclick="patchLogAflaai()" style="padding:0.35rem 0.8rem;background:#3d3020;color:#e8dfc8;border:none;border-radius:4px;cursor:pointer;font-size:0.82rem;">⬇️ Laai log af</button>';
-    html += '<button onclick="if(confirm(\'Alle hangende wysigings uitvee?\')) { patchLogWis(); patchLogBouAfdeling(); }" style="padding:0.35rem 0.8rem;background:#5a1a1a;color:#e8c8c8;border:none;border-radius:4px;cursor:pointer;font-size:0.82rem;">🗑️ Maak alles skoon</button>';
-    html += '<button onclick="patchLogDiagnose()" style="padding:0.35rem 0.8rem;background:#1a3a5a;color:#c8dce8;border:none;border-radius:4px;cursor:pointer;font-size:0.82rem;">🔍 Diagnose</button>';
+    if (merkAan) {
+      html += '<button onclick="patchLogVerwyder()" style="padding:0.35rem 0.8rem;background:#6a2a1a;color:#f0c8b0;border:none;border-radius:4px;cursor:pointer;font-size:0.82rem;">\uD83D\uDDD1\uFE0F Verwyder gemerktes</button>';
+    }
+    html += '<button onclick="patchLogAflaai()" style="padding:0.35rem 0.8rem;background:#3d3020;color:#e8dfc8;border:none;border-radius:4px;cursor:pointer;font-size:0.82rem;">\u2B07\uFE0F Laai log af</button>';
+    html += '<button onclick="if(confirm(\'Alle hangende wysigings uitvee?\')) { patchLogWis(); patchLogBouAfdeling(); }" style="padding:0.35rem 0.8rem;background:#5a1a1a;color:#e8c8c8;border:none;border-radius:4px;cursor:pointer;font-size:0.82rem;">\uD83D\uDDD1\uFE0F Maak alles skoon</button>';
+    html += '<button onclick="patchLogDiagnose()" style="padding:0.35rem 0.8rem;background:#1a3a5a;color:#c8dce8;border:none;border-radius:4px;cursor:pointer;font-size:0.82rem;">\uD83D\uDD0D Diagnose</button>';
     html += '</div>';
     el.innerHTML = html;
   }

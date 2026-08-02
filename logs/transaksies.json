@@ -10184,5 +10184,193 @@
       "fs_id": "GZLS-KS6",
       "wt_id": "De_Vries-4538"
     }
+  },
+  {
+    "tyd": "2026-08-02T13:45:37.418Z",
+    "volgorde": 1,
+    "rekord_id": "I4013",
+    "naam": "Cornelius Johannes Pieter CONRADIE",
+    "tipe": "huwelik-wysiging",
+    "wysigings": {
+      "marr_dates[0]": {
+        "oud": "~1979",
+        "nuut": "1977-12-03"
+      },
+      "marr_places[0]": {
+        "oud": "",
+        "nuut": "Berg-en-Dal Gemeente, Bloemfontein, OVS"
+      }
+    },
+    "rekord_na": {
+      "id": "I4013",
+      "ref": "4013",
+      "name": "Cornelius Johannes Pieter CONRADIE",
+      "given": "Cornelius Johannes Pieter",
+      "surname": "CONRADIE",
+      "sex": "M",
+      "family_code": "c2d5e1f8g1h1i4j1",
+      "branch": "c2",
+      "branch_path": [
+        "b1",
+        "c2",
+        "c2d5",
+        "c2d5e1",
+        "c2d5e1f8",
+        "c2d5e1f8g1",
+        "c2d5e1f8g1h1",
+        "c2d5e1f8g1h1i4",
+        "c2d5e1f8g1h1i4j1"
+      ],
+      "generation": 9,
+      "uncertain": false,
+      "nickname": "",
+      "birth_date": "1950-01-05",
+      "birth_year": 1950,
+      "birth_place": "",
+      "birth_circa": false,
+      "death_date": "2007-11-15",
+      "death_year": 2007,
+      "death_place": "",
+      "burial_place": "",
+      "baptism_date": "",
+      "baptism_place": "",
+      "is_spouse": false,
+      "spouses": [
+        {
+          "id": "S4013",
+          "name": "Jeanet KOORTS",
+          "birth_date": "1956-11-24",
+          "birth_year": 1956,
+          "divorce_date": "",
+          "divorced": false
+        }
+      ],
+      "children_ids": [
+        "I4014",
+        "I4015",
+        "I4016"
+      ],
+      "parents": [
+        {
+          "id": "I4012",
+          "name": "Wilhelmus Jacobus CONRADIE",
+          "role": "father"
+        },
+        {
+          "id": "S4012",
+          "name": "Susanna Johanna Petronella JACOBS",
+          "role": "mother"
+        }
+      ],
+      "marr_dates": [
+        "1977-12-03"
+      ],
+      "marr_places": [
+        "Berg-en-Dal Gemeente, Bloemfontein, OVS"
+      ],
+      "divorce_date": "",
+      "divorced": false,
+      "maiden_name": "",
+      "narrative": "2004: beide is mediese dokters, hy is verbonde aan departement huisartskunde aan die UV, Bloemfontein. 2007 adr: 4 Erns Jansen Street, Bloemfontein.",
+      "note": "",
+      "occupation": "",
+      "events": [],
+      "fs_id": "",
+      "wt_id": ""
+    }
+  },
+  {
+    "tyd": "2026-08-02T13:45:37.418Z",
+    "volgorde": 2,
+    "rekord_id": "I4013",
+    "naam": "Cornelius Johannes Pieter CONRADIE",
+    "tipe": "wysiging",
+    "wysigings": {
+      "death_year": {
+        "oud": "2007",
+        "nuut": 2007
+      },
+      "note": {
+        "oud": "Huweliksdatum nie bevestig nie — geraamde waarde (c. 1979) bereken uit vroegste kind se geboortejaar (1980).",
+        "nuut": ""
+      }
+    },
+    "rekord_na": {
+      "id": "I4013",
+      "ref": "4013",
+      "name": "Cornelius Johannes Pieter CONRADIE",
+      "given": "Cornelius Johannes Pieter",
+      "surname": "CONRADIE",
+      "sex": "M",
+      "family_code": "c2d5e1f8g1h1i4j1",
+      "branch": "c2",
+      "branch_path": [
+        "b1",
+        "c2",
+        "c2d5",
+        "c2d5e1",
+        "c2d5e1f8",
+        "c2d5e1f8g1",
+        "c2d5e1f8g1h1",
+        "c2d5e1f8g1h1i4",
+        "c2d5e1f8g1h1i4j1"
+      ],
+      "generation": 9,
+      "uncertain": false,
+      "nickname": "",
+      "birth_date": "1950-01-05",
+      "birth_year": 1950,
+      "birth_place": "",
+      "birth_circa": false,
+      "death_date": "2007-11-15",
+      "death_year": 2007,
+      "death_place": "",
+      "burial_place": "",
+      "baptism_date": "",
+      "baptism_place": "",
+      "is_spouse": false,
+      "spouses": [
+        {
+          "id": "S4013",
+          "name": "Jeanet KOORTS",
+          "birth_date": "1956-11-24",
+          "birth_year": 1956,
+          "divorce_date": "",
+          "divorced": false
+        }
+      ],
+      "children_ids": [
+        "I4014",
+        "I4015",
+        "I4016"
+      ],
+      "parents": [
+        {
+          "id": "I4012",
+          "name": "Wilhelmus Jacobus CONRADIE",
+          "role": "father"
+        },
+        {
+          "id": "S4012",
+          "name": "Susanna Johanna Petronella JACOBS",
+          "role": "mother"
+        }
+      ],
+      "marr_dates": [
+        "1977-12-03"
+      ],
+      "marr_places": [
+        "Berg-en-Dal Gemeente, Bloemfontein, OVS"
+      ],
+      "divorce_date": "",
+      "divorced": false,
+      "maiden_name": "",
+      "narrative": "2004: beide is mediese dokters, hy is verbonde aan departement huisartskunde aan die UV, Bloemfontein. 2007 adr: 4 Erns Jansen Street, Bloemfontein.",
+      "note": "",
+      "occupation": "",
+      "events": [],
+      "fs_id": "",
+      "wt_id": ""
+    }
   }
 ]

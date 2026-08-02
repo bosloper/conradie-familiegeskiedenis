@@ -735,25 +735,10 @@ main {
   border-top: 1px solid var(--sepia-light);
   margin: 0.6rem 0;
 }
-.sb-blok.gade {
-  background: #c47a8a;
-}
+.sb-blok.gade { background: #c47a8a; }
 .sb-blok.gade:hover { background: #a85f72; }
-.sb-blok .sb-dna-pct {
-  display: block;
-  font-size: 0.68rem;
-  opacity: 0.85;
-  margin-top: 0.1rem;
-}
-#sb-dna-knop {
-  position: absolute;
-  top: 0.7rem; right: 2.6rem;
-  background: none; border: none;
-  font-size: 1.1rem; cursor: pointer;
-  color: var(--muted);
-  padding: 0;
-  line-height: 1;
-}
+.sb-blok .sb-dna-pct { display: block; font-size: 0.68rem; opacity: 0.85; margin-top: 0.1rem; }
+#sb-dna-knop { position: absolute; top: 0.7rem; right: 2.6rem; background: none; border: none; font-size: 1.1rem; cursor: pointer; color: var(--muted); padding: 0; line-height: 1; }
 #sb-dna-knop.aktief { color: var(--forest); }
 
 /* Empty state */
@@ -2459,20 +2444,7 @@ body.stamvader-aktief .tab-btn[data-tab="search"] {
       </div>
     </div>
 
-    <!-- ── 6. DEEL-OPSIES + STUUR KNOPPIES ── -->
-    <div style="margin-bottom:0.6rem;padding:0.5rem 0.6rem;background:#1a1208;border:1px solid #3d3020;border-radius:5px;">
-      <div style="font-size:0.75rem;color:#8a7a5a;margin-bottom:0.35rem;">Sluit in by boodskap:</div>
-      <div style="display:flex;flex-wrap:wrap;gap:0.4rem 1rem;font-size:0.82rem;color:#c8b890;">
-        <label style="display:flex;align-items:center;gap:0.3rem;cursor:pointer;">
-          <input type="checkbox" id="deel-opsie-narratief" checked> Narratief</label>
-        <label style="display:flex;align-items:center;gap:0.3rem;cursor:pointer;">
-          <input type="checkbox" id="deel-opsie-nota" checked> Nota</label>
-        <label style="display:flex;align-items:center;gap:0.3rem;cursor:pointer;">
-          <input type="checkbox" id="deel-opsie-tydlyn" checked> Tydlyn</label>
-        <label style="display:flex;align-items:center;gap:0.3rem;cursor:pointer;">
-          <input type="checkbox" id="deel-opsie-voorvader" checked> Voorvaderketting</label>
-      </div>
-    </div>
+    <!-- ── 6. STUUR KNOPPIES ── -->
     <div class="vm-stuur-knoppies">
       <button class="vm-btn vm-btn-wa" onclick="vmStuurWA(false)">
         💬 WhatsApp (App)
@@ -3065,7 +3037,7 @@ function drukHerbou() {
     narratief: document.getElementById('druk-opsie-narratief') ? document.getElementById('druk-opsie-narratief').checked : true,
     nota:      document.getElementById('druk-opsie-nota')      ? document.getElementById('druk-opsie-nota').checked      : true,
     tydlyn:    document.getElementById('druk-opsie-tydlyn')    ? document.getElementById('druk-opsie-tydlyn').checked    : true,
-    voorvader: document.getElementById('druk-opsie-voorvader') ? document.getElementById('druk-opsie-voorvader').checked  : true
+    voorvader: document.getElementById('druk-opsie-voorvader') ? document.getElementById('druk-opsie-voorvader').checked : true
   };
   document.getElementById('druk-skerp-inhoud').innerHTML = buildDrukHTML(r, opsies);
 }
@@ -3231,17 +3203,12 @@ function buildDrukHTML(r, opsies) {
     });
   }
 
-  // Aantekening (narratief)
   if (opsies.narratief && r.narrative) {
     html += '<h2>Aantekening</h2><div class="druk-ry" style="font-style:italic">' + esc(r.narrative) + '</div>';
   }
-
-  // Nota
   if (opsies.nota && r.note) {
     html += '<h2>Nota</h2><div class="druk-ry">' + esc(r.note) + '</div>';
   }
-
-  // Voorvaderketting
   if (opsies.voorvader) {
     var vvKetting = bouwVoorvaderKetting(r.id);
     if (vvKetting && vvKetting.length > 1) {
@@ -3251,8 +3218,8 @@ function buildDrukHTML(r, opsies) {
         var pNaam = p ? (p.name || '?') : 'Onbekend';
         var gebJ = p ? (p.birth_year || (p.birth_date ? p.birth_date.slice(0,4) : '')) : '';
         var sterfJ = p ? (p.death_year || (p.death_date ? p.death_date.slice(0,4) : '')) : '';
-        var jare = (gebJ || sterfJ) ? ' (' + (gebJ||'?') + '\u2013' + (sterfJ||'?') + ')' : '';
-        html += '<div class="druk-ry">' + (vi + 1) + '. ' + esc(pNaam) + esc(jare) + ' <span style="font-size:9pt;color:#888;">' + esc(stap.kode) + '</span></div>';
+        var jare = (gebJ || sterfJ) ? ' (' + (gebJ||'?') + '–' + (sterfJ||'?') + ')' : '';
+        html += '<div class="druk-ry">' + (vi+1) + '. ' + esc(pNaam) + esc(jare) + ' <span style="font-size:9pt;color:#888;">' + esc(stap.kode) + '</span></div>';
       });
     }
   }
@@ -3453,73 +3420,112 @@ function buildPanelHTML(r) {
 }
 
 // ── DEEL PERSOON ──
+window._deelRek = null;
+
 function deelPersoon(id) {
-  const r = indexById[id];
+  var r = indexById[id];
   if (!r) return;
-
-  const naam = r.name || [r.given, r.surname].filter(Boolean).join(' ');
-  const reëls = [];
-
-  reëls.push('👤 ' + naam);
-  if (r.family_code) reëls.push('🔖 Geslagskode: ' + r.family_code);
-
-  const gebDatum = r.birth_date || (r.birth_year ? String(r.birth_year) : '');
-  if (gebDatum) reëls.push('📅 Gebore: ' + gebDatum + (r.birth_place ? ', ' + r.birth_place : ''));
-  if (r.baptism_date) reëls.push('⛪ Gedoop: ' + r.baptism_date);
-  if (r.nickname) reëls.push('🏷️ Bynaam: ' + r.nickname);
-  if (r.occupation) reëls.push('💼 Beroep: ' + r.occupation);
-  if (r.events && r.events.length) {
-    var evTipes = window.CONRADIE_EVENT_TIPES || [];
-    var drukEvents = r.events.filter(function(ev) {
-      var t = evTipes.find(function(x) { return x.kode === ev.type; });
-      return t ? t.printbaar : false;
-    });
-    drukEvents.forEach(function(ev) {
-      var t = evTipes.find(function(x) { return x.kode === ev.type; });
-      var ikon = (t && t.ikon) ? t.ikon : '📌';
-      var ekstra = ev.ander_van ? ' (' + ev.ander_van + ')' : (ev.bestemming ? ' \u2192 ' + ev.bestemming : '');
-      var evTeks = ev.text || (ev.type === 'KIND_ANDER_VAN' ? 'Kind' : '');
-      reëls.push(ikon + ' ' + (ev.year || '') + ' ' + (t ? t.naam : ev.type) + ': ' + evTeks + ekstra);
-    });
+  window._deelRek = r;
+  ['narratief','nota','tydlyn','voorvader'].forEach(function(k) {
+    var el = document.getElementById('deel-skakelaar-' + k);
+    if (el) el.checked = true;
+  });
+  deelBouVoorskou();
+  var paneel = document.getElementById('deel-paneel');
+  if (paneel) {
+    paneel.style.display = 'block';
+    paneel.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
+}
 
+function deelSluit() {
+  var paneel = document.getElementById('deel-paneel');
+  if (paneel) paneel.style.display = 'none';
+}
+
+function deelBouTeks() {
+  var r = window._deelRek;
+  if (!r) return '';
+  var metNarr = document.getElementById('deel-skakelaar-narratief') ? document.getElementById('deel-skakelaar-narratief').checked : true;
+  var metNota = document.getElementById('deel-skakelaar-nota')      ? document.getElementById('deel-skakelaar-nota').checked      : true;
+  var metTydl = document.getElementById('deel-skakelaar-tydlyn')    ? document.getElementById('deel-skakelaar-tydlyn').checked    : true;
+  var metVv   = document.getElementById('deel-skakelaar-voorvader') ? document.getElementById('deel-skakelaar-voorvader').checked  : true;
+  var reels = [];
+  var naam = r.name || [r.given, r.surname].filter(Boolean).join(' ');
+  reels.push('👤 ' + naam);
+  if (r.family_code) reels.push('🔖 Geslagskode: ' + r.family_code);
+  var geb = r.birth_date || (r.birth_year ? String(r.birth_year) : '');
+  if (geb) reels.push('📅 Gebore: ' + geb + (r.birth_place ? ', ' + r.birth_place : ''));
+  if (r.baptism_date) reels.push('⛪ Gedoop: ' + r.baptism_date);
+  if (r.nickname) reels.push('🏷️ Bynaam: ' + r.nickname);
   if (r.spouses && r.spouses.length) {
     r.spouses.forEach(function(sp, i) {
-      var huwDatum = r.marr_dates && r.marr_dates[i] ? r.marr_dates[i] : '';
-      var huwPlek  = r.marr_places && r.marr_places[i] ? r.marr_places[i] : '';
-      var huwInfo  = huwDatum ? ' (' + huwDatum + (huwPlek ? ', ' + huwPlek : '') + ')' : '';
-      reëls.push('💍 Getroud: ' + sp.name + huwInfo);
+      var md = r.marr_dates && r.marr_dates[i] ? r.marr_dates[i] : '';
+      var mp = r.marr_places && r.marr_places[i] ? r.marr_places[i] : '';
+      reels.push('💍 Getroud: ' + sp.name + (md ? ' (' + md + (mp ? ', ' + mp : '') + ')' : ''));
     });
   }
-
-  const sterfDatum = r.death_date || (r.death_year ? String(r.death_year) : '');
-  if (sterfDatum) reëls.push('✝️ Oorlede: ' + sterfDatum + (r.death_place ? ', ' + r.death_place : ''));
-  if (r.burial_place) reëls.push('⚰️ Begrawe: ' + r.burial_place);
-
-  if (r.children_ids && r.children_ids.length) {
-    reëls.push('👨‍👩‍👧‍👦 Kinders: ' + r.children_ids.length);
+  if (r.children_ids && r.children_ids.length) reels.push('👨‍👩‍👧‍👦 Kinders: ' + r.children_ids.length);
+  var sterf = r.death_date || (r.death_year ? String(r.death_year) : '');
+  if (sterf) reels.push('✝️ Oorlede: ' + sterf + (r.death_place ? ', ' + r.death_place : ''));
+  if (r.burial_place) reels.push('⚰️ Begrawe: ' + r.burial_place);
+  if (metTydl) {
+    var evTipes = window.CONRADIE_EVENT_TIPES || [];
+    var drukEv = (r.events || []).filter(function(ev) {
+      var t = evTipes.find(function(x) { return x.kode === ev.type; });
+      return t && t.printbaar;
+    });
+    drukEv.forEach(function(ev) {
+      var t = evTipes.find(function(x) { return x.kode === ev.type; });
+      var ikon = (t && t.ikon) ? t.ikon : '📌';
+      var ekstra = ev.ander_van ? ' (' + ev.ander_van + ')' : (ev.bestemming ? ' → ' + ev.bestemming : '');
+      reels.push(ikon + ' ' + (ev.year || '') + ' ' + (t ? t.naam : ev.type) + (ev.text ? ': ' + ev.text : '') + ekstra);
+    });
   }
+  if (metNarr && r.narrative) { reels.push(''); reels.push('📚 Aantekening:'); reels.push(r.narrative); }
+  if (metNota && r.note) { reels.push(''); reels.push('📝 Nota:'); reels.push(r.note); }
+  if (metVv) {
+    var vvKetting = bouwVoorvaderKetting(r.id);
+    if (vvKetting && vvKetting.length > 1) {
+      reels.push(''); reels.push('🌳 Voorvaderketting:');
+      vvKetting.forEach(function(stap, vi) {
+        var p = stap.persoon; var pn = p ? (p.name || '?') : 'Onbekend';
+        var gj = p ? (p.birth_year || (p.birth_date ? p.birth_date.slice(0,4) : '')) : '';
+        var sj = p ? (p.death_year || (p.death_date ? p.death_date.slice(0,4) : '')) : '';
+        var jare = (gj || sj) ? ' (' + (gj||'?') + '–' + (sj||'?') + ')' : '';
+        reels.push((vi+1) + '. ' + pn + jare);
+      });
+    }
+  }
+  reels.push(''); reels.push('🌐 Conradie Familiegeskiedenis');
+  reels.push('https://bosloper.github.io/conradie-familiegeskiedenis#' + r.id);
+  return reels.join('\n');
+}
 
-  if (r.note) reëls.push('📝 Nota: ' + r.note);
+function deelBouVoorskou() {
+  var ta = document.getElementById('deel-voorskou');
+  if (ta) ta.value = deelBouTeks();
+}
 
-  reëls.push('');
-  reëls.push('🌐 Conradie Familiegeskiedenis');
-  reëls.push('https://bosloper.github.io/conradie-familiegeskiedenis#' + id);
+function deelStuurWA(web) {
+  var teks = deelBouTeks(); if (!teks) return;
+  var encoded = encodeURIComponent(teks);
+  if (web) { window.open('https://web.whatsapp.com/send?text=' + encoded, '_blank'); }
+  else { window.location.href = 'whatsapp://send?text=' + encoded; }
+}
 
-  const teks = reëls.join('\n');
-
-  if (navigator.share) {
-    navigator.share({
-      title: 'Conradie Familiegeskiedenis — ' + naam,
-      text: teks
-    }).catch(function() {});
-  } else {
-    // Terugval: kopieer na knipbord
+function deelKopieer() {
+  var teks = deelBouTeks(); if (!teks) return;
+  var status = document.getElementById('deel-status');
+  if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(teks).then(function() {
-      alert('Gekopieer na knipbord!');
+      if (status) { status.textContent = '✅ Gekopieer!'; setTimeout(function(){ status.textContent=''; }, 3000); }
     }).catch(function() {
-      alert('Deel nie beskikbaar op hierdie toestel nie.');
+      if (status) status.textContent = 'Kopieer handmatig uit die kassie hierbo.';
     });
+  } else {
+    var ta = document.getElementById('deel-voorskou');
+    if (ta) { ta.select(); try { document.execCommand('copy'); if (status) status.textContent = '✅ Gekopieer!'; } catch(e) {} }
   }
 }
 
@@ -4210,9 +4216,7 @@ function sbToggleDna() {
 }
 
 function bouStamboomBlok(rek, rol) {
-  if (!rek) {
-    return '<span class="sb-blok onbekend">Onbekend</span>';
-  }
+  if (!rek) return '<span class="sb-blok onbekend">Onbekend</span>';
   var klas = 'sb-blok';
   if (rol === 'huidig') klas += ' huidig';
   else if (rol === 'gade') klas += ' gade';
@@ -4236,18 +4240,13 @@ function toonStamboomModal(id) {
   var r = indexById[id];
   if (!r) return;
   window._sbHuidigeId = id;
-
   var rye = [];
 
-  // --- RY 1: GROOTOUERS ---
+  // RY 1: GROOTOUERS
   var grootouers = [];
   (r.parents || []).forEach(function(ouerRef) {
     var ouer = indexById[ouerRef.id];
-    if (ouer) {
-      (ouer.parents || []).forEach(function(goRef) {
-        grootouers.push(indexById[goRef.id] || null);
-      });
-    }
+    if (ouer) (ouer.parents || []).forEach(function(goRef) { grootouers.push(indexById[goRef.id] || null); });
   });
   if (grootouers.length > 0) {
     var goBlokke = grootouers.map(function(go) { return bouStamboomBlok(go, 'grootjgr'); }).join('');
@@ -4255,20 +4254,15 @@ function toonStamboomModal(id) {
     rye.push('<hr class="sb-skeier">');
   }
 
-  // --- RY 2: OUERS ---
+  // RY 2: OUERS
   var ouers = r.parents || [];
   if (ouers.length > 0) {
-    var ouerHTML = '<div class="sb-ry"><div class="sb-ry-titel">Ouers</div>';
-    var ouerBlokke = ouers.map(function(oRef) {
-      return bouStamboomBlok(indexById[oRef.id] || null, 'ouer');
-    });
-    ouerHTML += '<div class="sb-paar">' + ouerBlokke.join('<span class="sb-kruis">×</span>') + '</div>';
-    ouerHTML += '</div>';
-    rye.push(ouerHTML);
+    var ouerBlokke = ouers.map(function(oRef) { return bouStamboomBlok(indexById[oRef.id] || null, 'ouer'); });
+    rye.push('<div class="sb-ry"><div class="sb-ry-titel">Ouers</div><div class="sb-paar">' + ouerBlokke.join('<span class="sb-kruis">×</span>') + '</div></div>');
     rye.push('<hr class="sb-skeier">');
   }
 
-  // --- RY 3: GESIN (broers/susters + persoon + gades) ---
+  // RY 3: GESIN + GADES
   var rParentIds = (r.parents || []).map(function(p) { return p.id; });
   var broersLys = [];
   if (ouers.length > 0) {
@@ -4278,41 +4272,26 @@ function toonStamboomModal(id) {
         if (kId === id) return;
         var broer = indexById[kId];
         if (!broer) { broersLys.push({ rek: null, rol: 'broer' }); return; }
-        var bParentIds = (broer.parents || []).map(function(p) { return p.id; });
-        var gedeeld = rParentIds.filter(function(pid) { return bParentIds.indexOf(pid) !== -1; }).length;
+        var bPIds = (broer.parents || []).map(function(p) { return p.id; });
+        var gedeeld = rParentIds.filter(function(pid) { return bPIds.indexOf(pid) !== -1; }).length;
         broersLys.push({ rek: broer, rol: gedeeld >= 2 ? 'broer' : 'halfbroer' });
       });
     }
   }
-
-  var gades = (r.spouses || []).map(function(sp) {
-    return indexById[sp.id] || null;
-  });
-
+  var gades = (r.spouses || []).map(function(sp) { return indexById[sp.id] || null; });
   var gesinsHTML = '<div class="sb-ry"><div class="sb-ry-titel">Gesin</div><div class="sb-blokke">';
   var sigbaar = 0;
-  for (var i = 0; i < broersLys.length && sigbaar < 3; i++) {
-    gesinsHTML += bouStamboomBlok(broersLys[i].rek, broersLys[i].rol);
-    sigbaar++;
-  }
+  for (var i = 0; i < broersLys.length && sigbaar < 3; i++) { gesinsHTML += bouStamboomBlok(broersLys[i].rek, broersLys[i].rol); sigbaar++; }
   var ekstra = broersLys.length - sigbaar;
   gesinsHTML += bouStamboomBlok(r, 'huidig');
-  if (gades.length > 0) {
-    gades.forEach(function(gade) {
-      gesinsHTML += '<span class="sb-kruis">×</span>';
-      gesinsHTML += bouStamboomBlok(gade, 'gade');
-    });
-  }
-  if (ekstra > 0) {
-    gesinsHTML += '<span class="sb-meer">+' + ekstra + ' meer broers/susters</span>';
-  }
+  gades.forEach(function(gade) { gesinsHTML += '<span class="sb-kruis">×</span>' + bouStamboomBlok(gade, 'gade'); });
+  if (ekstra > 0) gesinsHTML += '<span class="sb-meer">+' + ekstra + ' meer broers/susters</span>';
   gesinsHTML += '</div></div>';
   rye.push(gesinsHTML);
 
-  // --- RY 4+: KINDERS (per huwelik as veelhuwelik) ---
+  // RY 4+: KINDERS
   if (r.children_ids && r.children_ids.length > 0) {
     rye.push('<hr class="sb-skeier">');
-
     var kindGroepe = [];
     if (gades.length <= 1) {
       kindGroepe.push({ titel: 'Kinders', ids: r.children_ids });
@@ -4321,37 +4300,21 @@ function toonStamboomModal(id) {
         if (!gade) return;
         var gadeKinders = r.children_ids.filter(function(kId) {
           var kind = indexById[kId];
-          if (!kind) return false;
-          return (kind.parents || []).some(function(p) { return p.id === gade.id; });
+          return kind && (kind.parents || []).some(function(p) { return p.id === gade.id; });
         });
-        if (gadeKinders.length > 0) {
-          var gadeTitel = 'Kinders (× ' + (gade.given || gade.name || 'Gade ' + (gi + 1)) + ')';
-          kindGroepe.push({ titel: gadeTitel, ids: gadeKinders });
-        }
+        if (gadeKinders.length > 0) kindGroepe.push({ titel: 'Kinders (× ' + (gade.given || gade.name || 'Gade ' + (gi+1)) + ')', ids: gadeKinders });
       });
       var gekoppeld = kindGroepe.reduce(function(acc, g) { return acc.concat(g.ids); }, []);
       var ongekoppeld = r.children_ids.filter(function(kId) { return gekoppeld.indexOf(kId) === -1; });
-      if (ongekoppeld.length > 0) {
-        kindGroepe.push({ titel: 'Kinders (gade onseker)', ids: ongekoppeld });
-      }
-      if (kindGroepe.length === 0) {
-        kindGroepe.push({ titel: 'Kinders', ids: r.children_ids });
-      }
+      if (ongekoppeld.length > 0) kindGroepe.push({ titel: 'Kinders (gade onseker)', ids: ongekoppeld });
+      if (kindGroepe.length === 0) kindGroepe.push({ titel: 'Kinders', ids: r.children_ids });
     }
-
     kindGroepe.forEach(function(groep, gi) {
       if (gi > 0) rye.push('<hr class="sb-skeier">');
       var kindHTML = '<div class="sb-ry"><div class="sb-ry-titel">' + groep.titel + '</div><div class="sb-blokke">';
-      var kindSigbaar = 0;
-      for (var j = 0; j < groep.ids.length && kindSigbaar < 6; j++) {
-        var kind = indexById[groep.ids[j]];
-        kindHTML += bouStamboomBlok(kind || null, 'kind');
-        kindSigbaar++;
-      }
-      var ekstraKinders = groep.ids.length - kindSigbaar;
-      if (ekstraKinders > 0) {
-        kindHTML += '<span class="sb-meer">+' + ekstraKinders + ' meer</span>';
-      }
+      var ks = 0;
+      for (var j = 0; j < groep.ids.length && ks < 6; j++) { kindHTML += bouStamboomBlok(indexById[groep.ids[j]] || null, 'kind'); ks++; }
+      if (groep.ids.length - ks > 0) kindHTML += '<span class="sb-meer">+' + (groep.ids.length - ks) + ' meer</span>';
       kindHTML += '</div></div>';
       rye.push(kindHTML);
     });
@@ -4949,51 +4912,6 @@ function vmBouBoodskap(nuutPersAppart) {
   if (kontriKode)    msg += 'INDIENER_KODE: '    + kontriKode   + '\n';
   if (kontriKontak)  msg += 'INDIENER_KONTAK: '  + kontriKontak + '\n';
 
-  // Konteks-afdelings (opsioneel via skakelaars)
-  var deelOpsNarr = document.getElementById('deel-opsie-narratief');
-  var deelOpsNota = document.getElementById('deel-opsie-nota');
-  var deelOpsTydl = document.getElementById('deel-opsie-tydlyn');
-  var deelOpsVv   = document.getElementById('deel-opsie-voorvader');
-
-  if (deelOpsNarr && deelOpsNarr.checked && r.narrative) {
-    msg += '---\nNARRATIEF:\n' + r.narrative + '\n';
-  }
-  if (deelOpsNota && deelOpsNota.checked && r.note) {
-    msg += '---\nNOTA:\n' + r.note + '\n';
-  }
-  if (deelOpsTydl && deelOpsTydl.checked) {
-    var tydlLyne = [];
-    function _jU(s) { if (!s) return null; var m = String(s).match(/\d{4}/); return m ? +m[0] : null; }
-    function _dl(s) { return s ? s.replace(/^(\d{4})-(\d{2})-(\d{2})$/,'$3/$2/$1').replace(/^(\d{4})-(\d{2})$/,'$2/$1').replace(/^~(\d{4})$/,'omstreeks $1') : ''; }
-    if (r.birth_date||r.birth_year) tydlLyne.push((_jU(r.birth_date)||r.birth_year||'?') + ' Gebore' + (r.birth_place ? ', '+r.birth_place : ''));
-    if (r.spouses) r.spouses.forEach(function(sp,i) {
-      var md = r.marr_dates && r.marr_dates[i] ? r.marr_dates[i] : null;
-      tydlLyne.push((_jU(md)||'?') + ' Getroud: ' + sp.name);
-    });
-    if (r.death_date||r.death_year) tydlLyne.push((_jU(r.death_date)||r.death_year||'?') + ' Oorlede' + (r.death_place ? ', '+r.death_place : ''));
-    if (r.events) r.events.forEach(function(ev) {
-      var _evT = window.CONRADIE_EVENT_TIPES || [];
-      var t = _evT.find(function(x){return x.kode===ev.type;});
-      if (!t||!t.printbaar) return;
-      tydlLyne.push((ev.year||'?') + ' ' + (t.naam||ev.type) + (ev.text?' — '+ev.text:''));
-    });
-    if (tydlLyne.length) msg += '---\nTYDLYN:\n' + tydlLyne.join('\n') + '\n';
-  }
-  if (deelOpsVv && deelOpsVv.checked) {
-    var vvKetting = bouwVoorvaderKetting(r.id);
-    if (vvKetting && vvKetting.length > 1) {
-      var vvLyne = vvKetting.map(function(stap, vi) {
-        var p = stap.persoon;
-        var pNaam = p ? (p.name||'?') : 'Onbekend';
-        var gebJ = p ? (p.birth_year||(p.birth_date?p.birth_date.slice(0,4):'')) : '';
-        var sterfJ = p ? (p.death_year||(p.death_date?p.death_date.slice(0,4):'')) : '';
-        var jare = (gebJ||sterfJ) ? ' ('+(gebJ||'?')+'–'+(sterfJ||'?')+')' : '';
-        return (vi+1) + '. ' + pNaam + jare;
-      });
-      msg += '---\nVOORVADERKETTING:\n' + vvLyne.join('\n') + '\n';
-    }
-  }
-
   // Nuwe persoon (apart vir e-pos)
   if (nuutPersAppart) {
     var npNaam      = get('vm-np-naam');
@@ -5356,7 +5274,7 @@ function attachCorrectionListeners() {
     var html = '<div style="max-width:720px;margin:0 auto;padding:1rem;">';
     html += '<div style="display:flex;align-items:baseline;gap:0.7rem;margin-bottom:0.9rem;">';
     html += '<h2 style="color:var(--sepia-light);font-size:1.2rem;margin:0;">✏️ Admin</h2>';
-    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-22-0</span>';
+    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-19-0</span>';
     html += '</div>';
 
     // ── Publiek-inligtingspaneel (standaard oop) ──
@@ -6740,16 +6658,12 @@ function attachCorrectionListeners() {
 
     var merkAan = !window._merkBlokkeer;
     var html = '<div style="margin-bottom:0.5rem;display:flex;align-items:center;gap:0.6rem;">';
-    html += '<button onclick="window._merkBlokkeer=' + (merkAan ? 'true' : 'false') + ';patchLogBouAfdeling();" ' +
-      'style="padding:0.3rem 0.7rem;background:' + (merkAan ? '#5a3a1a' : '#1a3a1a') + ';color:#e8dfc8;border:1px solid #6a5a3a;border-radius:4px;cursor:pointer;font-size:0.78rem;">' +
-      (merkAan ? '\uD83D\uDD12 Sluit merk-af' : '\uD83D\uDD13 Aktiveer merk') + '</button>';
-    html += merkAan
-      ? '<span style="font-size:0.75rem;color:#8a7a5a;">Merk inskrywings om te verwyder</span>'
-      : '<span style="font-size:0.75rem;color:#8a6a2a;">\u26a0\ufe0f Merk gedeaktiveer \u2014 geen onbedoelde verwyderings</span>';
+    html += '<button onclick="window._merkBlokkeer=' + (merkAan ? 'true' : 'false') + ';patchLogBouAfdeling();" style="padding:0.3rem 0.7rem;background:' + (merkAan ? '#5a3a1a' : '#1a3a1a') + ';color:#e8dfc8;border:1px solid #6a5a3a;border-radius:4px;cursor:pointer;font-size:0.78rem;">' + (merkAan ? '🔒 Sluit merk-af' : '🔓 Aktiveer merk') + '</button>';
+    html += merkAan ? '<span style="font-size:0.75rem;color:#8a7a5a;">Merk inskrywings om te verwyder</span>' : '<span style="font-size:0.75rem;color:#8a6a2a;">⚠️ Merk gedeaktiveer — geen onbedoelde verwyderings</span>';
     html += '</div>';
     html += '<table style="width:100%;border-collapse:collapse;font-size:0.82rem;">';
     html += '<tr style="color:#c49a3a;border-bottom:1px solid #3d3020;">';
-    if (merkAan) html += '<th style="padding:0.3rem 0.4rem;text-align:center;">\u2713</th>';
+    if (merkAan) html += '<th style="padding:0.3rem 0.4rem;text-align:center;">✓</th>';
     html += '<th style="text-align:left;padding:0.3rem 0.4rem;">Tyd</th>';
     html += '<th style="text-align:left;padding:0.3rem 0.4rem;">Rekord</th>';
     html += '<th style="text-align:left;padding:0.3rem 0.4rem;">Velde</th></tr>';
@@ -6761,11 +6675,7 @@ function attachCorrectionListeners() {
           ? '\uD83D\uDCC5 ' + Object.keys(item.wysigings || {}).length + ' datum(s) genormaliseer'
           : (Object.keys(item.wysigings || {}).join(', ') || item.tipe || '?');
       html += '<tr style="border-bottom:1px solid #2a2010;color:#c8b890;">';
-      if (merkAan) {
-        html += '<td style="padding:0.3rem 0.4rem;text-align:center;">' +
-          '<input type="checkbox" class="patch-merk" data-indeks="' + i + '" ' +
-          'style="width:1.1rem;height:1.1rem;cursor:pointer;accent-color:#c49a3a;"></td>';
-      }
+      if (merkAan) html += '<td style="padding:0.3rem 0.4rem;text-align:center;"><input type="checkbox" class="patch-merk" data-indeks="' + i + '" style="width:1.1rem;height:1.1rem;cursor:pointer;accent-color:#c49a3a;"></td>';
       html += '<td style="padding:0.3rem 0.4rem;">' + tyd + '</td>';
       html += '<td style="padding:0.3rem 0.4rem;">' + (item.naam || item.rekord_id) + '</td>';
       html += '<td style="padding:0.3rem 0.4rem;">' + velde + '</td>';
@@ -6773,12 +6683,10 @@ function attachCorrectionListeners() {
     });
     html += '</table>';
     html += '<div style="margin-top:0.6rem;display:flex;gap:0.5rem;flex-wrap:wrap;">';
-    if (merkAan) {
-      html += '<button onclick="patchLogVerwyder()" style="padding:0.35rem 0.8rem;background:#6a2a1a;color:#f0c8b0;border:none;border-radius:4px;cursor:pointer;font-size:0.82rem;">\uD83D\uDDD1\uFE0F Verwyder gemerktes</button>';
-    }
-    html += '<button onclick="patchLogAflaai()" style="padding:0.35rem 0.8rem;background:#3d3020;color:#e8dfc8;border:none;border-radius:4px;cursor:pointer;font-size:0.82rem;">\u2B07\uFE0F Laai log af</button>';
-    html += '<button onclick="if(confirm(\'Alle hangende wysigings uitvee?\')) { patchLogWis(); patchLogBouAfdeling(); }" style="padding:0.35rem 0.8rem;background:#5a1a1a;color:#e8c8c8;border:none;border-radius:4px;cursor:pointer;font-size:0.82rem;">\uD83D\uDDD1\uFE0F Maak alles skoon</button>';
-    html += '<button onclick="patchLogDiagnose()" style="padding:0.35rem 0.8rem;background:#1a3a5a;color:#c8dce8;border:none;border-radius:4px;cursor:pointer;font-size:0.82rem;">\uD83D\uDD0D Diagnose</button>';
+    if (merkAan) html += '<button onclick="patchLogVerwyder()" style="padding:0.35rem 0.8rem;background:#6a2a1a;color:#f0c8b0;border:none;border-radius:4px;cursor:pointer;font-size:0.82rem;">🗑️ Verwyder gemerktes</button>';
+    html += '<button onclick="patchLogAflaai()" style="padding:0.35rem 0.8rem;background:#3d3020;color:#e8dfc8;border:none;border-radius:4px;cursor:pointer;font-size:0.82rem;">⬇️ Laai log af</button>';
+    html += '<button onclick="if(confirm(\'Alle hangende wysigings uitvee?\')) { patchLogWis(); patchLogBouAfdeling(); }" style="padding:0.35rem 0.8rem;background:#5a1a1a;color:#e8c8c8;border:none;border-radius:4px;cursor:pointer;font-size:0.82rem;">🗑️ Maak alles skoon</button>';
+    html += '<button onclick="patchLogDiagnose()" style="padding:0.35rem 0.8rem;background:#1a3a5a;color:#c8dce8;border:none;border-radius:4px;cursor:pointer;font-size:0.82rem;">🔍 Diagnose</button>';
     html += '</div>';
     el.innerHTML = html;
   }
@@ -9672,5 +9580,29 @@ function attachCorrectionListeners() {
     max-width:680px;margin:0 auto;line-height:1.6;padding-top:0.8rem;"></div>
 </div>
 
+
+<!-- Deel-paneel -->
+<div id="deel-paneel" style="display:none;position:fixed;inset:0;z-index:400;background:rgba(0,0,0,0.6);overflow-y:auto;">
+  <div style="background:#fff;max-width:520px;margin:2rem auto;border-radius:8px;padding:1.2rem 1rem;position:relative;">
+    <button onclick="deelSluit()" style="position:absolute;top:0.6rem;right:0.8rem;background:none;border:none;font-size:1.3rem;cursor:pointer;">✕</button>
+    <h3 style="margin:0 0 0.8rem;font-size:1rem;">📤 Deel hierdie persoon</h3>
+    <div style="margin-bottom:0.7rem;padding:0.5rem 0.6rem;background:#f5f0e8;border:1px solid #d0c0a0;border-radius:5px;">
+      <div style="font-size:0.78rem;color:#6a5a3a;margin-bottom:0.35rem;">Sluit in:</div>
+      <div style="display:flex;flex-wrap:wrap;gap:0.4rem 1rem;font-size:0.85rem;">
+        <label style="display:flex;align-items:center;gap:0.3rem;cursor:pointer;"><input type="checkbox" id="deel-skakelaar-narratief" checked onchange="deelBouVoorskou()"> Narratief</label>
+        <label style="display:flex;align-items:center;gap:0.3rem;cursor:pointer;"><input type="checkbox" id="deel-skakelaar-nota" checked onchange="deelBouVoorskou()"> Nota</label>
+        <label style="display:flex;align-items:center;gap:0.3rem;cursor:pointer;"><input type="checkbox" id="deel-skakelaar-tydlyn" checked onchange="deelBouVoorskou()"> Tydlyn</label>
+        <label style="display:flex;align-items:center;gap:0.3rem;cursor:pointer;"><input type="checkbox" id="deel-skakelaar-voorvader" checked onchange="deelBouVoorskou()"> Voorvaderketting</label>
+      </div>
+    </div>
+    <textarea id="deel-voorskou" rows="10" style="width:100%;box-sizing:border-box;font-size:0.8rem;border:1px solid #ccc;border-radius:4px;padding:0.5rem;font-family:monospace;resize:vertical;" readonly></textarea>
+    <div style="margin-top:0.6rem;display:flex;gap:0.5rem;flex-wrap:wrap;">
+      <button onclick="deelStuurWA(false)" style="padding:0.4rem 0.9rem;background:#25d366;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:0.85rem;">💬 WhatsApp</button>
+      <button onclick="deelStuurWA(true)" style="padding:0.4rem 0.9rem;background:#1a5c1a;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:0.85rem;">🌐 WA Web</button>
+      <button onclick="deelKopieer()" style="padding:0.4rem 0.9rem;background:#5a4a2a;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:0.85rem;">✂️ Kopieer</button>
+    </div>
+    <div id="deel-status" style="margin-top:0.4rem;font-size:0.82rem;color:#2d7a2d;min-height:1.2rem;"></div>
+  </div>
+</div>
 </body>
 </html>

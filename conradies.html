@@ -3626,47 +3626,53 @@ function wtBouVergelyking(r, wt) {
   return html;
 }
 
+// Wag op WikiTree-kopieer na aanmelding
+window._wtPending = null;
+
 function wtKopieer(id, veld, waarde) {
   var veldMap = { birth_date:'adm-birth-date', birth_place:'adm-birth-place', death_date:'adm-death-date', death_place:'adm-death-place' };
   var admId = veldMap[veld];
   if (!admId) { alert('Onbekende veld: ' + veld); return; }
 
-  // Bewaking: Admin moet aangemeld wees
-  if (!adminOntsluit) {
-    alert('Meld eers by Admin aan om WikiTree-data te kopieer.');
-    return;
-  }
-
   // Sluit die WikiTree-modal
   var wtModal = document.getElementById('wt-modal');
   if (wtModal) wtModal.style.display = 'none';
 
-  // Stap 1: Maak die Admin-tab oop (dit roep buildAdminUI)
+  // As Admin NIE aangemeld is nie — stoor pending en maak Admin-tab oop
+  if (!adminOntsluit) {
+    window._wtPending = { id: id, admId: admId, waarde: waarde };
+    if (typeof switchTab === 'function') switchTab('admin');
+    return; // admOntsluit sal _wtPending toepas na aanmelding
+  }
+
+  // Admin IS aangemeld — voer dadelik uit
+  _wtKopieerToepas(id, admId, waarde);
+}
+
+function _wtKopieerToepas(id, admId, waarde) {
+  // Stap 1: Maak Admin-tab oop (bou DOM as nog nie gebou nie)
   if (typeof switchTab === 'function') switchTab('admin');
 
-  // Stap 2: Gebruik setTimeout om te wag tot die Admin-DOM gerender is,
-  // dan laai die persoon en vul die veld in
   setTimeout(function() {
-    // Laai die persoon in die Admin-paneel as dit nie reeds gelaai is nie
+    // Stap 2: Laai die persoon (stel alle velde met databasis-waardes)
     if (typeof window.admLaaiPersoon === 'function') {
       window.admLaaiPersoon(id);
     }
-    // Stap 3: Navigeer na die Stoor-taak
+    // Stap 3: Wys die Stoor-taak
     if (typeof window.admTaakKies === 'function') {
       window.admTaakKies('taak-stoor');
     }
-    // Stap 4: Vul die veld in (na laai voltooi)
+    // Stap 4: Oorskryf net die een WikiTree-veld (MOET laas wees)
     setTimeout(function() {
       var el = document.getElementById(admId);
       if (el) {
         el.value = waarde;
         el.style.background = '#d4edda';
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
         setTimeout(function() { el.style.background = ''; }, 3000);
-      } else {
-        alert('Veld nie gevind nie: ' + admId + '. Meld asseblief by Admin aan.');
       }
-    }, 150);
-  }, 100);
+    }, 200);
+  }, 150);
 }
 
 
@@ -5283,6 +5289,14 @@ function attachCorrectionListeners() {
       window.admPendingHuw = null;
       setTimeout(function() {
         admVulHuwPaneelLaai(ph.persId, ph.huwIndeks);
+      }, 300);
+    }
+    // Toepas WikiTree-kopieer as dit pending was voor aanmelding
+    if (window._wtPending) {
+      var wtp = window._wtPending;
+      window._wtPending = null;
+      setTimeout(function() {
+        _wtKopieerToepas(wtp.id, wtp.admId, wtp.waarde);
       }, 300);
     }
   };

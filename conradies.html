@@ -3641,29 +3641,32 @@ function wtKopieer(id, veld, waarde) {
   var admId = veldMap[veld];
   if (!admId) { alert('Onbekende veld: ' + veld); return; }
 
-  // Sluit die WikiTree-modal
+  // Stap 1: Sluit WikiTree-modal
   var wtModal = document.getElementById('wt-modal');
   if (wtModal) wtModal.style.display = 'none';
 
-  // As Admin NIE aangemeld is nie — stoor pending en maak Admin-tab oop
-  if (!adminOntsluit) {
-    window._wtPending = { id: id, admId: admId, waarde: waarde };
-    if (typeof switchTab === 'function') switchTab('admin');
-    return; // admOntsluit sal _wtPending toepas na aanmelding
-  }
+  // Stap 2: Sluit detail-paneel (dek Admin-tab op mobiel toe; het 300ms CSS-transition)
+  if (typeof closePanel === 'function') closePanel();
 
-  // Admin IS aangemeld — voer dadelik uit
-  _wtKopieerToepas(id, admId, waarde);
+  // Stap 3: Wag vir detail-paneel transition, dan verwerk
+  setTimeout(function() {
+    if (!adminOntsluit) {
+      // Nie aangemeld — stoor pending, navigeer na Admin (gebruiker meld aan)
+      window._wtPending = { id: id, admId: admId, waarde: waarde };
+      if (typeof switchTab === 'function') switchTab('admin');
+      // admOntsluit() sal _wtPending toepas na aanmelding
+    } else {
+      // Aangemeld — voer dadelik uit
+      _wtKopieerToepas(id, admId, waarde);
+    }
+  }, 350);
 }
 
 function _wtKopieerToepas(id, admId, waarde) {
-  // Stap 1: Sluit detail-paneel (dek Admin-tab op mobiel toe)
-  if (typeof closePanel === 'function') closePanel();
-
-  // Stap 2: Maak Admin-tab oop en bou DOM indien nodig
+  // Maak Admin-tab oop en bou DOM indien nodig
   if (typeof switchTab === 'function') switchTab('admin');
 
-  // Stap 3: Wag vir DOM — laai persoon + wys Stoor-taak
+  // Wag vir DOM-bou, laai dan persoon + wys Stoor-taak
   setTimeout(function() {
     if (typeof window.admLaaiPersoon === 'function') {
       window.admLaaiPersoon(id);
@@ -3671,7 +3674,7 @@ function _wtKopieerToepas(id, admId, waarde) {
     if (typeof window.admTaakKies === 'function') {
       window.admTaakKies('taak-stoor');
     }
-    // Stap 4: Stel WikiTree-veld ná admLaaiPersoon (wat alle velde herlaai)
+    // Stel WikiTree-veld ná admLaaiPersoon (wat alle velde herlaai)
     setTimeout(function() {
       var el = document.getElementById(admId);
       if (el) {
@@ -3680,7 +3683,7 @@ function _wtKopieerToepas(id, admId, waarde) {
         el.scrollIntoView({ behavior: 'smooth', block: 'center' });
         setTimeout(function() { el.style.background = ''; }, 3000);
       } else {
-        alert('Veld nie gevind nie: ' + admId + '. Kontroleer dat Admin gebou is.');
+        alert('Veld nie gevind nie: ' + admId + '. Maak die Admin-tab oop en probeer weer.');
       }
     }, 300);
   }, 200);
@@ -5328,7 +5331,7 @@ function attachCorrectionListeners() {
     var html = '<div style="max-width:720px;margin:0 auto;padding:1rem;">';
     html += '<div style="display:flex;align-items:baseline;gap:0.7rem;margin-bottom:0.9rem;">';
     html += '<h2 style="color:var(--sepia-light);font-size:1.2rem;margin:0;">✏️ Admin</h2>';
-    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-21-0</span>';
+    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-21-1</span>';
     html += '</div>';
 
     // ── Publiek-inligtingspaneel (standaard oop) ──

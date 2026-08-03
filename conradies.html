@@ -740,6 +740,17 @@ main {
 .sb-blok .sb-dna-pct { display: block; font-size: 0.68rem; opacity: 0.85; margin-top: 0.1rem; }
 #sb-dna-knop { position: absolute; top: 0.7rem; right: 2.6rem; background: none; border: none; font-size: 1.1rem; cursor: pointer; color: var(--muted); padding: 0; line-height: 1; }
 #sb-dna-knop.aktief { color: var(--forest); }
+#sb-dna-tabel-boks { margin-top: 0.9rem; border-top: 1px solid var(--sepia-light); padding-top: 0.8rem; }
+#sb-dna-tabel-boks h4 { font-family: 'Josefin Sans', sans-serif; font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin: 0 0 0.5rem; }
+#sb-dna-tabel { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+#sb-dna-tabel th { font-family: 'Josefin Sans', sans-serif; font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); text-align: left; padding: 0.2rem 0.4rem; border-bottom: 1px solid var(--sepia-light); }
+#sb-dna-tabel td { padding: 0.25rem 0.4rem; border-bottom: 1px solid rgba(160,130,100,0.15); color: var(--ink); }
+#sb-dna-tabel tr:last-child td { border-bottom: none; }
+#sb-dna-tabel td:last-child { text-align: right; font-weight: bold; color: var(--forest); white-space: nowrap; }
+#sb-dna-tabel .dna-groep { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); padding: 0.4rem 0.4rem 0.1rem; font-family: 'Josefin Sans', sans-serif; }
+#sb-dna-tabel .dna-groep td { border-bottom: none; color: var(--muted); font-size: 0.65rem; }
+#sb-dna-wissel { display: inline-flex; align-items: center; gap: 0.4rem; background: none; border: 1px solid var(--sepia-light); border-radius: 6px; padding: 0.3rem 0.7rem; font-size: 0.78rem; color: var(--sepia); cursor: pointer; font-family: inherit; margin-top: 0.5rem; width: 100%; justify-content: center; }
+#sb-dna-wissel:hover { background: var(--parchment-dark); }
 
 /* Empty state */
 .empty-state {
@@ -2111,6 +2122,33 @@ body.stamvader-aktief .tab-btn[data-tab="search"] {
     <button id="sb-dna-knop" onclick="sbToggleDna()" title="Wys DNA-persentasies">🧬</button>
     <h2>🌿 Mini-stamboom</h2>
     <div id="sb-inhoud"></div>
+    <button id="sb-dna-wissel" onclick="sbToggleDnaTabel()">🧬 Teoretiese DNA-verwantskap</button>
+    <div id="sb-dna-tabel-boks" style="display:none;">
+      <h4>Teoretiese gemiddelde DNA-deling</h4>
+      <table id="sb-dna-tabel">
+        <thead><tr><th>Verwantskap</th><th>Verwante</th><th>Gemiddeld</th></tr></thead>
+        <tbody>
+          <tr class="dna-groep"><td colspan="3">Naaste familie</td></tr>
+          <tr><td>Identiese tweeling</td><td>Tweeling</td><td>100%</td></tr>
+          <tr><td>Kind / Ouer</td><td>Kind, pa, ma</td><td>50%</td></tr>
+          <tr><td>Broer / Suster</td><td>Volle broer/suster</td><td>~50%</td></tr>
+          <tr class="dna-groep"><td colspan="3">Tweede graad</td></tr>
+          <tr><td>Halfbroer / Halfsuster</td><td>Half-broer/suster</td><td>~25%</td></tr>
+          <tr><td>Grootouers / Kleinkind</td><td>Oupa, ouma, kleinkind</td><td>~25%</td></tr>
+          <tr><td>Oom / Tante / Neef / Niggie</td><td>Ouer se broer/suster</td><td>~25%</td></tr>
+          <tr class="dna-groep"><td colspan="3">Derde graad</td></tr>
+          <tr><td>Oorgrootouers / Agterklein</td><td>Oupa se ouer</td><td>~12.5%</td></tr>
+          <tr><td>Grootouer se broer/suster</td><td>Groot-oom/tante</td><td>~12.5%</td></tr>
+          <tr><td>Eerste neef/niggie</td><td>Kind van oom/tante</td><td>~12.5%</td></tr>
+          <tr class="dna-groep"><td colspan="3">Vierde graad</td></tr>
+          <tr><td>Eerste neef/niggie, een keer verwyder</td><td>Kind van eerste neef</td><td>~6.25%</td></tr>
+          <tr><td>Tweede neef/niggie</td><td>Kind van eerste neef</td><td>~3.13%</td></tr>
+          <tr class="dna-groep"><td colspan="3">Geen bloedverwantskap</td></tr>
+          <tr><td>Aangetroude</td><td>Gade, skoonouers</td><td>0%</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:0.72rem;color:var(--muted);margin-top:0.6rem;font-style:italic;">⚠️ Teoretiese gemiddeldes — werklike DNA-deling wissel aansienlik.</p>
+    </div>
   </div>
 </div>
 
@@ -4269,6 +4307,15 @@ function sbToggleDna() {
   if (window._sbHuidigeId) toonStamboomModal(window._sbHuidigeId);
 }
 
+function sbToggleDnaTabel() {
+  var boks = document.getElementById('sb-dna-tabel-boks');
+  var knop = document.getElementById('sb-dna-wissel');
+  if (!boks) return;
+  var oop = boks.style.display !== 'none';
+  boks.style.display = oop ? 'none' : 'block';
+  knop.textContent = oop ? '\uD83E\uDDEC Teoretiese DNA-verwantskap' : '\uD83E\uDDEC Verberg DNA-tabel';
+}
+
 function bouStamboomBlok(rek, rol) {
   if (!rek) return '<span class="sb-blok onbekend">Onbekend</span>';
   var klas = 'sb-blok';
@@ -4376,6 +4423,11 @@ function toonStamboomModal(id) {
 
   var inhoud = document.getElementById('sb-inhoud');
   inhoud.innerHTML = rye.length ? rye.join('') : '<div style="color:var(--muted);font-style:italic;font-size:0.9rem;">Geen familiedata beskikbaar nie.</div>';
+  // Reset DNA-tabel na toe
+  var dnaBoks = document.getElementById('sb-dna-tabel-boks');
+  var dnaWissel = document.getElementById('sb-dna-wissel');
+  if (dnaBoks) dnaBoks.style.display = 'none';
+  if (dnaWissel) dnaWissel.textContent = '\uD83E\uDDEC Teoretiese DNA-verwantskap';
   document.getElementById('stamboom-modal').classList.add('oop');
 }
 
@@ -5338,7 +5390,7 @@ function attachCorrectionListeners() {
     var html = '<div style="max-width:720px;margin:0 auto;padding:1rem;">';
     html += '<div style="display:flex;align-items:baseline;gap:0.7rem;margin-bottom:0.9rem;">';
     html += '<h2 style="color:var(--sepia-light);font-size:1.2rem;margin:0;">✏️ Admin</h2>';
-    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-21-4</span>';
+    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-22-0</span>';
     html += '</div>';
 
     // ── Publiek-inligtingspaneel (standaard oop) ──

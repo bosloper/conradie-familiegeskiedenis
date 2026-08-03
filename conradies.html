@@ -3568,6 +3568,12 @@ function wtVergelyk(rek) {
       return;
     }
     inhoud.innerHTML = wtBouVergelyking(r, wt);
+    // Bind kopieer-knoppies via addEventListener (data-eienskappe — veilig vir alle karakters)
+    inhoud.querySelectorAll('.wt-kopieer-knp').forEach(function(knp) {
+      knp.addEventListener('click', function() {
+        wtKopieer(knp.dataset.id, knp.dataset.veld, knp.dataset.waarde);
+      });
+    });
   }
   wtHaalData(wtApiUrl)
     .then(wtVerwerk)
@@ -3589,8 +3595,9 @@ function wtBouVergelyking(r, wt) {
   function ry(label, plaaslik, wiki, veldNm) {
     var verskil = plaaslik.trim() !== wiki.trim() && wiki.trim() !== '';
     var kleur = verskil ? 'background:#fff3cd' : '';
+    // Gebruik data-eienskappe — geen inline onclick nie (kwesbaar vir spesiale karakters)
     var kopieerKnp = (verskil && veldNm) ?
-      ' <button onclick="wtKopieer(\'' + r.id + '\',\'' + veldNm + '\',\'' + wiki.replace(/'/g, "\\'") + '\')" ' +
+      ' <button class="wt-kopieer-knp" data-id="' + escHtml(r.id) + '" data-veld="' + escHtml(veldNm) + '" data-waarde="' + escHtml(wiki) + '" ' +
       'style="font-size:0.72rem;padding:0.1rem 0.4rem;background:#2d6a2d;color:#fff;border:none;border-radius:3px;cursor:pointer;margin-left:0.4rem;">Kopieer ↓</button>' : '';
     return '<tr style="' + kleur + '">' +
       '<td style="padding:0.3rem 0.5rem;color:#7a6a4a;font-weight:600;">' + label + '</td>' +
@@ -5317,7 +5324,7 @@ function attachCorrectionListeners() {
     var html = '<div style="max-width:720px;margin:0 auto;padding:1rem;">';
     html += '<div style="display:flex;align-items:baseline;gap:0.7rem;margin-bottom:0.9rem;">';
     html += '<h2 style="color:var(--sepia-light);font-size:1.2rem;margin:0;">✏️ Admin</h2>';
-    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-20-0</span>';
+    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-20-1</span>';
     html += '</div>';
 
     // ── Publiek-inligtingspaneel (standaard oop) ──

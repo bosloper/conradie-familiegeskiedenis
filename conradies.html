@@ -3676,20 +3676,21 @@ function _wtKopieerToepas(id, admId, waarde) {
       if (typeof window.admTaakKies === 'function') {
         window.admTaakKies('taak-stoor');
       }
+      // Scroll na bo sodat taak-stoor-knoppie en paneel sigbaar is
+      var tabAdm = document.getElementById('tab-admin');
+      if (tabAdm) tabAdm.scrollTop = 0;
+      window.scrollTo(0, 0);
       // Stap 4: Stel WikiTree-veld (NADAT admTaakKies die paneel gewys het)
       setTimeout(function() {
         var el = document.getElementById(admId);
         if (el) {
           el.value = waarde;
-          el.style.background = '#d4edda';
+          el.style.background = '#1a5c2a';
+          el.style.color = '#ffffff';
           el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          setTimeout(function() { el.style.background = ''; }, 3000);
+          setTimeout(function() { el.style.background = ''; el.style.color = ''; }, 4000);
         } else {
           alert('Veld nie gevind nie: ' + admId + '. Maak die Admin-tab oop en probeer weer.');
-        }
-        // Stap 5: Kopieer ook na knipbord (vir gebruik elders)
-        if (navigator.clipboard && waarde) {
-          navigator.clipboard.writeText(waarde).catch(function() {});
         }
       }, 200);
     }, 200);
@@ -5338,7 +5339,7 @@ function attachCorrectionListeners() {
     var html = '<div style="max-width:720px;margin:0 auto;padding:1rem;">';
     html += '<div style="display:flex;align-items:baseline;gap:0.7rem;margin-bottom:0.9rem;">';
     html += '<h2 style="color:var(--sepia-light);font-size:1.2rem;margin:0;">✏️ Admin</h2>';
-    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-21-2</span>';
+    html += '<span style="font-size:0.68rem;color:#6a5a40;letter-spacing:0.05em;">v9-21-3</span>';
     html += '</div>';
 
     // ── Publiek-inligtingspaneel (standaard oop) ──

@@ -10937,5 +10937,139 @@
       "wt_id": "",
       "huwelik": "Derien NN (2015-09-26)"
     }
+  },
+  {
+    "tyd": "2026-08-23T17:34:04.630Z",
+    "volgorde": 1,
+    "rekord_id": "S4021",
+    "naam": "Erick Kobus DORFLING",
+    "tipe": "huwelik-wysiging",
+    "wysigings": {
+      "marr_dates[0]": {
+        "oud": "",
+        "nuut": "2010/11/06"
+      },
+      "marr_places[0]": {
+        "oud": "",
+        "nuut": "Bloemfontein"
+      }
+    },
+    "rekord_na": {
+      "id": "S4021",
+      "ref": "4021",
+      "name": "Erick Kobus DORFLING",
+      "given": "Erick Kobus",
+      "surname": "DORFLING",
+      "sex": "",
+      "family_code": "",
+      "branch": "",
+      "branch_path": [],
+      "generation": 0,
+      "uncertain": false,
+      "nickname": "",
+      "birth_date": "1985-11-19",
+      "birth_year": 1985,
+      "birth_place": "Brits",
+      "birth_circa": false,
+      "death_date": "",
+      "death_year": null,
+      "death_place": "",
+      "burial_place": "",
+      "baptism_date": "",
+      "baptism_place": "",
+      "is_spouse": true,
+      "spouses": [
+        {
+          "id": "I4021",
+          "name": "Hendrina Jacomina CONRADIE",
+          "birth_date": "1984-01-15",
+          "birth_year": 1984,
+          "divorce_date": "",
+          "divorced": false
+        }
+      ],
+      "children_ids": [],
+      "parents": [],
+      "marr_dates": [
+        "2010/11/06"
+      ],
+      "marr_places": [
+        "Bloemfontein"
+      ],
+      "divorce_date": "",
+      "divorced": false,
+      "maiden_name": "",
+      "narrative": "2011: Werk as stoelassistent in Pretoria.",
+      "note": "",
+      "occupation": "",
+      "events": [],
+      "fs_id": "",
+      "wt_id": ""
+    }
+  },
+  {
+    "tyd": "2026-08-23T17:34:04.630Z",
+    "volgorde": 2,
+    "rekord_id": "S4021",
+    "naam": "Erick Kobus DORFLING",
+    "tipe": "wysiging",
+    "wysigings": {
+      "birth_place": {
+        "oud": "",
+        "nuut": "Brits"
+      }
+    },
+    "rekord_na": {
+      "id": "S4021",
+      "ref": "4021",
+      "name": "Erick Kobus DORFLING",
+      "given": "Erick Kobus",
+      "surname": "DORFLING",
+      "sex": "",
+      "family_code": "",
+      "branch": "",
+      "branch_path": [],
+      "generation": 0,
+      "uncertain": false,
+      "nickname": "",
+      "birth_date": "1985-11-19",
+      "birth_year": 1985,
+      "birth_place": "Brits",
+      "birth_circa": false,
+      "death_date": "",
+      "death_year": null,
+      "death_place": "",
+      "burial_place": "",
+      "baptism_date": "",
+      "baptism_place": "",
+      "is_spouse": true,
+      "spouses": [
+        {
+          "id": "I4021",
+          "name": "Hendrina Jacomina CONRADIE",
+          "birth_date": "1984-01-15",
+          "birth_year": 1984,
+          "divorce_date": "",
+          "divorced": false
+        }
+      ],
+      "children_ids": [],
+      "parents": [],
+      "marr_dates": [
+        "2010/11/06"
+      ],
+      "marr_places": [
+        "Bloemfontein"
+      ],
+      "divorce_date": "",
+      "divorced": false,
+      "maiden_name": "",
+      "narrative": "2011: Werk as stoelassistent in Pretoria.",
+      "note": "",
+      "occupation": "",
+      "events": [],
+      "fs_id": "",
+      "wt_id": ""
+    }
   }
 ]
